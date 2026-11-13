@@ -97,6 +97,7 @@ export const SYNC_REASON_CODES = new Set<string>([
   "assignment_target_mismatch",
   "assignment_tenant_mismatch",
   "attendance_last_write_wins_by_timestamp",
+  "attendance_requires_teacher_review",
   "attendance_student_mismatch",
   "attendance_tenant_mismatch",
   "completed_lab_session_requires_review",

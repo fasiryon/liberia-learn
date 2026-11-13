@@ -11,15 +11,22 @@ export async function POST(
 ) {
   try {
     const user = await requireRole("STUDENT");
+    if (!user.schoolId) return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
     const { meetingId } = params;
 
     const meeting = await prisma.meeting.findUnique({
       where: { id: meetingId },
       include: { Class: { select: { id: true, schoolId: true, subject: true } } },
     });
-    if (!meeting) {
+    if (!meeting || !meeting.Class || meeting.Class.schoolId !== user.schoolId) {
       return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
     }
+    const student = await prisma.student.findFirst({
+      where: { userId: user.id, deletedAt: null, user: { schoolId: user.schoolId },
+        enrollments: { some: { classId: meeting.classId } } },
+      select: { id: true },
+    });
+    if (!student) return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
     if (meeting.liveStatus !== "LIVE") {
       return NextResponse.json({ error: "Session is not live" }, { status: 400 });
     }
@@ -30,9 +37,6 @@ export async function POST(
       create: { meetingId, userId: user.id },
     });
 
-    const student = await Promise.resolve(
-      (prisma as any).student?.findUnique?.({ where: { userId: user.id }, select: { id: true } })
-    ).catch(() => null);
     const schoolId = meeting.Class?.schoolId ?? user.schoolId ?? null;
     const classId = meeting.Class?.id ?? meeting.classId;
     await logProductSignal({
@@ -57,3 +61,4 @@ export async function POST(
     return NextResponse.json({ error: err.message ?? "Internal error" }, { status });
   }
 }
+// route-policy: auth=session; scope=record; authority=enrolled-student; rationale=only an active student enrolled in the meeting class in their current school may receive the join URL or create attendance/signals

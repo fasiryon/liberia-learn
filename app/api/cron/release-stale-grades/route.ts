@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { releaseStaleAIGrades } from "@/lib/ai/staleGradeReleaser";
+import {previewAutomationDisabled} from "@/lib/previewSideEffects";
+
+// route-policy: auth=cron; scope=none; authority=legacy-optional-secret; rationale=Preview refuses all work; outside Preview the existing optional CRON_SECRET comparison remains unchanged.
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  if(previewAutomationDisabled())return NextResponse.json({error:"Preview automation is disabled"},{status:401});
   const secret = req.headers.get("x-cron-secret") ?? req.headers.get("authorization");
   const expected = process.env.CRON_SECRET;
   if (expected && secret !== expected && secret !== `Bearer ${expected}`) {

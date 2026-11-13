@@ -54,6 +54,7 @@ export interface RunResult {
 
 const DEFAULT_MAX_DEPTH = 20;
 const DEFAULT_TIMEOUT_MS = 60_000;
+const PUBLIC_MODERATION_FALLBACK = "I cannot provide a response right now. Please ask your teacher or school staff for help.";
 
 function stripFences(raw: string): string {
   return raw.trim().replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
@@ -247,6 +248,13 @@ export async function runAgent(
   ctx: RunContext = {}
 ): Promise<RunResult> {
   const agent = getAgent(agentName); // throws "Agent not found" for unknown
+  // System/webhook caller roles do not identify the human output audience.
+  const audience = agent.audience ?? (agent.rolesAllowed.includes("student") ? "minor" : agent.rolesAllowed.includes("guardian") ? "guardian" : "general");
+  const publicAudience = audience !== "general";
+  const moderateAgentText = (text: string, kind: "input" | "output") =>
+    publicAudience ? moderateText(text, kind, { audience }) : moderateText(text, kind);
+  const blocksRelease = (verdict: "SAFE" | "UNSAFE" | "UNCERTAIN") =>
+    verdict === "UNSAFE" || (publicAudience && verdict !== "SAFE");
   const triggeredBy: TriggeredBy = ctx.triggeredBy ?? "USER";
   const clock = ctx.now ?? Date.now;
   const startedAt = clock();
@@ -293,7 +301,7 @@ export async function runAgent(
     };
   };
 
-  // 1. Kill switch (admin DB override wins over the env flag).
+  // 1. Absolute environment stop, then database override / environment default.
   if (!(await resolveAgentEnabled(agent.name, agent.featureFlag))) {
     return earlyReturn("FEATURE_DISABLED", "feature_disabled");
   }
@@ -317,13 +325,14 @@ export async function runAgent(
   }
 
   // 4. Input moderation.
-  const inputVerdict = await moderateText(userInput, "input");
-  if (inputVerdict.verdict === "UNSAFE") {
-    return earlyReturn(
+  const inputVerdict = await moderateAgentText(userInput, "input");
+  if (blocksRelease(inputVerdict.verdict)) {
+    const blocked = await earlyReturn(
       "FAILURE",
       "input_moderation_blocked",
       inputVerdict.reason ?? "input_unsafe"
     );
+    return publicAudience ? { ...blocked, response: PUBLIC_MODERATION_FALLBACK } : blocked;
   }
 
   // 5. Translation in — run the agent in English regardless of caller language.
@@ -372,8 +381,8 @@ export async function runAgent(
 
   // 7. Output moderation with a single regeneration, then escalation.
   if (status === "SUCCESS" && response !== null) {
-    const out1 = await moderateText(response, "output");
-    if (out1.verdict === "UNSAFE") {
+    const out1 = await moderateAgentText(response, "output");
+    if (blocksRelease(out1.verdict)) {
       messages.push({
         role: "user",
         content:
@@ -394,8 +403,8 @@ export async function runAgent(
       toolCalls.push(...loop2.toolCalls);
 
       if (loop2.status === "SUCCESS" && loop2.response !== null) {
-        const out2 = await moderateText(loop2.response, "output");
-        if (out2.verdict === "UNSAFE") {
+        const out2 = await moderateAgentText(loop2.response, "output");
+        if (blocksRelease(out2.verdict)) {
           status = "ESCALATED";
           response = null;
           error = "output_moderation_unsafe";
@@ -416,6 +425,18 @@ export async function runAgent(
   // 8. Translation out.
   if (status === "SUCCESS" && response !== null && userLang !== "en") {
     response = await translateFromEnglish(response, userLang);
+    if (publicAudience) {
+      const translatedVerdict = await moderateAgentText(response, "output");
+      if (blocksRelease(translatedVerdict.verdict)) {
+        status = "ESCALATED";
+        response = null;
+        error = "output_moderation_translation_blocked";
+        escalationReason = error;
+      }
+    }
+  }
+  if (publicAudience && status === "ESCALATED" && response === null && error?.startsWith("output_moderation")) {
+    response = PUBLIC_MODERATION_FALLBACK;
   }
 
   const latencyMs = clock() - startedAt;

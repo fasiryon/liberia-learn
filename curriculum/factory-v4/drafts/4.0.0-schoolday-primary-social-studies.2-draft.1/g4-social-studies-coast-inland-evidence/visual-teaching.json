@@ -1,0 +1,445 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.2.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "candidateSha256": "3808f2a1237d0087852f813547ef3f7f77cef549d308dd66d737b09d1a52e1bb",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "g4-social-studies-coast-inland-evidence-o1",
+      "statement": "Use geographical vocabulary and a labelled sketch to compare coastal and inland landscapes in Liberia.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-social-studies-coast-inland-evidence-o1",
+          "statement": "Use geographical vocabulary and a labelled sketch to compare coastal and inland landscapes in Liberia.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-social-studies-coast-inland-evidence-o2",
+      "statement": "Support a comparison with relevant text evidence while distinguishing observations from unsupported generalizations.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-social-studies-coast-inland-evidence-o2",
+          "statement": "Support a comparison with relevant text evidence while distinguishing observations from unsupported generalizations.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-social-studies-coast-inland-evidence-o3",
+      "statement": "Recommend a community reading-club site using local evidence, a counterargument and a question for further checking.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-social-studies-coast-inland-evidence-o3",
+          "statement": "Recommend a community reading-club site using local evidence, a counterargument and a question for further checking.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "read-landscape",
+      "slot": "blocks",
+      "index": 0,
+      "type": "READING_PASSAGE",
+      "blockSha256": "2e422e0e3f450768aac59807500add20bd9e65a38231aaeb9aa9a4e392b7b085",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Read or listen, make a labelled sketch and ask one question about a place you know.",
+      "misconceptionIds": [
+        "inland-is-always-high"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Reading Liberia's landscape. Liberia lies in West Africa beside the Atlantic Ocean. Coastal means near the sea. Inland means farther from the coast. Liberia has coastal lowlands, with hills and higher land farther inland. These broad descriptions do not give every place the same shape. A plain is a broad area of fairly level land. A plateau is higher land with a fairly level surface. A physical region describes landscape features. It is not the same as a county boundary. Read a map's key before using its symbols.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Reading Liberia's landscape. Liberia lies in West Africa beside the Atlantic Ocean. Coastal means near the sea. Inland means farther from the coast. Liberia has coastal lowlands, with hills and higher land farther inland. These broad descriptions do not give every place the same shape. A plain is a broad area of fairly level land. A plateau is higher land with a fairly level surface. A physical region describes landscape features. It is not the same as a county boundary. Read a map's key before using its symbols.",
+        "responsePrompt": "Read or listen, make a labelled sketch and ask one question about a place you know. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "model-comparison",
+      "slot": "blocks",
+      "index": 0,
+      "type": "STEP_REVEAL",
+      "blockSha256": "4f0d996fbb796e40a7050abe715d2eb2b672c4b19586fb3fc99bfc13d661f51a",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2"
+      ],
+      "instructionalPurpose": "Watch a worked example one step at a time. Learner action: Underline the difference in the model. Circle the words that limit its claim.",
+      "misconceptionIds": [
+        "inland-is-always-high",
+        "one-case-describes-everywhere"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "How can we compare without claiming too much? Step 1: Name the feature: distance from the coast. Step 2: Compare: a coastal location is nearer the sea than an inland location. Step 3: Limit: this description alone does not give an exact height or every person's work.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: How can we compare without claiming too much? Step 1: Name the feature: distance from the coast. Step 2: Compare: a coastal location is nearer the sea than an inland location. Step 3: Limit: this description alone does not give an exact height or every person's work.",
+        "responsePrompt": "Underline the difference in the model. Circle the words that limit its claim. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "guided-geography",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "b22aa7cded4e8498f5f24d9a8547cd01039b30451f055ffab084f4a3e0d1d75c",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Check the geographical claim, then explain what further information a real map would need.",
+      "misconceptionIds": [
+        "inland-is-always-high",
+        "physical-region-equals-county"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "physical-region-equals-county",
+          "responsePattern": "inland-claim-item:OPTION:opt-c8118c572f91",
+          "feedback": "Physical descriptions do not supply administrative boundaries or a geographical scale."
+        },
+        {
+          "misconceptionId": "inland-is-always-high",
+          "responsePattern": "inland-claim-item:OPTION:opt-7811f6e2081c",
+          "feedback": "Inland describes position away from the coast, not one height for every home."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which claim fits the passage? Options: A coast-to-inland sketch gives every county border exactly.; Inland places can have different landforms; a local map gives more detail.; Every inland home stands on a mountain..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which claim fits the passage? Options: A coast-to-inland sketch gives every county border exactly.; Inland places can have different landforms; a local map gives more detail.; Every inland home stands on a mountain..",
+        "responsePrompt": "Check the geographical claim, then explain what further information a real map would need. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "guided-observations",
+      "slot": "blocks",
+      "index": 0,
+      "type": "READING_PASSAGE",
+      "blockSha256": "bbc5dad6111b06215f8af3a16743b2c54fad8d59d9da8ef7ad23db200ed199ce",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Select two relevant details, explain their different meanings and name one missing observation.",
+      "misconceptionIds": [
+        "one-case-describes-everywhere",
+        "place-label-proves-safety",
+        "one-criterion-proves-all-needs"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Two invented reading-club records. These reading clubs and observations are invented for this lesson. Club A is near the coast. Its covered room stayed dry during two observed showers. Water covered part of its path during one shower. Nobody checked the path after dark. Club B is inland beside a river. Its room had a leaking roof. Its path stayed clear during both observed showers. Nobody checked the river after prolonged rain. Both clubs want books kept dry and a route that an adult can check.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Two invented reading-club records. These reading clubs and observations are invented for this lesson. Club A is near the coast. Its covered room stayed dry during two observed showers. Water covered part of its path during one shower. Nobody checked the path after dark. Club B is inland beside a river. Its room had a leaking roof. Its path stayed clear during both observed showers. Nobody checked the river after prolonged rain. Both clubs want books kept dry and a route that an adult can check.",
+        "responsePrompt": "Select two relevant details, explain their different meanings and name one missing observation. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "guided-observations",
+      "slot": "blocks",
+      "index": 1,
+      "type": "SOURCE_EVIDENCE",
+      "blockSha256": "4e0c3b5e18808ae13e5ad1d2de41d22bbe4f0e485c6cb9748b327caaaade71f7",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "instructionalPurpose": "Select the sentences in a source that answer a question, with a reason for each. Learner action: Select two relevant details, explain their different meanings and name one missing observation.",
+      "misconceptionIds": [
+        "one-case-describes-everywhere",
+        "place-label-proves-safety",
+        "one-criterion-proves-all-needs"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Club A's invented record. The covered room stayed dry during two observed showers. Water covered part of the path during one shower. Club A is near the coast. Which two details support discussing the room and route separately?",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Club A's invented record. The covered room stayed dry during two observed showers. Water covered part of the path during one shower. Club A is near the coast. Which two details support discussing the room and route separately?",
+        "responsePrompt": "Select two relevant details, explain their different meanings and name one missing observation. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "guided-observations",
+      "slot": "blocks",
+      "index": 2,
+      "type": "CHECK",
+      "blockSha256": "4cb21b1c446702f737f41e26a5eba5d6dea0125b25d486171b5ed5b782156ebe",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Select two relevant details, explain their different meanings and name one missing observation.",
+      "misconceptionIds": [
+        "one-case-describes-everywhere",
+        "place-label-proves-safety",
+        "one-criterion-proves-all-needs"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "one-case-describes-everywhere",
+          "responsePattern": "label-or-evidence-item:OPTION:opt-584bcee940ec",
+          "feedback": "The record concerns one path and one observed condition, not every coastal route."
+        },
+        {
+          "misconceptionId": "one-criterion-proves-all-needs",
+          "responsePattern": "label-or-evidence-item:OPTION:opt-41d5912a0a5e",
+          "feedback": "A dry room does not establish that the route to it is clear."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which reason best supports checking Club A's path? Options: Every coastal path must always be unusable.; Its room was dry, so the path needs no attention.; Part of its path was covered by water in an observed shower..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which reason best supports checking Club A's path? Options: Every coastal path must always be unusable.; Its room was dry, so the path needs no attention.; Part of its path was covered by water in an observed shower..",
+        "responsePrompt": "Select two relevant details, explain their different meanings and name one missing observation. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "independent-source-check",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "8361f13481a58ca718955628ec8cfd21a1159c30fc3438ae2e48e7dd5c34c271",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Evaluate both claims independently. Explain how to make a conclusion match its evidence.",
+      "misconceptionIds": [
+        "one-case-describes-everywhere"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "one-case-describes-everywhere",
+          "responsePattern": "limited-observation-item:OPTION:opt-9f33989a8ec0",
+          "feedback": "The observations at Club A do not establish a rule about inland buildings."
+        },
+        {
+          "misconceptionId": "one-case-describes-everywhere",
+          "responsePattern": "limited-observation-item:OPTION:opt-b2f023a69f17",
+          "feedback": "The evidence does not cover every building or every storm."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which conclusion is supported about Club A's room? Options: No inland building can stay dry.; It stayed dry during the two showers described.; All coastal buildings stay dry in every storm..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which conclusion is supported about Club A's room? Options: No inland building can stay dry.; It stayed dry during the two showers described.; All coastal buildings stay dry in every storm..",
+        "responsePrompt": "Evaluate both claims independently. Explain how to make a conclusion match its evidence. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "reason-and-revise",
+      "slot": "blocks",
+      "index": 0,
+      "type": "MISTAKE_ANALYSIS",
+      "blockSha256": "60a010de1df251b751a43b18b1416c2d817e39db9e6070443e0a1cd54659af7d",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "instructionalPurpose": "Diagnose a worked attempt that contains a common misconception. Learner action: Identify the faulty reason and propose a condition for a defensible recommendation.",
+      "misconceptionIds": [
+        "place-label-proves-safety",
+        "one-criterion-proves-all-needs"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "place-label-proves-safety",
+          "responsePattern": "OPTION:reverse",
+          "feedback": "Reversing the preference still uses a region label instead of local evidence."
+        },
+        {
+          "misconceptionId": "one-criterion-proves-all-needs",
+          "responsePattern": "OPTION:ignore",
+          "feedback": "The room and route are separate needs. Evidence about one does not settle the other."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "A club needs dry book storage and a route an adult can check. A fictional pupil wrote: Club B is inland. Therefore its room and path must meet every need. Which response best repairs the reasoning? Options: Use the roof and route observations, then name a repair or further check.; Choose Club A just because it is coastal instead.; Ignore the roof because the path was clear..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: A club needs dry book storage and a route an adult can check. A fictional pupil wrote: Club B is inland. Therefore its room and path must meet every need. Which response best repairs the reasoning? Options: Use the roof and route observations, then name a repair or further check.; Choose Club A just because it is coastal instead.; Ignore the roof because the path was clear..",
+        "responsePrompt": "Identify the faulty reason and propose a condition for a defensible recommendation. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

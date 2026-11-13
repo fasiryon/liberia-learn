@@ -1,8 +1,11 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=onboarding import creates student accounts; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import bcrypt from "bcryptjs";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +48,8 @@ export async function POST(req: NextRequest) {
     const user = await requireRole("ADMIN");
     if (!user.schoolId) return NextResponse.json({ error: "No school" }, { status: 400 });
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json();
 
     // Preview mode: parse without creating
@@ -154,6 +159,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ created: created.length, skipped: skipped.length, errors });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
   }
 }

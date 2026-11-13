@@ -148,6 +148,7 @@ vi.mock("@/lib/serverFlags", async () => {
 vi.mock("@/lib/db", () => ({
   prisma: {
     class:               { findMany: mockClassFindMany, findUnique: mockClassFindUnique },
+    teacherAssignment:   { findMany: async () => [] },
     curriculumContent:   { findUnique: mockContentFindUnique },
     scheduledWork:       {
       findMany:   mockScheduledWorkFindMany,
@@ -294,6 +295,11 @@ describe("National Scale Smoke Test — 10 parallel school contexts", () => {
       const ctx = schools.find((s) => s.swId === id);
       if (!ctx) return null;
       return { id: ctx.swId, classId: ctx.classId, class: { schoolId: ctx.schoolId }, suggestedLabs: [] };
+    });
+    // AT-GRADE-01: lab linking needs class authority; each school's teacher is the teacher of its scheduled class.
+    mockClassFindUnique.mockImplementation(async (args: any) => {
+      const ctx = schools.find((s) => s.classId === args.where?.id);
+      return ctx ? { schoolId: ctx.schoolId, teacherId: ctx.teacherId } : null;
     });
     mockVirtualLabFindUnique.mockImplementation(async (args: any) => ({
       id: `lab-db-${args.where?.labId}`,

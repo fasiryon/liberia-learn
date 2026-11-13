@@ -1,0 +1,169 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-schoolday-primary-science.2-draft.1",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g4-science-food-path-and-absorption",
+  "lessonId": "schoolday:g4-science-food-path-and-absorption",
+  "grade": 4,
+  "subject": "SCIENCE",
+  "title": "Model food's path and explain absorption",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-primary-science-author/1.1.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "ORIGINAL_FACTORY_DRAFT",
+    "authoringPlan": "lib/content-factory/v4/primaryScience/revision.ts",
+    "legacyRecordsReplaced": false
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "programOrderId": "GO-G04-P2-SCIENCE-U1",
+  "courseId": "stem1-g4-science",
+  "unit": 1,
+  "orderKind": "LESSON",
+  "inputPins": {
+    "manifestSha256": "f3f1b7bfe5efd02c777c7750e4c223499603d354c22bb5ed2dc4925dc1ec9916",
+    "frontendCommit": "18684b3b9159ddc8487ca150b19ebfe6fa929b61"
+  },
+  "candidateSha256": "b481157bde0e0a509c99220f2a80afd5ba65f97e6fa4efe23b04670d37e5c1d7",
+  "blueprintHash": "fdcd0c09d008cb210c820beccb0425ebdc4a626e331ecab438b75dd039bbf282",
+  "learnerProjectionSha256": "81a05128c2336fe324bdd6b05cf4992c7e4a4f77daa31dc047748fbc49014cc8",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "SCIENCE",
+    "balance": {
+      "explanationSeconds": 231,
+      "activitySeconds": 1060,
+      "activityShare": 0.821
+    },
+    "practice": {
+      "g4-science-food-path-and-absorption-o1": {
+        "visuals": 0,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 0,
+        "mistakes": 0,
+        "transfer": 1
+      },
+      "g4-science-food-path-and-absorption-o2": {
+        "visuals": 0,
+        "workedExamples": 1,
+        "guided": 2,
+        "independent": 3,
+        "mistakes": 0,
+        "transfer": 1
+      },
+      "g4-science-food-path-and-absorption-o3": {
+        "visuals": 0,
+        "workedExamples": 1,
+        "guided": 2,
+        "independent": 3,
+        "mistakes": 0,
+        "transfer": 1
+      }
+    },
+    "totals": {
+      "visuals": 0,
+      "workedExamples": 2,
+      "guided": 6,
+      "independent": 6,
+      "mistakes": 0,
+      "transfer": 3,
+      "problems": 12
+    },
+    "advisories": [
+      {
+        "code": "v4_paragraph_long",
+        "severity": "ADVISORY",
+        "detail": "A 71-word paragraph; consider splitting it or showing it.",
+        "sceneId": "build-route"
+      },
+      {
+        "code": "v4_paragraph_long",
+        "severity": "ADVISORY",
+        "detail": "A 66-word paragraph; consider splitting it or showing it.",
+        "sceneId": "try-transfer"
+      },
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "82% activity (target 65–75%); do not pad with repetitive questions to reach it."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 8,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-science-food-path-and-absorption-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-science-food-path-and-absorption-o2",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-science-food-path-and-absorption-o3",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING",
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ],
+  "files": {
+    "candidate.json": "a23af90d834c982e6c77ce2515ce0bdb0ad9c2c543fc0e9fa8bed94f03233577",
+    "visual-teaching.json": "e43f6fb77df3171ac1fad65a62f3155dade4620a2944de8ac77c523d61c68a12",
+    "blueprint.json": "1ca26e484bc6a1665f0908ee1da5660be67ac34fd56ee73244d0d8256e10efd4",
+    "factory-artifact.json": "5987e7620d81524b3009311c875fbffd62c5c28052a943cfeef422039ff0ada8",
+    "learner-projection.json": "5bebb7280617a183994be8705f5460f967944d238381c2ad549e46e3cf0fb526",
+    "factory-receipt.json": "71ecf6604c7c100c5c088686c0506e1a4b4bfb18c8803ea2e8e151161f50c3db",
+    "paper-alternative.txt": "c7be47b02162cacef804882e39469ff2874fa7244227df88a8d172d95ceb44f5",
+    "academic-review.json": "3fa701192abd1231859cf87b826ec38507fea877d2ab268d51187a545dc93e9d",
+    "teacher-guide.json": "336e177640781887c7c38c08f62d80b422d684f3ef78082aec3314d75cc067b3"
+  },
+  "supersedesPackage": "4.0.0-schoolday-primary-science.1-draft.1@g4-science-food-path-and-absorption",
+  "unicodeNormalization": "NFC",
+  "packageHash": "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a"
+}

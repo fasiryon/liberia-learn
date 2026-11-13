@@ -1,0 +1,6 @@
+next-auth 4.24.15 tarball (npm pack) sha512 base64:
+sha512-NnjYtjrSOAx/TIVFGTX4IfI/9yHnNpi4B7FuLUwuV20v2Zxgr2OGP/YN0ynJuI7y8QOnTBPitfOdEXZrVvhIuA==
+package-lock integrity:
+sha512-NnjYtjrSOAx/TIVFGTX4IfI/9yHnNpi4B7FuLUwuV20v2Zxgr2OGP/YN0ynJuI7y8QOnTBPitfOdEXZrVvhIuA==
+utils/detect-origin.js sha256 (4.24.15): 19185633035ef522ee375231ee138e867fe924d7f9adf424af205ee5774f8684
+utils/detect-origin.js sha256 (local installed 4.24.14): 4c698e1a9224d6a580e7aa1b3aa3fe9649207c814d29247b3c2f8d189afae650

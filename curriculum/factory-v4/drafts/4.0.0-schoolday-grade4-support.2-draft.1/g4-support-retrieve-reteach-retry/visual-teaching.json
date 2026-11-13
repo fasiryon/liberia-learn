@@ -1,0 +1,473 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.2.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "candidateSha256": "b475b1aa4c3d8e8c6df77a7e25356ea4cfe7f1efdade79a1d563b0a13bb59cdb",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "g4-support-retrieve-reteach-retry-o1",
+      "statement": "Retrieve and explain learning from the six accepted periods without opening worked support.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-support-retrieve-reteach-retry-o1",
+          "statement": "Retrieve and explain learning from the six accepted periods without opening worked support.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-support-retrieve-reteach-retry-o2",
+      "statement": "Choose a relevant misconception card and improve an explanation with guided evidence.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-support-retrieve-reteach-retry-o2",
+          "statement": "Choose a relevant misconception card and improve an explanation with guided evidence.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-support-retrieve-reteach-retry-o3",
+      "statement": "Try a fresh related task independently, check its reasoning and extend an idea when ready.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-support-retrieve-reteach-retry-o3",
+          "statement": "Try a fresh related task independently, check its reasoning and extend an idea when ready.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "selected-support",
+      "slot": "blocks",
+      "index": 0,
+      "type": "READING_PASSAGE",
+      "blockSha256": "1fa46d46e50e6b09397300382c832bce489950af6615f73285656a2b34fe005e",
+      "objectiveIds": [
+        "g4-support-retrieve-reteach-retry-o1",
+        "g4-support-retrieve-reteach-retry-o2",
+        "g4-support-retrieve-reteach-retry-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Choose one relevant card, work with its guidance and explain which evidence supports the correction.",
+      "misconceptionIds": [
+        "copying-is-retrieval",
+        "answer-without-reason"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "P1: choose a relevant card with your teacher. Card 1. A mistake to check: The digits of a factor are multiplied as single units and their products are added. Better idea: Name the full place values before multiplying: 2 hundreds is 200, not 2. Reconnect: Represent 312 as 300, 10 and 2. Multiply each full value by 3 before combining. Card 2. A mistake to check: Tens or hundreds formed by a partial product are discarded when writing the final digits. Better idea: Keep the value of every partial product and regroup it into the correct place rather than deleting it. Reconnect: Trade ten ones for one ten without throwing away value. Show how 4 times 4 ones becomes one ten and six ones.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: P1: choose a relevant card with your teacher. Card 1. A mistake to check: The digits of a factor are multiplied as single units and their products are added. Better idea: Name the full place values before multiplying: 2 hundreds is 200, not 2. Reconnect: Represent 312 as 300, 10 and 2. Multiply each full value by 3 before combining. Card 2. A mistake to check: Tens or hundreds formed by a partial product are discarded when writing the final digits. Better idea: Keep the value of every partial product and regroup it into the correct place rather than deleting it. Reconnect: Trade ten ones for one ten without throwing away value. Show how 4 times 4 ones becomes one ten and six ones.",
+        "responsePrompt": "Choose one relevant card, work with its guidance and explain which evidence supports the correction. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/grade4Roles/supportRevision.ts",
+          "sha256": "89c03b903a7a0a6ea7e384ea4e4ec6172699f085d88b9f2787d20171532994ee",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "selected-support",
+      "slot": "blocks",
+      "index": 1,
+      "type": "READING_PASSAGE",
+      "blockSha256": "31553948bd2caf568fdafdd7ebc7ae5ecd920f032453abe2e9254baead749fbd",
+      "objectiveIds": [
+        "g4-support-retrieve-reteach-retry-o1",
+        "g4-support-retrieve-reteach-retry-o2",
+        "g4-support-retrieve-reteach-retry-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Choose one relevant card, work with its guidance and explain which evidence supports the correction.",
+      "misconceptionIds": [
+        "copying-is-retrieval",
+        "answer-without-reason"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "P2: choose a relevant card with your teacher. Card 1. A mistake to check: The swallowed food route is drawn through the liver or pancreas instead of distinguishing the juices they supply. Better idea: Keep the continuous food route separate from the liver and pancreas, which supply digestive juices. Reconnect: Use one arrow for swallowed food and different arrows for digestive juices. Place liver and pancreas beside the food route. Card 2. A mistake to check: The stomach is treated as the place where all nutrients enter the body. Better idea: Most digested nutrients are absorbed through the small-intestine wall. Reconnect: Compare the stomach with the small intestine. Locate where most digested nutrients enter the body. Card 3. A mistake to check: Nutrients that cross the wall are treated as disappearing from the model total. Better idea: Keep transferred tokens visible in the body region. Count both regions to conserve the total. Reconnect: Move paper nutrient tokens into a body region while keeping every token visible. Transferred tokens still exist. Card 4. A mistake to check: The starting count is reported as still inside after tokens have crossed the wall. Better idea: The starting count describes both regions together. Subtract transferred tokens to find what remains inside. Reconnect: Label the starting total before moving tokens. Label the tokens still in the first region separately. Card 5. A mistake to check: The number transferred during a round is confused with the number remaining inside. Better idea: Transferred and remaining name different groups. Track the inside count after every transfer. Reconnect: Keep transferred and remaining tokens in two labelled groups. Point to the group named by each question.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: P2: choose a relevant card with your teacher. Card 1. A mistake to check: The swallowed food route is drawn through the liver or pancreas instead of distinguishing the juices they supply. Better idea: Keep the continuous food route separate from the liver and pancreas, which supply digestive juices. Reconnect: Use one arrow for swallowed food and different arrows for digestive juices. Place liver and pancreas beside the food route. Card 2. A mistake to check: The stomach is treated as the place where all nutrients enter the body. Better idea: Most digested nutrients are absorbed through the small-intestine wall. Reconnect: Compare the stomach with the small intestine. Locate where most digested nutrients enter the body. Card 3. A mistake to check: Nutrients that cross the wall are treated as disappearing from the model total. Better idea: Keep transferred tokens visible in the body region. Count both regions to conserve the total. Reconnect: Move paper nutrient tokens into a body region while keeping every token visible. Transferred tokens still exist. Card 4. A mistake to check: The starting count is reported as still inside after tokens have crossed the wall. Better idea: The starting count describes both regions together. Subtract transferred tokens to find what remains inside. Reconnect: Label the starting total before moving tokens. Label the tokens still in the first region separately. Card 5. A mistake to check: The number transferred during a round is confused with the number remaining inside. Better idea: Transferred and remaining name different groups. Track the inside count after every transfer. Reconnect: Keep transferred and remaining tokens in two labelled groups. Point to the group named by each question.",
+        "responsePrompt": "Choose one relevant card, work with its guidance and explain which evidence supports the correction. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/grade4Roles/supportRevision.ts",
+          "sha256": "89c03b903a7a0a6ea7e384ea4e4ec6172699f085d88b9f2787d20171532994ee",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "selected-support",
+      "slot": "blocks",
+      "index": 2,
+      "type": "READING_PASSAGE",
+      "blockSha256": "65fefb228565e854fbe48cb1cf630e06709d741347777bf2beeccbc7ffbc5294",
+      "objectiveIds": [
+        "g4-support-retrieve-reteach-retry-o1",
+        "g4-support-retrieve-reteach-retry-o2",
+        "g4-support-retrieve-reteach-retry-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Choose one relevant card, work with its guidance and explain which evidence supports the correction.",
+      "misconceptionIds": [
+        "copying-is-retrieval",
+        "answer-without-reason"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "P3: choose a relevant card with your teacher. Card 1. A mistake to check: A plausible prediction is reported as something the story has already established. Better idea: Name the detail that makes the idea plausible, use might or may, and change the prediction if later evidence conflicts. Reconnect: Mark an early clue, your prediction and a later detail in the accepted reading text. Treat the prediction as a possibility. Card 2. A mistake to check: A summary lists incidental details or invents an outcome instead of connecting the central problem, response and result. Better idea: Keep the problem, the action taken and the result supported by the story; remove details that do not explain that connection. Reconnect: Choose details that explain the main problem, response and result. Put minor details aside.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: P3: choose a relevant card with your teacher. Card 1. A mistake to check: A plausible prediction is reported as something the story has already established. Better idea: Name the detail that makes the idea plausible, use might or may, and change the prediction if later evidence conflicts. Reconnect: Mark an early clue, your prediction and a later detail in the accepted reading text. Treat the prediction as a possibility. Card 2. A mistake to check: A summary lists incidental details or invents an outcome instead of connecting the central problem, response and result. Better idea: Keep the problem, the action taken and the result supported by the story; remove details that do not explain that connection. Reconnect: Choose details that explain the main problem, response and result. Put minor details aside.",
+        "responsePrompt": "Choose one relevant card, work with its guidance and explain which evidence supports the correction. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/grade4Roles/supportRevision.ts",
+          "sha256": "89c03b903a7a0a6ea7e384ea4e4ec6172699f085d88b9f2787d20171532994ee",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "selected-support",
+      "slot": "blocks",
+      "index": 3,
+      "type": "READING_PASSAGE",
+      "blockSha256": "8f481468861a667337eacb335c2fb7ebe4f7e92a6b8160ac291d7b2b8a850cac",
+      "objectiveIds": [
+        "g4-support-retrieve-reteach-retry-o1",
+        "g4-support-retrieve-reteach-retry-o2",
+        "g4-support-retrieve-reteach-retry-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Choose one relevant card, work with its guidance and explain which evidence supports the correction.",
+      "misconceptionIds": [
+        "copying-is-retrieval",
+        "answer-without-reason"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "P4: choose a relevant card with your teacher. Card 1. A mistake to check: Every inland location is assumed to be high or mountainous. Better idea: Inland means away from the coast. A broad terrain description does not determine every local elevation. Reconnect: Separate coastal or inland labels from evidence about elevation or a particular route. Use the accepted records. Card 2. A mistake to check: One observation or place description is treated as evidence about all communities. Better idea: Name the place and observation, limit the conclusion to that evidence and seek additional observations. Reconnect: Compare what the two club records actually describe. One record does not describe every place. Card 3. A mistake to check: Coastal or inland is treated as enough evidence to select a safe site. Better idea: Compare the actual site, path and local observations. A region label alone does not establish safety. Reconnect: Match each room or route claim to its actual observation. A place name does not establish safety. Card 4. A mistake to check: General coast-to-inland landform descriptions are treated as exact county boundaries. Better idea: Use an administrative map for county boundaries. A physical sketch does not establish those lines. Reconnect: Use separate labels for a physical region and an administrative county. They answer different kinds of questions. Card 5. A mistake to check: Evidence about a dry room or a clear path is treated as proving the other requirement too. Better idea: Check each requirement separately. Room and route observations answer different questions. Reconnect: Make separate columns for room conditions and route access. Check each need with relevant evidence.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: P4: choose a relevant card with your teacher. Card 1. A mistake to check: Every inland location is assumed to be high or mountainous. Better idea: Inland means away from the coast. A broad terrain description does not determine every local elevation. Reconnect: Separate coastal or inland labels from evidence about elevation or a particular route. Use the accepted records. Card 2. A mistake to check: One observation or place description is treated as evidence about all communities. Better idea: Name the place and observation, limit the conclusion to that evidence and seek additional observations. Reconnect: Compare what the two club records actually describe. One record does not describe every place. Card 3. A mistake to check: Coastal or inland is treated as enough evidence to select a safe site. Better idea: Compare the actual site, path and local observations. A region label alone does not establish safety. Reconnect: Match each room or route claim to its actual observation. A place name does not establish safety. Card 4. A mistake to check: General coast-to-inland landform descriptions are treated as exact county boundaries. Better idea: Use an administrative map for county boundaries. A physical sketch does not establish those lines. Reconnect: Use separate labels for a physical region and an administrative county. They answer different kinds of questions. Card 5. A mistake to check: Evidence about a dry room or a clear path is treated as proving the other requirement too. Better idea: Check each requirement separately. Room and route observations answer different questions. Reconnect: Make separate columns for room conditions and route access. Check each need with relevant evidence.",
+        "responsePrompt": "Choose one relevant card, work with its guidance and explain which evidence supports the correction. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/grade4Roles/supportRevision.ts",
+          "sha256": "89c03b903a7a0a6ea7e384ea4e4ec6172699f085d88b9f2787d20171532994ee",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "selected-support",
+      "slot": "blocks",
+      "index": 4,
+      "type": "READING_PASSAGE",
+      "blockSha256": "0de542ccffb7f167b57d3d06f1a1e51c30d43769b1ee9d4cc8c76c8fe1e1b68f",
+      "objectiveIds": [
+        "g4-support-retrieve-reteach-retry-o1",
+        "g4-support-retrieve-reteach-retry-o2",
+        "g4-support-retrieve-reteach-retry-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Choose one relevant card, work with its guidance and explain which evidence supports the correction.",
+      "misconceptionIds": [
+        "copying-is-retrieval",
+        "answer-without-reason"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "P5: choose a relevant card with your teacher. Card 1. A mistake to check: The variable's name is changed whenever its number changes. Better idea: Keep the name score fixed and replace the number stored beneath it. Reconnect: Keep the score name card fixed and replace only the number card when its value changes. Card 2. A mistake to check: Set score to a number is treated as adding that number. Better idea: Set replaces the current value. Add uses the current value to calculate the next one. Reconnect: Compare set to 2 with add 2 from the same starting score of 4. Set replaces; add uses the previous value. Card 3. A mistake to check: Initialization is repeated before every event, discarding the accumulated score. Better idea: Initialize at new-game start and retain the updated value between events. Reconnect: Initialize at the start of a new game. Keep the updated value between hits unless a reset event occurs. Card 4. A mistake to check: A set instruction is ignored and the previous value is retained. Better idea: Follow every instruction in order. Set replaces the old value even if no points were earned. Reconnect: Follow every instruction in order, including set. Replace the number even when no points were earned. Card 5. A mistake to check: A new game starts without initialization and inherits an earlier game's score. Better idea: Give each new game its stated starting value before processing events. Reconnect: Show the end of one game and the starting value of a new game on separate cards. Initialize the new game.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: P5: choose a relevant card with your teacher. Card 1. A mistake to check: The variable's name is changed whenever its number changes. Better idea: Keep the name score fixed and replace the number stored beneath it. Reconnect: Keep the score name card fixed and replace only the number card when its value changes. Card 2. A mistake to check: Set score to a number is treated as adding that number. Better idea: Set replaces the current value. Add uses the current value to calculate the next one. Reconnect: Compare set to 2 with add 2 from the same starting score of 4. Set replaces; add uses the previous value. Card 3. A mistake to check: Initialization is repeated before every event, discarding the accumulated score. Better idea: Initialize at new-game start and retain the updated value between events. Reconnect: Initialize at the start of a new game. Keep the updated value between hits unless a reset event occurs. Card 4. A mistake to check: A set instruction is ignored and the previous value is retained. Better idea: Follow every instruction in order. Set replaces the old value even if no points were earned. Reconnect: Follow every instruction in order, including set. Replace the number even when no points were earned. Card 5. A mistake to check: A new game starts without initialization and inherits an earlier game's score. Better idea: Give each new game its stated starting value before processing events. Reconnect: Show the end of one game and the starting value of a new game on separate cards. Initialize the new game.",
+        "responsePrompt": "Choose one relevant card, work with its guidance and explain which evidence supports the correction. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/grade4Roles/supportRevision.ts",
+          "sha256": "89c03b903a7a0a6ea7e384ea4e4ec6172699f085d88b9f2787d20171532994ee",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "selected-support",
+      "slot": "blocks",
+      "index": 5,
+      "type": "READING_PASSAGE",
+      "blockSha256": "ca3dce71f11f5b22b63bc5839534df45ea4fdda0f4941805cd020ed26eb2b086",
+      "objectiveIds": [
+        "g4-support-retrieve-reteach-retry-o1",
+        "g4-support-retrieve-reteach-retry-o2",
+        "g4-support-retrieve-reteach-retry-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Choose one relevant card, work with its guidance and explain which evidence supports the correction.",
+      "misconceptionIds": [
+        "copying-is-retrieval",
+        "answer-without-reason"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "P6: choose a relevant card with your teacher. Card 1. A mistake to check: The switch creates the energy that lights the lamp. Better idea: The battery supplies energy. Closing the switch completes a conducting path; the switch does not create energy. Reconnect: Sketch the battery, lamp and conducting return path. Open and close the switch on the sketch. Card 2. A mistake to check: One successful test proves the switch always works. Better idea: Record every trial, including failures. Five trials support a limited comparison, not a guarantee. Reconnect: Read every actual or explicitly supplied trial from the accepted Engineering activity. Include failures and identify the source. Card 3. A mistake to check: Changing several components establishes which single change caused an outcome. Better idea: Change one contact feature while keeping battery, bulb, wires and procedure fixed. Reconnect: Name one contact feature to change. Keep battery, lamp, wires and procedure fixed. Card 4. A mistake to check: The taller closed-switch bar proves the best design without checking open-switch control. Better idea: Use both closed-light and open-dark observations, and acknowledge the limits of the tests. Reconnect: Read both closed-light bars, then inspect both open-dark counts. Both criteria matter.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: P6: choose a relevant card with your teacher. Card 1. A mistake to check: The switch creates the energy that lights the lamp. Better idea: The battery supplies energy. Closing the switch completes a conducting path; the switch does not create energy. Reconnect: Sketch the battery, lamp and conducting return path. Open and close the switch on the sketch. Card 2. A mistake to check: One successful test proves the switch always works. Better idea: Record every trial, including failures. Five trials support a limited comparison, not a guarantee. Reconnect: Read every actual or explicitly supplied trial from the accepted Engineering activity. Include failures and identify the source. Card 3. A mistake to check: Changing several components establishes which single change caused an outcome. Better idea: Change one contact feature while keeping battery, bulb, wires and procedure fixed. Reconnect: Name one contact feature to change. Keep battery, lamp, wires and procedure fixed. Card 4. A mistake to check: The taller closed-switch bar proves the best design without checking open-switch control. Better idea: Use both closed-light and open-dark observations, and acknowledge the limits of the tests. Reconnect: Read both closed-light bars, then inspect both open-dark counts. Both criteria matter.",
+        "responsePrompt": "Choose one relevant card, work with its guidance and explain which evidence supports the correction. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/grade4Roles/supportRevision.ts",
+          "sha256": "89c03b903a7a0a6ea7e384ea4e4ec6172699f085d88b9f2787d20171532994ee",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "selected-support",
+      "slot": "blocks",
+      "index": 6,
+      "type": "CHECK",
+      "blockSha256": "1940e5e426cbdfce804e972ec506b4ef20dfb7853e21301a94c0375fb31db0ed",
+      "objectiveIds": [
+        "g4-support-retrieve-reteach-retry-o1",
+        "g4-support-retrieve-reteach-retry-o2",
+        "g4-support-retrieve-reteach-retry-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Choose one relevant card, work with its guidance and explain which evidence supports the correction.",
+      "misconceptionIds": [
+        "copying-is-retrieval",
+        "answer-without-reason"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "copying-is-retrieval",
+          "responsePattern": "independent-retry-item:OPTION:opt-0e23a816e0a7",
+          "feedback": "A scribe may record your own reasoning. Another person's answer does not show your recall."
+        },
+        {
+          "misconceptionId": "copying-is-retrieval",
+          "responsePattern": "independent-retry-item:OPTION:opt-2cdf35fce0bb",
+          "feedback": "A copied answer does not show what you can retrieve. Put the card away and try a new question."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which approach shows what you can explain independently? Options: Have a partner write the fresh answer for you and call it your recall.; Try first, use a relevant card, then put it away and answer a fresh question.; Copy the worked answer into the fresh question..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which approach shows what you can explain independently? Options: Have a partner write the fresh answer for you and call it your recall.; Try first, use a relevant card, then put it away and answer a fresh question.; Copy the worked answer into the fresh question..",
+        "responsePrompt": "Choose one relevant card, work with its guidance and explain which evidence supports the correction. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/grade4Roles/supportRevision.ts",
+          "sha256": "89c03b903a7a0a6ea7e384ea4e4ec6172699f085d88b9f2787d20171532994ee",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "selected-support",
+      "slot": "blocks",
+      "index": 7,
+      "type": "CHECK",
+      "blockSha256": "1f80e047ebfc9e446dfa1cc8f63ea634d0a7acd4ed1446615d0d1e2ea713f8ec",
+      "objectiveIds": [
+        "g4-support-retrieve-reteach-retry-o1",
+        "g4-support-retrieve-reteach-retry-o2",
+        "g4-support-retrieve-reteach-retry-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Choose one relevant card, work with its guidance and explain which evidence supports the correction.",
+      "misconceptionIds": [
+        "copying-is-retrieval",
+        "answer-without-reason"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "answer-without-reason",
+          "responsePattern": "show-the-reason-item:OPTION:opt-8b80ea787d32",
+          "feedback": "A choice needs relevant observations. Explain which room and route details support it."
+        },
+        {
+          "misconceptionId": "answer-without-reason",
+          "responsePattern": "show-the-reason-item:OPTION:opt-093dcb87abd3",
+          "feedback": "A number alone hides the method. Show the place values, trace or other relevant reasoning."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "What makes an explanation checkable? Options: State only your site choice, without room or route evidence.; Point to a relevant step or detail and explain why it supports the answer.; Write only the final number, with no steps or reason..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: What makes an explanation checkable? Options: State only your site choice, without room or route evidence.; Point to a relevant step or detail and explain why it supports the answer.; Write only the final number, with no steps or reason..",
+        "responsePrompt": "Choose one relevant card, work with its guidance and explain which evidence supports the correction. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/grade4Roles/supportRevision.ts",
+          "sha256": "89c03b903a7a0a6ea7e384ea4e4ec6172699f085d88b9f2787d20171532994ee",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "fresh-retry",
+      "slot": "blocks",
+      "index": 0,
+      "type": "READING_PASSAGE",
+      "blockSha256": "6217cc7b1ef85dd0cf7a1298b29666fab7d77f50b55c9ab7e518e5d363ecc78f",
+      "objectiveIds": [
+        "g4-support-retrieve-reteach-retry-o1",
+        "g4-support-retrieve-reteach-retry-o2",
+        "g4-support-retrieve-reteach-retry-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Solve one fresh question independently and check it using a different representation or relevant evidence.",
+      "misconceptionIds": [],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Choose the fresh question for your card. P1. Card 1: Find 214 times 4. Explain the value of each digit. Card 2: Find 214 times 4 and explain where the regrouped ten goes. P2. Card 1: Trace food to the small intestine and explain one supporting organ. Card 2: Explain why the food route continues beyond the stomach. Card 3: Start with 16 tokens. Transfer 6. Explain where all 16 are now. Card 4: Start with 16 and transfer 6. Find and distinguish the starting and remaining counts. Card 5: Start with 16 and transfer 6. Find the transferred and remaining counts and explain the difference. P3. Card 1: Name an unanswered question from the text without inventing an ending. Card 2: Summarize the text and justify one detail you kept. P4. Card 1: Explain what further observation would support a claim about one site. Card 2: Give a conditional recommendation and state one limit of the records. Card 3: Identify a missing observation before deciding whether a site meets a need. Card 4: Explain why a coastal label is not by itself the name of a county. Card 5: Explain how a dry room could still be reached by a difficult route. P5. Card 1: Start score at 2 and add 3. Explain what changes and what stays fixed. Card 2: Start at 1. Add 3, set to 2, then add 3. Explain every state. Card 3: Start at 0 and add 2 for each of three hits. Explain why resetting before every hit loses the total. Card 4: Start at 7, set to 2, then add 3. Record all three states. Card 5: One game ends at 9. A new game starts at 0. Explain the new score before its first hit. P6. Card 1: Explain why closing a switch does not create energy. Card 2: Explain what five trials support and what they do not guarantee. Card 3: Propose a further test and explain which conditions you will keep fixed. Card 4: Use available records to justify a choice. Without data, explain a plan only.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Choose the fresh question for your card. P1. Card 1: Find 214 times 4. Explain the value of each digit. Card 2: Find 214 times 4 and explain where the regrouped ten goes. P2. Card 1: Trace food to the small intestine and explain one supporting organ. Card 2: Explain why the food route continues beyond the stomach. Card 3: Start with 16 tokens. Transfer 6. Explain where all 16 are now. Card 4: Start with 16 and transfer 6. Find and distinguish the starting and remaining counts. Card 5: Start with 16 and transfer 6. Find the transferred and remaining counts and explain the difference. P3. Card 1: Name an unanswered question from the text without inventing an ending. Card 2: Summarize the text and justify one detail you kept. P4. Card 1: Explain what further observation would support a claim about one site. Card 2: Give a conditional recommendation and state one limit of the records. Card 3: Identify a missing observation before deciding whether a site meets a need. Card 4: Explain why a coastal label is not by itself the name of a county. Card 5: Explain how a dry room could still be reached by a difficult route. P5. Card 1: Start score at 2 and add 3. Explain what changes and what stays fixed. Card 2: Start at 1. Add 3, set to 2, then add 3. Explain every state. Card 3: Start at 0 and add 2 for each of three hits. Explain why resetting before every hit loses the total. Card 4: Start at 7, set to 2, then add 3. Record all three states. Card 5: One game ends at 9. A new game starts at 0. Explain the new score before its first hit. P6. Card 1: Explain why closing a switch does not create energy. Card 2: Explain what five trials support and what they do not guarantee. Card 3: Propose a further test and explain which conditions you will keep fixed. Card 4: Use available records to justify a choice. Without data, explain a plan only.",
+        "responsePrompt": "Solve one fresh question independently and check it using a different representation or relevant evidence. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/grade4Roles/supportRevision.ts",
+          "sha256": "89c03b903a7a0a6ea7e384ea4e4ec6172699f085d88b9f2787d20171532994ee",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

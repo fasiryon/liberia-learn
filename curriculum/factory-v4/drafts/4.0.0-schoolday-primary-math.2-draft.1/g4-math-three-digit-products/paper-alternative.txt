@@ -1,0 +1,61 @@
+Multiply hundreds, tens and ones
+
+Partition a larger factor
+
+A fictional school in Nimba County plans three exercise books for each of 214 pupils. Split 214 pupils into groups of 200, 10 and 4. Each group needs three books per pupil; the three regions together count the whole order. Connect each region to its full place-value quantities. Find 214 × 3 by splitting it into parts.
+
+Connect the model to the written calculation
+
+Multiply each full quantity by three. Twelve ones can be regrouped as one ten and two ones. Regrouping does not create or remove books; it is another way to name the same value. Find three exercise books for each of 214 pupils. Step 1: Multiply each place-value quantity. 214 × 3 = (200 × 3) + (10 × 3) + (4 × 3) Step 2: Combine the complete partial products. 600 + 30 + 12 = 642 Step 3: Regroup twelve ones without losing their value. 600 + 40 + 2 = 642
+
+Name the value of the 2 in 214 before multiplying it.
+
+Keep the whole value of 4×3, including the ten it contains.
+
+Connect the regions to column multiplication
+
+Keep hundreds, tens and ones in separate columns. Start at the ones. Four ones times three is twelve ones: write two ones and carry one ten. One ten times three plus the carried ten is four tens. Two hundreds times three is six hundreds. These columns name the same 642 books as the three regions.
+
+| Row | Hundreds | Tens | Ones |
+| --- | --- | --- | --- |
+| Carried value | | 1 | |
+| Pupils | 2 | 1 | 4 |
+| Multiply by | | | 3 |
+| Books | 6 | 4 | 2 | Write 214 times 3 in hundreds, tens and ones columns. Step 1: Align the place-value columns. 214 × 3 Step 2: Ones: keep two ones and carry one ten. 4 × 3 = 12 = 10 + 2 Step 3: Tens: add the carried ten to the three tens. (1 × 3) + 1 = 4 tens Step 4: Hundreds: six hundreds complete the result. 600 + 40 + 2 = 642
+
+The carried 1 means one ten, not one extra one.
+
+Match the ones-region product of twelve with two ones plus one ten.
+
+Keep the zero place and the regrouped value
+
+Try 143 times 3 and 208 times 4. In 208, there are no tens to start with, but multiplying the eight ones can still create tens. A zero digit is not permission to discard value created elsewhere. Calculate and interpret the products. 143 times 3: write your answer. 208 times 4: write your answer. Tens formed by 8 times 4 ones: write your answer. Show 143 times 3 in columns. Name the value of the carried 1 when twelve tens are regrouped. Use the area partition to check your result.
+
+Write the factor as hundreds plus tens plus ones, using full quantities.
+
+Thirty-two ones can be named as three tens and two ones.
+
+Show 143 times 3 in columns. Name the value of the carried 1 when twelve tens are regrouped. Use the area partition to check your result.
+Response: __________________________
+
+Solve two new products independently
+
+Use column multiplication for 125 times 4. Use a partitioned calculation to check it, then choose either method for 321 times 6. Check that both methods preserve all the place-value quantities, especially when a final digit is zero. Find each product. 125 times 4: write your answer. 321 times 6: write your answer. Show the column calculation for 125 times 4 and identify each carried quantity. Check it by adding the area-model partial products. Explain why the zero digits in the answer preserve the full value.
+
+Show the column calculation for 125 times 4 and identify each carried quantity. Check it by adding the area-model partial products. Explain why the zero digits in the answer preserve the full value.
+Response: __________________________
+
+Find the value that disappeared
+
+A pupil writes 125 times 4 as 480 after forming 400, 80 and 20. The partial products were correct, but the last combination lost part of the value. Explain how to repair the combination. Combine the partial products 400, 80 and 20. A fictional pupil wrote: 400 + 80 + 20 = 480 Which correction preserves every partial product? Options: Ignore 20 because its ones digit is zero.; Combine 80 and 20 as 100, then add it to 400.; Append 20 to 480 to make 48020..
+
+Plan a rice delivery in Bong County
+
+A fictional community rice cooperative in Bong County packs 246 bags with four kilograms of rice in each bag. The team must plan the total mass for delivery. Use a complete calculation and explain one partial product so another pupil can check the plan. What total mass of rice is planned? Kilograms of rice: write your answer. Explain what the 40×4 region counts and why all partial products must be kept. For an advanced challenge, show a second valid partition of 246 and prove that the total stays the same.
+
+Explain what the 40×4 region counts and why all partial products must be kept. For an advanced challenge, show a second valid partition of 246 and prove that the total stays the same.
+Response: __________________________
+
+Independent assessment unavailable
+
+No independent assessment is available in this draft.

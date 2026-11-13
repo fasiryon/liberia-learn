@@ -1,0 +1,780 @@
+{
+  "planVersion": "stem-day-plan/1.0.0",
+  "planId": "stem1-g12-day1",
+  "grade": 12,
+  "section": "A",
+  "sectionB": {
+    "rotation": "section B takes section A's period i+3",
+    "order": [
+      "PHYSICS",
+      "COMPUTING",
+      "ENGINEERING",
+      "MATH",
+      "BIOLOGY",
+      "ENGLISH"
+    ]
+  },
+  "timetableMode": "STANDARD_45",
+  "generatedFrom": "scripts/cos-stem/lib/days.cjs (band template); do not edit by hand",
+  "scope": "Full K-12 STEM day (founder, 2026-10-23). Every instructional period must be bound to a factory lesson that passes G1-G8 before this grade's day can be called complete.",
+  "developmentalBand": "9-12",
+  "blocks": [
+    {
+      "slot": "ARRIVAL",
+      "start": "07:30",
+      "end": "08:00",
+      "binding": {
+        "kind": "NON_INSTRUCTIONAL"
+      }
+    },
+    {
+      "slot": "ASSEMBLY",
+      "start": "08:00",
+      "end": "08:20",
+      "binding": {
+        "kind": "TEACHER_LED",
+        "activity": "Whole-school assembly with the STEM question of the day.",
+        "studentLabel": "Assembly (teacher-led)"
+      }
+    },
+    {
+      "slot": "P1",
+      "start": "08:20",
+      "end": "09:10",
+      "course": "MATH",
+      "unit": 1,
+      "binding": {
+        "kind": "CONTENT_GAP",
+        "gapReason": "No factory lesson exists for this course, grade and unit.",
+        "studentLabel": "No approved lesson for this period yet - teacher-led session",
+        "generationOrder": {
+          "orderId": "GO-G12-P1-MATH-U1",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_9-12",
+          "grade": 12,
+          "courseId": "stem1-g12-math",
+          "unit": 1,
+          "unitTitle": "Differentiation",
+          "performanceTask": "find the rate of change of a quantity and an optimum",
+          "family": "MATHEMATICS",
+          "pattern": [
+            "VISUALIZE",
+            "DEMONSTRATE",
+            "SOLVE_WITH_SUPPORT",
+            "PRACTICE_INDEPENDENTLY",
+            "ANALYZE_MISTAKE",
+            "APPLY"
+          ],
+          "recordedSubject": "MATH",
+          "developmental": {
+            "band": "9-12",
+            "maxSentenceWords": 32,
+            "maxSceneBodyWords": 150,
+            "approach": "Advanced mathematics and sciences, programming, engineering design, research and career preparation",
+            "maxSegmentMinutes": 25,
+            "maxScreenMinutesPerPeriod": 40,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              120,
+              400
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": null,
+          "blocks": {
+            "existing": [
+              "EQUATION",
+              "WORKED_SOLUTION",
+              "NUMERIC_RESPONSE",
+              "MISTAKE_ANALYSIS",
+              "DATA_PLOT"
+            ],
+            "proposed": [
+              "COORDINATE_PLANE",
+              "FUNCTION_TABLE",
+              "GRAPH_BUILDER",
+              "PROBABILITY_SIMULATOR"
+            ]
+          },
+          "labs": [],
+          "stemPractices": [
+            "CONCEPT_BEFORE_PROCEDURE",
+            "MATHEMATICAL_REASONING",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ]
+        },
+        "stemPractices": [
+          "CONCEPT_BEFORE_PROCEDURE",
+          "MATHEMATICAL_REASONING",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ]
+      }
+    },
+    {
+      "slot": "P2",
+      "start": "09:10",
+      "end": "10:00",
+      "course": "BIOLOGY",
+      "unit": 1,
+      "binding": {
+        "kind": "CONTENT_GAP",
+        "gapReason": "No factory lesson exists for this course, grade and unit.",
+        "studentLabel": "No approved lesson for this period yet - teacher-led session",
+        "generationOrder": {
+          "orderId": "GO-G12-P2-BIOLOGY-U1",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_9-12",
+          "grade": 12,
+          "courseId": "stem1-g12-biology",
+          "unit": 1,
+          "unitTitle": "Ecology and conservation",
+          "performanceTask": "propose a conservation plan for a threatened Liberian species",
+          "family": "SCIENCE",
+          "pattern": [
+            "PREDICT",
+            "EXPERIMENT",
+            "OBSERVE",
+            "EXPLAIN",
+            "APPLY"
+          ],
+          "recordedSubject": "SCIENCE",
+          "developmental": {
+            "band": "9-12",
+            "maxSentenceWords": 32,
+            "maxSceneBodyWords": 150,
+            "approach": "Advanced mathematics and sciences, programming, engineering design, research and career preparation",
+            "maxSegmentMinutes": 25,
+            "maxScreenMinutesPerPeriod": 40,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              120,
+              400
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": null,
+          "blocks": {
+            "existing": [
+              "PARTICLE_MODEL",
+              "PREDICT_OBSERVE",
+              "DATA_PLOT",
+              "EQUATION",
+              "WORKED_SOLUTION",
+              "NUMERIC_RESPONSE"
+            ],
+            "proposed": [
+              "MEASUREMENT_TABLE",
+              "FAIR_TEST_PLANNER",
+              "GRAPH_BUILDER",
+              "UNCERTAINTY_CALCULATOR"
+            ]
+          },
+          "labs": [],
+          "stemPractices": [
+            "SCIENTIFIC_EVIDENCE",
+            "CONCEPT_BEFORE_PROCEDURE",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ]
+        },
+        "stemPractices": [
+          "SCIENTIFIC_EVIDENCE",
+          "CONCEPT_BEFORE_PROCEDURE",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ]
+      }
+    },
+    {
+      "slot": "BREAK",
+      "start": "10:00",
+      "end": "10:20",
+      "binding": {
+        "kind": "NON_INSTRUCTIONAL"
+      }
+    },
+    {
+      "slot": "P3",
+      "start": "10:20",
+      "end": "11:10",
+      "course": "ENGLISH",
+      "unit": 1,
+      "binding": {
+        "kind": "CONTENT_GAP",
+        "gapReason": "No factory lesson exists for this course, grade and unit.",
+        "studentLabel": "No approved lesson for this period yet - teacher-led session",
+        "generationOrder": {
+          "orderId": "GO-G12-P3-ENGLISH-U1",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_9-12",
+          "grade": 12,
+          "courseId": "stem1-g12-english",
+          "unit": 1,
+          "unitTitle": "WASSCE essay mastery",
+          "performanceTask": "write timed essays across genres",
+          "family": "LANGUAGE",
+          "pattern": [
+            "READ",
+            "UNDERSTAND",
+            "ANALYZE",
+            "CONSTRUCT",
+            "REVISE"
+          ],
+          "recordedSubject": "ENGLISH",
+          "developmental": {
+            "band": "9-12",
+            "maxSentenceWords": 32,
+            "maxSceneBodyWords": 150,
+            "approach": "Advanced mathematics and sciences, programming, engineering design, research and career preparation",
+            "maxSegmentMinutes": 25,
+            "maxScreenMinutesPerPeriod": 40,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              120,
+              400
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": null,
+          "blocks": {
+            "existing": [
+              "READING_PASSAGE",
+              "SOURCE_EVIDENCE",
+              "WRITING_ORGANIZER"
+            ],
+            "proposed": []
+          },
+          "labs": [],
+          "stemPractices": [
+            "COMMUNICATION_AND_CRITICAL_THINKING",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ]
+        },
+        "stemPractices": [
+          "COMMUNICATION_AND_CRITICAL_THINKING",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ]
+      }
+    },
+    {
+      "slot": "P4",
+      "start": "11:10",
+      "end": "12:00",
+      "course": "PHYSICS",
+      "unit": 1,
+      "binding": {
+        "kind": "CONTENT_GAP",
+        "gapReason": "No factory lesson exists for this course, grade and unit.",
+        "studentLabel": "No approved lesson for this period yet - teacher-led session",
+        "generationOrder": {
+          "orderId": "GO-G12-P4-PHYSICS-U1",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_9-12",
+          "grade": 12,
+          "courseId": "stem1-g12-physics",
+          "unit": 1,
+          "unitTitle": "Electromagnetic induction and generators",
+          "performanceTask": "explain how Mount Coffee generates electricity",
+          "family": "SCIENCE",
+          "pattern": [
+            "PREDICT",
+            "EXPERIMENT",
+            "OBSERVE",
+            "EXPLAIN",
+            "APPLY"
+          ],
+          "recordedSubject": "SCIENCE",
+          "developmental": {
+            "band": "9-12",
+            "maxSentenceWords": 32,
+            "maxSceneBodyWords": 150,
+            "approach": "Advanced mathematics and sciences, programming, engineering design, research and career preparation",
+            "maxSegmentMinutes": 25,
+            "maxScreenMinutesPerPeriod": 40,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              120,
+              400
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": null,
+          "blocks": {
+            "existing": [
+              "PARTICLE_MODEL",
+              "PREDICT_OBSERVE",
+              "DATA_PLOT",
+              "EQUATION",
+              "WORKED_SOLUTION",
+              "NUMERIC_RESPONSE"
+            ],
+            "proposed": [
+              "MEASUREMENT_TABLE",
+              "FAIR_TEST_PLANNER",
+              "GRAPH_BUILDER",
+              "UNCERTAINTY_CALCULATOR"
+            ]
+          },
+          "labs": [],
+          "stemPractices": [
+            "SCIENTIFIC_EVIDENCE",
+            "CONCEPT_BEFORE_PROCEDURE",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ]
+        },
+        "stemPractices": [
+          "SCIENTIFIC_EVIDENCE",
+          "CONCEPT_BEFORE_PROCEDURE",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ]
+      }
+    },
+    {
+      "slot": "LUNCH",
+      "start": "12:00",
+      "end": "12:40",
+      "binding": {
+        "kind": "NON_INSTRUCTIONAL"
+      }
+    },
+    {
+      "slot": "P5",
+      "start": "12:40",
+      "end": "13:30",
+      "course": "COMPUTING",
+      "unit": 1,
+      "binding": {
+        "kind": "CONTENT_GAP",
+        "gapReason": "No factory lesson exists for this course, grade and unit.",
+        "studentLabel": "No approved lesson for this period yet - teacher-led session",
+        "generationOrder": {
+          "orderId": "GO-G12-P5-COMPUTING-U1",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_9-12",
+          "grade": 12,
+          "courseId": "stem1-g12-computing",
+          "unit": 1,
+          "unitTitle": "Software engineering practice",
+          "performanceTask": "write requirements, tests and a design document",
+          "family": "COMPUTING",
+          "pattern": [
+            "PREDICT",
+            "DECOMPOSE",
+            "DEMONSTRATE",
+            "BUILD_WITH_SUPPORT",
+            "BUILD_INDEPENDENTLY",
+            "TEST",
+            "DEBUG",
+            "APPLY"
+          ],
+          "recordedSubject": "COMPUTER_SCIENCE",
+          "developmental": {
+            "band": "9-12",
+            "maxSentenceWords": 32,
+            "maxSceneBodyWords": 150,
+            "approach": "Advanced mathematics and sciences, programming, engineering design, research and career preparation",
+            "maxSegmentMinutes": 25,
+            "maxScreenMinutesPerPeriod": 40,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              120,
+              400
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": {
+            "medium": "TEXT_CODE",
+            "learnerDoes": [
+              "Decompose a real problem into functions and data structures",
+              "Implement and test a solution to a specification",
+              "Compare algorithm efficiency with evidence",
+              "Reason about security, privacy and fairness of a system",
+              "Work with data: clean, analyse, visualise, conclude"
+            ],
+            "evidence": [
+              "Tested code against a specification",
+              "An efficiency or correctness argument",
+              "A written evaluation of limits and risks"
+            ],
+            "blocks": {
+              "now": [
+                "MISTAKE_ANALYSIS",
+                "WRITING_ORGANIZER",
+                "DATA_PLOT"
+              ],
+              "needed": [
+                "CODE_TRACE",
+                "CODE_RUNNER"
+              ]
+            }
+          },
+          "blocks": {
+            "existing": [
+              "MISTAKE_ANALYSIS",
+              "STEP_REVEAL"
+            ],
+            "proposed": [
+              "CODE_TRACE",
+              "CODE_RUNNER"
+            ]
+          },
+          "labs": [],
+          "stemPractices": [
+            "COMPUTATIONAL_THINKING",
+            "MATHEMATICAL_REASONING",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ]
+        },
+        "stemPractices": [
+          "COMPUTATIONAL_THINKING",
+          "MATHEMATICAL_REASONING",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ]
+      }
+    },
+    {
+      "slot": "P6",
+      "start": "13:30",
+      "end": "14:20",
+      "course": "ENGINEERING",
+      "unit": 1,
+      "binding": {
+        "kind": "CONTENT_GAP",
+        "gapReason": "No factory lesson exists for this course, grade and unit.",
+        "studentLabel": "No approved lesson for this period yet - teacher-led session",
+        "generationOrder": {
+          "orderId": "GO-G12-P6-ENGINEERING-U1",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_9-12",
+          "grade": 12,
+          "courseId": "stem1-g12-engineering",
+          "unit": 1,
+          "unitTitle": "Engineering capstone",
+          "performanceTask": "deliver a full design-build-test project for a community problem",
+          "family": "ENGINEERING",
+          "pattern": [
+            "DEFINE",
+            "RESEARCH_CONSTRAINTS",
+            "DESIGN",
+            "BUILD_OR_MODEL",
+            "TEST",
+            "REFINE",
+            "COMMUNICATE"
+          ],
+          "recordedSubject": "ENGINEERING_FOUNDATIONS",
+          "developmental": {
+            "band": "9-12",
+            "maxSentenceWords": 32,
+            "maxSceneBodyWords": 150,
+            "approach": "Advanced mathematics and sciences, programming, engineering design, research and career preparation",
+            "maxSegmentMinutes": 25,
+            "maxScreenMinutesPerPeriod": 40,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              120,
+              400
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": {
+            "medium": "ENGINEERING_DESIGN_AND_ANALYSIS",
+            "learnerDoes": [
+              "Specify requirements for a real Liberian problem",
+              "Analyse with quantitative models (forces, circuits, flow, energy)",
+              "Evaluate alternatives with a decision matrix",
+              "Test, analyse failure, and document the design"
+            ],
+            "evidence": [
+              "Requirements",
+              "A quantitative analysis",
+              "A decision matrix",
+              "A test and failure analysis"
+            ],
+            "blocks": {
+              "now": [
+                "EQUATION",
+                "WORKED_SOLUTION",
+                "NUMERIC_RESPONSE",
+                "DATA_PLOT",
+                "WRITING_ORGANIZER"
+              ],
+              "needed": [
+                "DESIGN_CYCLE",
+                "MEASUREMENT_TABLE",
+                "BUDGET_CONSTRAINT_TABLE"
+              ]
+            }
+          },
+          "blocks": {
+            "existing": [
+              "DATA_PLOT",
+              "EQUATION",
+              "WORKED_SOLUTION"
+            ],
+            "proposed": [
+              "DESIGN_CYCLE",
+              "MEASUREMENT_TABLE",
+              "BUDGET_CONSTRAINT_TABLE"
+            ]
+          },
+          "labs": [],
+          "stemPractices": [
+            "ENGINEERING_DESIGN",
+            "MATHEMATICAL_REASONING",
+            "SCIENTIFIC_EVIDENCE",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ]
+        },
+        "stemPractices": [
+          "ENGINEERING_DESIGN",
+          "MATHEMATICAL_REASONING",
+          "SCIENTIFIC_EVIDENCE",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ]
+      }
+    },
+    {
+      "slot": "SUPPORT",
+      "start": "14:20",
+      "end": "14:40",
+      "binding": {
+        "kind": "CONTENT_GAP",
+        "gapReason": "No factory activity exists yet.",
+        "studentLabel": "Support time (teacher-led)",
+        "generationOrder": {
+          "orderId": "GO-G12-SUPPORT",
+          "owner": "T2_CODEX",
+          "kind": "DIFFERENTIATED_SUPPORT",
+          "batch": "BAND_9-12",
+          "grade": 12,
+          "developmental": {
+            "band": "9-12",
+            "maxSentenceWords": 32,
+            "maxSceneBodyWords": 150,
+            "approach": "Advanced mathematics and sciences, programming, engineering design, research and career preparation",
+            "maxSegmentMinutes": 25,
+            "maxScreenMinutesPerPeriod": 40,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              120,
+              400
+            ],
+            "requiresMovementSegment": false
+          },
+          "requirements": [
+            "Retrieval items for P1-P6 objectives of the same day, no hints",
+            "A targeted re-teach path per named misconception",
+            "An extension path for learners who show mastery",
+            "Formative only; the pilot stores nothing"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ]
+        }
+      }
+    },
+    {
+      "slot": "END_OF_DAY",
+      "start": "14:40",
+      "end": "14:50",
+      "binding": {
+        "kind": "CONTENT_GAP",
+        "gapReason": "No factory activity exists yet.",
+        "studentLabel": "No approved lesson for this period yet - teacher-led session",
+        "generationOrder": {
+          "orderId": "GO-G12-EOD",
+          "owner": "T2_CODEX",
+          "kind": "END_OF_DAY_REFLECTION",
+          "batch": "BAND_9-12",
+          "grade": 12,
+          "developmental": {
+            "band": "9-12",
+            "maxSentenceWords": 32,
+            "maxSceneBodyWords": 150,
+            "approach": "Advanced mathematics and sciences, programming, engineering design, research and career preparation",
+            "maxSegmentMinutes": 25,
+            "maxScreenMinutesPerPeriod": 40,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              120,
+              400
+            ],
+            "requiresMovementSegment": false
+          },
+          "requirements": [
+            "A ten-minute reflection that connects the day's STEM periods",
+            "A short written reflection and one question to carry to tomorrow",
+            "Formative only"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ]
+        }
+      }
+    },
+    {
+      "slot": "DISMISSAL",
+      "start": "14:50",
+      "end": "15:00",
+      "binding": {
+        "kind": "NON_INSTRUCTIONAL"
+      }
+    }
+  ]
+}

@@ -355,6 +355,37 @@ async function main() {
         const threeRequestViolation = (profile === "LOW" || profile === "FALLBACK_2D") && issues.threeChunkRequests.length > 0;
         // A9: every web font settled before the still, so text never rasterises with a fallback face in one run only.
         await page.evaluate(() => document.fonts.ready.then(() => true));
+        // Diagnostic only (PR #202 lab gate: one full-page still was 16 px taller in one of two runs with every shared
+        // row pixel-identical): the document extent and the UNCLIPPED elements that decide it, recorded beside the still
+        // (r2: clipped inner content no longer dominates the ranking). Never part of the comparison.
+        const layout = await page.evaluate(() => {
+          const doc = document.documentElement, scrollHeight = doc.scrollHeight;
+          // Only elements that can extend the document: no ancestor up to <html> clips or scrolls its overflow.
+          const unclipped = (el: Element) => { for (let a = el.parentElement; a && a !== doc; a = a.parentElement) { const cs = getComputedStyle(a); if (cs.overflowX !== "visible" || cs.overflowY !== "visible") return false; } return true; };
+          const describe = (el: Element) => {
+            const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+            const attrs = Array.from(el.attributes).filter((a) => a.name.startsWith("data-") || a.name === "role" || a.name === "id" || a.name === "aria-live").map((a) => `${a.name}=${a.value.slice(0, 40)}`);
+            return { el: `${el.tagName.toLowerCase()}${attrs.length ? `[${attrs.join(" ")}]` : ""}.${String(el.getAttribute("class") ?? "").split(/\s+/).slice(0, 4).join(".")}`,
+              text: (el.textContent ?? "").trim().slice(0, 60), position: cs.position, display: cs.display, visibility: cs.visibility, opacity: cs.opacity,
+              bottom: Math.round(r.bottom + window.scrollY), top: Math.round(r.top + window.scrollY), height: Math.round(r.height), width: Math.round(r.width) };
+          };
+          const extent = Array.from(document.querySelectorAll("body *")).filter((el) => { const r = el.getBoundingClientRect(); return (r.height > 0 || r.width > 0) && unclipped(el); }).map(describe);
+          return { scrollHeight, scrollWidth: doc.scrollWidth, clientHeight: doc.clientHeight, clientWidth: doc.clientWidth, bodyHeight: document.body.scrollHeight,
+            // What decides the full-page height: the unclipped elements reaching furthest down, and everything within 40 px of the bottom.
+            lowestUnclipped: [...extent].sort((a, b) => b.bottom - a.bottom).slice(0, 8),
+            nearDocumentBottom: extent.filter((e) => e.bottom >= scrollHeight - 40),
+            // r3 (run3: B scrolled to 1102 with no counted box below main's 1086): boxes the filters above cannot see.
+            scrollingElementHeight: document.scrollingElement?.scrollHeight ?? null,
+            topLevel: [...Array.from(doc.children), ...Array.from(document.body.children)].map((el) => {
+              const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+              return { el: el.tagName.toLowerCase(), id: el.id || null, shadowHost: !!(el as Element & { shadowRoot?: ShadowRoot | null }).shadowRoot, display: cs.display, position: cs.position,
+                top: Math.round(r.top + window.scrollY), bottom: Math.round(r.bottom + window.scrollY), height: Math.round(r.height), width: Math.round(r.width), marginBottom: cs.marginBottom };
+            }),
+            strayText: [...Array.from(doc.childNodes), ...Array.from(document.body.childNodes)].filter((n) => n.nodeType === Node.TEXT_NODE && (n.textContent ?? "").trim()).map((n) => (n.textContent ?? "").trim().slice(0, 80)),
+            belowMain: (() => { const main = document.querySelector("main"); const mainBottom = main ? main.getBoundingClientRect().bottom + window.scrollY : 0;
+              return Array.from(document.querySelectorAll("*")).filter((el) => el.getBoundingClientRect().bottom + window.scrollY > mainBottom + 0.5)
+                .slice(0, 20).map((el) => { const r = el.getBoundingClientRect(), cs = getComputedStyle(el); return { el: `${el.tagName.toLowerCase()}.${String(el.getAttribute("class") ?? "").slice(0, 60)}`, position: cs.position, display: cs.display, transform: cs.transform, bottom: Math.round(r.bottom + window.scrollY), height: Math.round(r.height) }; }); })() };
+        });
         await page.screenshot({ path: still, fullPage: fullPageFor(viewport), animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
         captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
         // R4 P1-1: a shader that fails to compile still counts draws, so parity alone cannot catch it.
@@ -371,7 +402,7 @@ async function main() {
           status: failure ? "FAIL" : "PASS", ...(failure ? { failureReason: failure } : {}),
           framePlan: frameProbe, frameParity, threeChunkRequests: issues.threeChunkRequests, controlHitTargets,
           actualProfile: identity.actualProfile, downgradePath: identity.downgradePath, actualRenderer: identity.actualRenderer, framesRendered: identity.framesRendered, drawCalls: identity.drawCalls,
-          ...opened, warnings: issues.consoleErrors, consoleErrors: issues.consoleErrors, pageErrors: issues.pageErrors });
+          ...opened, layout, warnings: issues.consoleErrors, consoleErrors: issues.consoleErrors, pageErrors: issues.pageErrors });
         writeManifest();
         if (failure) { console.error(`FAIL ${base}: ${failure}`); if (!identity.verdict.ok) continue; }
       } catch (cause) {

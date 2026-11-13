@@ -1,8 +1,10 @@
+// route-policy: auth=session; scope=platform; authority=moe-platform-admin; rationale=demo only: production/staging need ALLOW_LIVE_DEMO_RESET; a deployed Preview (DEMO_MODE classifies as demo) is refused after authority unless that opt-in is set; resets validated demo schools only (DEMO_SCHOOL_IDS)
 import { NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 import {
   canRunDemoResetInCurrentEnv,
+  isDemoMutationAllowedForDeployment,
   getDemoSchoolIdsFromEnv,
   resetDemoSchools,
   validateDemoSchoolIds,
@@ -18,6 +20,9 @@ export async function POST() {
     }
 
     const actor = await requireMoePlatformAdmin();
+    if (!isDemoMutationAllowedForDeployment()) {
+      return NextResponse.json({ error: "Not available in this environment" }, { status: 403 });
+    }
     const schoolIds = getDemoSchoolIdsFromEnv();
     if (schoolIds.length === 0) {
       return NextResponse.json({ error: "DEMO_SCHOOL_IDS not configured" }, { status: 400 });

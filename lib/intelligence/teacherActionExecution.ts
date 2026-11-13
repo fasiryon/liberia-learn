@@ -3,12 +3,15 @@ import { logAudit } from "@/lib/audit";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { getTeacherLessonPlannerResponse } from "@/lib/ai/teacher/lessonPlanner";
 import { openInterventionChain } from "@/lib/interventions/interventionChains";
+import { authorizeClassAccess, type ClassFunction } from "@/lib/authz/classAuthority";
 
 export type TeacherActionLifecycle = "draft" | "confirmed" | "executed" | "failed";
 
 type ExecutionContext = {
   teacherUserId: string;
   schoolId: string;
+  /** The caller's role (TEACHER or ADMIN), for the class-authority decision. */
+  role?: string;
 };
 
 type ExecutionResult = {
@@ -48,35 +51,50 @@ async function updateLifecycle(actionId: string, metadata: Record<string, any>, 
   });
 }
 
-async function resolveClassForAction(action: any, metadata: Record<string, any>) {
-  if (action.classId) {
-    const cls = await prisma.class.findFirst({
-      where: { id: action.classId, schoolId: action.schoolId, teacherId: action.teacherUserId },
-      select: { id: true, name: true },
-    });
-    if (cls) return cls;
-  }
+const forbidden = () => Object.assign(new Error("Forbidden"), { status: 403 });
+const HANDLED_TYPES = ["ASSIGN_REMEDIATION_REVIEW", "PLAN_CLASS_REVIEW", "GENERATE_REVIEW_PLAN", "CREATE_FOLLOW_UP_REMINDER", "RECORD_FOLLOW_UP", "REVIEW_INTERVENTION"];
 
-  if (action.studentId) {
-    const enrollment = await prisma.enrollment.findFirst({
-      where: {
-        studentId: action.studentId,
-        Class: { schoolId: action.schoolId, teacherId: action.teacherUserId },
-      },
-      select: { classId: true, Class: { select: { id: true, name: true } } },
-    });
-    if (enrollment?.Class) return enrollment.Class;
-  }
+/** The student's current classes in this school (Student.id). */
+async function studentClassIds(studentId: string, schoolId: string): Promise<string[]> {
+  const rows = await prisma.enrollment.findMany({ where: { studentId, Class: { schoolId } }, select: { classId: true } });
+  return Array.from(new Set(rows.map((row) => row.classId)));
+}
 
-  const targetClassId = metadata?.action?.targetClassId;
-  if (typeof targetClassId === "string" && targetClassId) {
-    return prisma.class.findFirst({
-      where: { id: targetClassId, schoolId: action.schoolId, teacherId: action.teacherUserId },
-      select: { id: true, name: true },
-    });
+/** The first candidate class on which the caller currently holds `fn` (with `subject`), or null. */
+async function firstAuthorizedClass(context: ExecutionContext, candidates: readonly (string | null | undefined)[], fn: ClassFunction, subject?: string | null) {
+  const actor = { id: context.teacherUserId, role: (context.role ?? "TEACHER") as "TEACHER", schoolId: context.schoolId };
+  for (const classId of Array.from(new Set(candidates.filter((id): id is string => typeof id === "string" && id.length > 0)))) {
+    if ((await authorizeClassAccess(actor, { classId, subject: subject ?? undefined, fn })).allowed) return classId;
   }
-
   return null;
+}
+
+/**
+ * AT-GRADE-01 batch 3 (CoS ruling 10, COS-BATCH3-RULINGS-20261028 B): every handler is authorized through
+ * lib/authz/classAuthority with its own target class and function, on CURRENT authority, before any write (including the
+ * lifecycle update). Returns the authorized class (null only for an owner-only reminder); throws 403 or 409 otherwise.
+ */
+async function authorizeTeacherAction(action: any, metadata: Record<string, any>, context: ExecutionContext): Promise<string | null> {
+  const type = baseActionType(action.actionType);
+  if (!HANDLED_TYPES.includes(type)) throw Object.assign(new Error("No execution handler exists for this action."), { status: 409 });
+  const metadataClassId = typeof metadata?.action?.targetClassId === "string" ? metadata.action.targetClassId : null;
+  const studentClasses = action.studentId ? await studentClassIds(action.studentId, context.schoolId) : [];
+  let classId: string | null = null;
+  if (type === "ASSIGN_REMEDIATION_REVIEW") {
+    classId = await firstAuthorizedClass(context, [action.classId, metadataClassId, ...studentClasses], "class.lesson.support", action.subject);
+  } else if (type === "PLAN_CLASS_REVIEW" || type === "GENERATE_REVIEW_PLAN") {
+    if (!action.classId) throw forbidden();
+    classId = await firstAuthorizedClass(context, [action.classId], "class.lesson.support", action.subject);
+  } else if (type === "CREATE_FOLLOW_UP_REMINDER") {
+    // With neither a class nor a student, the reminder is the caller's own note (owner-only; the action is the caller's).
+    if (!action.classId && !action.studentId) return null;
+    classId = await firstAuthorizedClass(context, action.classId ? [action.classId] : studentClasses, "class.read.learning", action.subject);
+  } else {
+    if (!action.studentId) throw Object.assign(new Error("Intervention action needs a target student."), { status: 409 });
+    classId = await firstAuthorizedClass(context, studentClasses, "class.feedback", action.subject);
+  }
+  if (!classId) throw forbidden();
+  return classId;
 }
 
 function targetStudentIdsForAction(action: any, metadata: Record<string, any>) {
@@ -109,11 +127,12 @@ async function resolveTargetStudents(action: any, classId: string, targetStudent
   };
 }
 
-async function executeRemediationAssignment(action: any, metadata: Record<string, any>) {
+async function executeRemediationAssignment(action: any, metadata: Record<string, any>, authorizedClassId: string) {
   if (!action.contentId) {
     throw Object.assign(new Error("Remediation action needs linked curriculum content."), { status: 409 });
   }
-  const cls = await resolveClassForAction(action, metadata);
+  // The class was decided by authorizeTeacherAction (class.lesson.support); never re-derived from Class.teacherId.
+  const cls = await prisma.class.findUnique({ where: { id: authorizedClassId }, select: { id: true, name: true } });
   if (!cls) {
     throw Object.assign(new Error("Remediation action needs a teacher-owned class."), { status: 409 });
   }
@@ -316,13 +335,16 @@ export async function executeTeacherAction(
     throw Object.assign(new Error("This action is unsupported."), { status: 409 });
   }
 
+  // Authorization comes first: nothing, not even the lifecycle update, is written for an unauthorized action.
+  const authorizedClassId = await authorizeTeacherAction(action, metadata, context);
+
   await updateLifecycle(action.id, metadata, "confirmed", { confirmedAt: new Date().toISOString() });
 
   try {
     const type = baseActionType(action.actionType);
     const result =
       type === "ASSIGN_REMEDIATION_REVIEW"
-        ? await executeRemediationAssignment(action, metadata)
+        ? await executeRemediationAssignment(action, metadata, authorizedClassId!)
         : type === "PLAN_CLASS_REVIEW" || type === "GENERATE_REVIEW_PLAN"
           ? await executeReviewPlan(action, metadata)
           : type === "CREATE_FOLLOW_UP_REMINDER"

@@ -1,0 +1,159 @@
+{
+  "registryVersion": "teaching-blocks/1.2.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-schoolday-primary-computing.2-draft.1",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g4-computing-keep-score-with-variables",
+  "lessonId": "schoolday:g4-computing-keep-score-with-variables",
+  "grade": 4,
+  "subject": "COMPUTER_SCIENCE",
+  "title": "Keep score: name, change, trace and debug",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-primary-computing-author/2.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "ORIGINAL_FACTORY_DRAFT",
+    "authoringPlan": "lib/content-factory/v4/primaryComputing/revision.ts",
+    "legacyRecordsReplaced": false
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "programOrderId": "GO-G04-P5-COMPUTING-U1",
+  "courseId": "stem1-g4-computing",
+  "unit": 1,
+  "orderKind": "LESSON",
+  "inputPins": {
+    "manifestSha256": "17064f4d9c9282c40223d247915b93c52f00232404daeeb8d3bb7c4a249b2608",
+    "frontendCommit": "3e3f6cf46e2dee4da5853ef240f3c11dfd39f35b"
+  },
+  "candidateSha256": "ec40eb4790a453ceccbccbdb32a8cfc88cd47a56808d7084e4bac2cd67db85f1",
+  "blueprintHash": "5d64f85926ce80a03d75efe70e599ddba3e6d14882625c3ff9d400218991473b",
+  "learnerProjectionSha256": "5d7a683828ee7a7ebb626c6e1c9e2610552a9d26044e0aff18525f2f34107743",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "COMPUTING",
+    "balance": {
+      "explanationSeconds": 225,
+      "activitySeconds": 870,
+      "activityShare": 0.795
+    },
+    "practice": {
+      "g4-computing-keep-score-with-variables-o1": {
+        "visuals": 0,
+        "workedExamples": 1,
+        "guided": 2,
+        "independent": 1,
+        "mistakes": 0,
+        "transfer": 1
+      },
+      "g4-computing-keep-score-with-variables-o2": {
+        "visuals": 0,
+        "workedExamples": 1,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 1
+      },
+      "g4-computing-keep-score-with-variables-o3": {
+        "visuals": 0,
+        "workedExamples": 0,
+        "guided": 1,
+        "independent": 2,
+        "mistakes": 1,
+        "transfer": 1
+      }
+    },
+    "totals": {
+      "visuals": 0,
+      "workedExamples": 2,
+      "guided": 5,
+      "independent": 5,
+      "mistakes": 1,
+      "transfer": 3,
+      "problems": 10
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "79% activity (target 65â€“75%); do not pad with repetitive questions to reach it."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 6,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-computing-keep-score-with-variables-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-computing-keep-score-with-variables-o2",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-computing-keep-score-with-variables-o3",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING",
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ],
+  "files": {
+    "candidate.json": "50d14b773b6132f56d9cee201eab045758e41e3002612b1aaa2cfba0b6742d9c",
+    "visual-teaching.json": "a23541823e904b12e9fb461cec2febf74027bfa8c308af586f85abf3dcd623b3",
+    "blueprint.json": "8b591ee3753a54d7b674a2041f10658629ae8523dc0c925fee64c84bf56d66a3",
+    "factory-artifact.json": "347dd90d2de14851a81918fe164d3e6d68e5c60235371ee4e8503ed8a35d2a02",
+    "learner-projection.json": "8c7e57ae09c5e6d50fa6e7e3751488dd0cfeb019ee3e7b6deeb744dd1c3d82b6",
+    "factory-receipt.json": "5a636f3cb981cd12fff5c13bcbaddb75e9758f0f2252b927c173f0a0a3e99d9f",
+    "paper-alternative.txt": "579f95a9aa0e9cbcd98f755d432671d5a021eda5ddf50a3c243dbd7572f160f7",
+    "academic-review.json": "c6e2d212865e7bf86074e0a89f4b384731765fd1576f10681758a87982d4a6d1",
+    "teacher-guide.json": "258b49eac6ec4b2a57173e73e402bf7d04e09feb4e94b93431fee65719636e8a"
+  },
+  "supersedesPackage": "4.0.0-schoolday-primary-computing.1-draft.1@g4-computing-keep-score-with-variables",
+  "unicodeNormalization": "NFC",
+  "packageHash": "be00b57563b01f490e99768e2787fd46271e446bf97d8a6d8c790a7f4deaba43"
+}

@@ -24,6 +24,11 @@ import {
 import { parseAuth0MfaClaims } from "@/lib/auth/auth0Claims";
 import { assertTokenFresh, credentialStampOf, isDisabledCredential, privilegedAssuranceFailure, sessionFreshnessFailure, SessionRevokedError } from "@/lib/auth/sessionRevocation";
 import { readTeacherProfileSettings } from "@/lib/teacher/profileSettings";
+import {
+  isPreviewSessionExpired,
+  isPreviewSessionPolicyActive,
+  sessionMaxAgeSeconds,
+} from "@/lib/auth/previewSessionPolicy";
 
 type RawCredentialInput = {
   email?: string;
@@ -186,6 +191,11 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
     return recordLoginFailure("school_inactive", user.schoolId);
   }
 
+  // PV-06: a deployed Preview has no accepted privileged MFA, so no platform-admin password login there.
+  if (user.isPlatformAdmin && isPreviewSessionPolicyActive()) {
+    return recordLoginFailure("privileged_mfa_required", user.schoolId ?? null);
+  }
+
   const privileged = isPrivilegedAccount(user);
   if (privileged && isPrivilegedMfaEnforced()) {
     const breakGlassUntil = user.privilegedIdentity?.breakGlassUntil;
@@ -231,16 +241,16 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
 }
 
 const providers: NextAuthOptions["providers"] = [
-  GoogleProvider({
-    clientId: process.env.GOOGLE_CLIENT_ID!,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+  ...(process.env.GOOGLE_CLIENT_ID?.trim() && process.env.GOOGLE_CLIENT_SECRET?.trim() ? [GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID.trim(),
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET.trim(),
     authorization: {
       params: {
         hd: undefined,
         prompt: "select_account",
       },
     },
-  }),
+  })] : []),
   CredentialsProvider({
     name: "Credentials",
     credentials: {
@@ -293,7 +303,7 @@ if (isAuth0Configured()) {
 }
 
 export const authOptions: NextAuthOptions = {
-  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
+  session: { strategy: "jwt", maxAge: sessionMaxAgeSeconds() },
   providers,
   callbacks: {
     async signIn({ user, account }) {
@@ -486,6 +496,7 @@ export const authOptions: NextAuthOptions = {
           token.isPlatformAdmin = dbUser.isPlatformAdmin ?? false;
           token.loginId = dbUser.loginId ?? null;
           token.mustChangePIN = dbUser.mustChangePIN ?? false;
+          token.authTime = Date.now();
         }
         token.authTime = typeof (user as any)?.authTime === "number" ? (user as any).authTime : Date.now();
         token.credStamp = typeof (user as any)?.credStamp === "number" ? (user as any).credStamp : undefined;
@@ -498,7 +509,8 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
       if (user) {
-        // Immutable for the life of the session; refreshes never change it (unlike iat).
+        // Immutable for the life of the session; refreshes never change it (unlike iat). It is also the sign-in anchor of
+        // the PV-06 Preview absolute bound (integration/g4-day: V3's later re-stamp is removed, so both read this value).
         token.authTime = typeof (user as any).authTime === "number" ? (user as any).authTime : Date.now();
         // The credential version read with the verified credential (Atlas SR-01); absent means the session is refused.
         token.credStamp = typeof (user as any).credStamp === "number" ? (user as any).credStamp : undefined;
@@ -533,6 +545,10 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      // PV-06: past the Preview absolute bound the session has no user, so every server reader is signed out.
+      if (isPreviewSessionExpired(token as { authTime?: unknown })) {
+        return { expires: session.expires } as typeof session;
+      }
       if (session.user) {
         (session.user as any).id = (token as any).id;
         (session.user as any).role = (token as any).role;
@@ -650,32 +666,33 @@ async function assertSessionFresh(user: SessionUser) {
   }
 
   // Cache DB freshness check for 700s — must outlive full load-test window (83s warm + 540s test = 623s).
-  // Secondary check only: the uncached jwt-refresh check (assertTokenFresh) is authoritative. The key includes the
-  // credential version, so a fresh login after a change reads its own entry; school deactivation may lag up to 700s here.
-  const record = await withRedisCache<FreshnessRecord>(
-    `cache:session-fresh:${user.id}:${user.credStamp ?? "none"}`,
-    700,
-    async () => {
-      const dbRecord = await prisma.user.findUnique({
-        where: { id: user.id },
-        select: {
-          passwordChangedAt: true,
-          role: true,
-          schoolId: true,
-          isPlatformAdmin: true,
-          school: { select: { status: true } },
-        },
-      });
-      if (!dbRecord) throw Object.assign(new Error("Unauthorized"), { status: 401 });
-      return {
-        passwordChangedAt: dbRecord.passwordChangedAt?.toISOString() ?? null,
-        role: dbRecord.role,
-        schoolId: dbRecord.schoolId,
-        isPlatformAdmin: dbRecord.isPlatformAdmin,
-        schoolStatus: dbRecord.school?.status ?? null,
-      };
-    }
-  );
+  // Secondary check only: the uncached jwt-refresh check (assertTokenFresh) is authoritative.
+  const loadFreshness = async (): Promise<FreshnessRecord> => {
+    const dbRecord = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        passwordChangedAt: true,
+        role: true,
+        schoolId: true,
+        isPlatformAdmin: true,
+        school: { select: { status: true } },
+      },
+    });
+    if (!dbRecord) throw Object.assign(new Error("Unauthorized"), { status: 401 });
+    return {
+      passwordChangedAt: dbRecord.passwordChangedAt?.toISOString() ?? null,
+      role: dbRecord.role,
+      schoolId: dbRecord.schoolId,
+      isPlatformAdmin: dbRecord.isPlatformAdmin,
+      schoolStatus: dbRecord.school?.status ?? null,
+    };
+  };
+  // PV-06: Preview reads freshness uncached so a password, role or school change ends sessions at once. Elsewhere the
+  // cache key includes the credential version (R1), so a fresh login after a change reads its own entry; school
+  // deactivation may lag up to 700s here.
+  const record = isPreviewSessionPolicyActive()
+    ? await loadFreshness()
+    : await withRedisCache<FreshnessRecord>(`cache:session-fresh:${user.id}:${user.credStamp ?? "none"}`, 700, loadFreshness);
 
   // Same rule as the uncached jwt-refresh check (which is authoritative); a token without authTime is stale.
   const failure = sessionFreshnessFailure(user, record);

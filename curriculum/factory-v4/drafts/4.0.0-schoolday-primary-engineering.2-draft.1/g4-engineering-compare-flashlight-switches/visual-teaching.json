@@ -1,0 +1,435 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.3.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "candidateSha256": "68529397f37a3f68b7b0d6ab985f95c947bc71bef42f557c05d340daca014229",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "g4-engineering-compare-flashlight-switches-o1",
+      "statement": "Explain how a complete conducting path and an open switch affect a compatible battery and lamp circuit.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-engineering-compare-flashlight-switches-o1",
+          "statement": "Explain how a complete conducting path and an open switch affect a compatible battery and lamp circuit.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-engineering-compare-flashlight-switches-o2",
+      "statement": "Plan a fair comparison of two contact designs, record honestly attributed observations and explain a controlled revision.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-engineering-compare-flashlight-switches-o2",
+          "statement": "Plan a fair comparison of two contact designs, record honestly attributed observations and explain a controlled revision.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-engineering-compare-flashlight-switches-o3",
+      "statement": "Draw a two-bar graph from available closed-switch counts and justify a design choice using both closed and open observations.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-engineering-compare-flashlight-switches-o3",
+          "statement": "Draw a two-bar graph from available closed-switch counts and justify a design choice using both closed and open observations.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "constraints",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "3cd796aaf09ac3a0a64037f8682868cad0c1e41a87b9f2850bf43f5a50d174c7",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Explain the source of energy and why every trial matters.",
+      "misconceptionIds": [
+        "switch-creates-energy",
+        "one-pass-proves-reliability",
+        "change-everything-is-fair",
+        "tallest-bar-proves-best"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "switch-creates-energy",
+          "responsePattern": "battery-and-switch-item:OPTION:opt-2f6754b19fc8",
+          "feedback": "The battery is the source; the switch controls the connection."
+        },
+        {
+          "misconceptionId": "switch-creates-energy",
+          "responsePattern": "battery-and-switch-item:OPTION:opt-cdf62be07251",
+          "feedback": "Closing changes the path, not the source of energy."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Why can closing the switch light a working circuit? Options: The lamp gets its energy from the switch instead of the battery.; It completes the path so energy from the battery can be transferred.; The switch makes new energy each time it closes..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Why can closing the switch light a working circuit? Options: The lamp gets its energy from the switch instead of the battery.; It completes the path so energy from the battery can be transferred.; The switch makes new energy each time it closes..",
+        "responsePrompt": "Explain the source of energy and why every trial matters. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "constraints",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "9c14f0dcf8502f9d255f45eef3d6ca63e6fca5450b50a51b7322a99e76712ca7",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Explain the source of energy and why every trial matters.",
+      "misconceptionIds": [
+        "switch-creates-energy",
+        "one-pass-proves-reliability",
+        "change-everything-is-fair",
+        "tallest-bar-proves-best"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "one-pass-proves-reliability",
+          "responsePattern": "honest-trials-item:OPTION:opt-5b82957645b8",
+          "feedback": "One result does not guarantee future performance."
+        },
+        {
+          "misconceptionId": "one-pass-proves-reliability",
+          "responsePattern": "honest-trials-item:OPTION:opt-e53ffc2ec8f8",
+          "feedback": "Missing trials stay missing. Never copy one success into unobserved trials."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "What can one successful closure establish? Options: The lamp lit on that trial; we still need the other observations.; It proves every future closure will work.; One success can stand for all five trials without testing them..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: What can one successful closure establish? Options: The lamp lit on that trial; we still need the other observations.; It proves every future closure will work.; One success can stand for all five trials without testing them..",
+        "responsePrompt": "Explain the source of energy and why every trial matters. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "design",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "25a72bdd3b08a85675123336943ac60eee514bdf3a7f42f56ab9d0113954b0d9",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: State what changes, what stays fixed and why the comparison is useful.",
+      "misconceptionIds": [
+        "switch-creates-energy",
+        "one-pass-proves-reliability",
+        "change-everything-is-fair",
+        "tallest-bar-proves-best"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "change-everything-is-fair",
+          "responsePattern": "plan-one-change-item:OPTION:change-bulb",
+          "feedback": "Both the contact and the lamp change. You could not tell which change affected the result. Keep the lamp fixed."
+        },
+        {
+          "misconceptionId": "change-everything-is-fair",
+          "responsePattern": "plan-one-change-item:OPTION:change-kit",
+          "feedback": "Several parts change together. A different result would not identify the effect of the contact. Change one feature and keep the kit fixed."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which plan lets us compare one contact change fairly? Options: Widen one contact. Keep the same battery, lamp, wires and procedure.; Widen one contact and use a brighter lamp for Design 2.; Change the contact, battery and wires together for Design 2..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which plan lets us compare one contact change fairly? Options: Widen one contact. Keep the same battery, lamp, wires and procedure.; Widen one contact and use a brighter lamp for Design 2.; Change the contact, battery and wires together for Design 2..",
+        "responsePrompt": "State what changes, what stays fixed and why the comparison is useful. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "build",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "1ad7318cf94a30691de370d14d8ee8e9de28567169b1f0c4b166904eebdcce76",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Choose the honest evidence route and explain the planned fair test.",
+      "misconceptionIds": [
+        "switch-creates-energy",
+        "one-pass-proves-reliability",
+        "change-everything-is-fair",
+        "tallest-bar-proves-best"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "change-everything-is-fair",
+          "responsePattern": "fair-comparison-item:OPTION:opt-cf1e4dd06907",
+          "feedback": "Several changes leave the effect of the contact uncertain."
+        },
+        {
+          "misconceptionId": "change-everything-is-fair",
+          "responsePattern": "fair-comparison-item:OPTION:opt-c62086a7055b",
+          "feedback": "A different bulb is another changed factor."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which comparison helps investigate the contact change? Options: Change the contact feature while keeping the kit and trial procedure fixed.; Change battery, bulb and contacts together, then credit the contact.; Use a brighter bulb only for the second design and credit the contact..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which comparison helps investigate the contact change? Options: Change the contact feature while keeping the kit and trial procedure fixed.; Change battery, bulb and contacts together, then credit the contact.; Use a brighter bulb only for the second design and credit the contact..",
+        "responsePrompt": "Choose the honest evidence route and explain the planned fair test. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "build",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "e568d9359a7b50e1c9b2d18dff00f80e069954d1895214c4e5269e25598f2e0c",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Choose the honest evidence route and explain the planned fair test.",
+      "misconceptionIds": [
+        "switch-creates-energy",
+        "one-pass-proves-reliability",
+        "change-everything-is-fair",
+        "tallest-bar-proves-best"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "tallest-bar-proves-best",
+          "responsePattern": "compare-both-criteria-item:OPTION:opt-7836f789aea1",
+          "feedback": "The open-switch criterion is not shown by that bar."
+        },
+        {
+          "misconceptionId": "tallest-bar-proves-best",
+          "responsePattern": "compare-both-criteria-item:OPTION:opt-5c52f67f22de",
+          "feedback": "A controllable light should also be dark when the switch is open."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "What must a final design choice consider? Options: Both designs' closed-light and open-dark counts, plus the test limits.; The tallest closed-light bar is enough; ignore open-switch results.; Only closed-switch light counts matter, even if the lamp stays on when open..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: What must a final design choice consider? Options: Both designs' closed-light and open-dark counts, plus the test limits.; The tallest closed-light bar is enough; ignore open-switch results.; Only closed-switch light counts matter, even if the lamp stays on when open..",
+        "responsePrompt": "Choose the honest evidence route and explain the planned fair test. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "investigation",
+      "slot": "blocks",
+      "index": 0,
+      "type": "DESIGN_CYCLE",
+      "blockSha256": "a9a0432689917a610ebc2994977fabf1ab9fd83ce325683a0aaf7f0fe075757c",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "instructionalPurpose": "Define a problem, test a design against criteria and constraints, and improve it across iterations; optionally record each design's results in a named measurement table. Learner action: Complete both available observation records, source labels and the hand-drawn graph before leaving this activity.",
+      "misconceptionIds": [
+        "switch-creates-energy",
+        "one-pass-proves-reliability",
+        "change-everything-is-fair",
+        "tallest-bar-proves-best"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Build and compare two low-voltage flashlight-switch designs. Use repeated tests to choose or improve a design. Light when closed: Closed-switch light successes, at least 4 trials. Dark when open: Open-switch dark successes, at least 5 trials. Change one contact feature; keep battery, lamp, wires and procedure fixed. Teacher checks enclosed low-voltage batteries and a compatible bulb. No mains, loose button cells, damaged cells, direct shorts or hot wires. Stop if parts warm. Adults handle cutting and real safety decisions. Observe five closed-switch trials and record every outcome. Observe five open-switch trials and record every outcome. Explain one contact change from Design 1 evidence; test Design 2 under the same conditions. Record only observations actually available. Compare both designs.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Build and compare two low-voltage flashlight-switch designs. Use repeated tests to choose or improve a design. Light when closed: Closed-switch light successes, at least 4 trials. Dark when open: Open-switch dark successes, at least 5 trials. Change one contact feature; keep battery, lamp, wires and procedure fixed. Teacher checks enclosed low-voltage batteries and a compatible bulb. No mains, loose button cells, damaged cells, direct shorts or hot wires. Stop if parts warm. Adults handle cutting and real safety decisions. Observe five closed-switch trials and record every outcome. Observe five open-switch trials and record every outcome. Explain one contact change from Design 1 evidence; test Design 2 under the same conditions. Record only observations actually available. Compare both designs.",
+        "responsePrompt": "Complete both available observation records, source labels and the hand-drawn graph before leaving this activity. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "investigation",
+      "slot": "blocks",
+      "index": 1,
+      "type": "MEASUREMENT_TABLE",
+      "blockSha256": "d52bd895f64383d24288deb06bc1d0b6856c3d64efcec977d3e725051a742cf2",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "instructionalPurpose": "Record repeated trials with units; the origin (measured or illustrative) is always stated. Learner action: Complete both available observation records, source labels and the hand-drawn graph before leaving this activity.",
+      "misconceptionIds": [
+        "switch-creates-energy",
+        "one-pass-proves-reliability",
+        "change-everything-is-fair",
+        "tallest-bar-proves-best"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "MEASURED: switch trial observations Row 1 is Design 1. Row 2 is Design 2. Record your own counts out of 5. MEASURED: identify whether you performed the test or observed your group's test. Closed-switch light successes (trials), 0 to 5. Open-switch dark successes (trials), 0 to 5. Row 1 is Design 1. Row 2 is Design 2. Missing observations are not zero.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: MEASURED: switch trial observations Row 1 is Design 1. Row 2 is Design 2. Record your own counts out of 5. MEASURED: identify whether you performed the test or observed your group's test. Closed-switch light successes (trials), 0 to 5. Open-switch dark successes (trials), 0 to 5. Row 1 is Design 1. Row 2 is Design 2. Missing observations are not zero.",
+        "responsePrompt": "Complete both available observation records, source labels and the hand-drawn graph before leaving this activity. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

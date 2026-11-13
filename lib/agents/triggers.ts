@@ -1,5 +1,5 @@
 import { runAgent, type RunContext } from "@/lib/agents/runtime";
-import { isAgentEnabled } from "@/lib/agents/flags";
+import { resolveAgentEnabled } from "@/lib/agents/control";
 import { logger } from "@/lib/logger";
 
 /**
@@ -34,15 +34,15 @@ export interface EmitResult {
 }
 
 export async function emitAgentEvent(eventType: string, payload: unknown): Promise<EmitResult> {
-  const matches = listTriggers().filter((t) => {
-    if (t.eventType !== eventType) return false;
-    if (!isAgentEnabled(t.featureFlag)) return false;
+  const matches: TriggerDefinition[] = [];
+  for (const t of listTriggers()) {
+    if (t.eventType !== eventType || !(await resolveAgentEnabled(t.agentName, t.featureFlag))) continue;
     try {
-      return t.filter ? t.filter(payload) : true;
+      if (!t.filter || t.filter(payload)) matches.push(t);
     } catch {
-      return false;
+      // A failing filter cannot authorize a triggered invocation.
     }
-  });
+  }
 
   const results: EmitResult["results"] = [];
   for (const trigger of matches) {

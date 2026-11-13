@@ -6,8 +6,13 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding LiberiaLearn...');
 
-  const teacherPwd = await bcrypt.hash('teach123', 10);
-  const studentPwd = await bcrypt.hash('student123', 10);
+  const teacherPassword = process.env.SEED_TEACHER_PASSWORD?.trim();
+  const studentPassword = process.env.SEED_STUDENT_PASSWORD?.trim();
+  if (!teacherPassword || !studentPassword) {
+    throw new Error("SEED_TEACHER_PASSWORD and SEED_STUDENT_PASSWORD are required for seeding.");
+  }
+  const teacherPwd = await bcrypt.hash(teacherPassword, 10);
+  const studentPwd = await bcrypt.hash(studentPassword, 10);
 
   const teacherUser = await prisma.user.upsert({
     where: { email: 'teacher1@liberialearn.dev' },

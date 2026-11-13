@@ -239,8 +239,11 @@ export default async function TeacherLabSessionReviewPage({
                 {aiAnalysis ? (
                   <div className="mt-4 space-y-4 text-sm text-[var(--ll-text)]">
                     <div className="rounded-xl border border-emerald-500/20 bg-[var(--ll-yellow)]/10 p-4">
-                      <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Suggested Score</p>
-                      <p className="mt-2 text-3xl font-bold text-[var(--ll-yellow)]">{String(aiAnalysis.suggestedScore ?? "Pending")}</p>
+                      <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">AI suggestion (provisional)</p>
+                      {aiAnalysis.status === "WITHHELD"
+                        ? <p className="mt-2 text-base font-semibold text-[var(--ll-text)]">Withheld by the safety check. No AI score exists; please review this work directly.</p>
+                        : <p className="mt-2 text-3xl font-bold text-[var(--ll-yellow)]">{aiAnalysis.suggestedScore == null ? "Pending" : String(aiAnalysis.suggestedScore)}</p>}
+                      <p className="mt-2 text-xs text-[var(--ll-text-muted)]">Not a grade and not recorded as the student&apos;s performance. Only the score you submit below is saved.</p>
                     </div>
                     <div>
                       <h3 className="font-semibold text-[var(--ll-text)]">Observation Feedback</h3>

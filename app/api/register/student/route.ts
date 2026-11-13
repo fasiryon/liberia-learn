@@ -1,3 +1,4 @@
+// route-policy: auth=public; scope=none; authority=registration-code; rationale=self-registration creates a student account; refused on any deployed Preview/staging before authority or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
@@ -7,6 +8,7 @@ import { sendStudentWelcome } from "@/lib/email";
 import { normalizeCredentialPhone, slugifyLoginSeed, normalizeLoginId } from "@/lib/login-identifiers";
 import { checkRateLimit, RATE_LIMIT_POLICIES, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { createUniqueHumanReadableStudentId } from "@/lib/students/humanReadableId";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +29,8 @@ async function buildUniqueLoginId(seed: string) {
 }
 
 export async function POST(req: NextRequest) {
+  const frozen = previewIdentityFrozen();
+  if (frozen) return frozen;
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const rateLimit = await checkRateLimit(`register:student:${ip}`, {
     windowMs: RATE_LIMIT_POLICIES.AI_HEAVY.windowMs,

@@ -72,6 +72,8 @@
 
 html {
   background: var(--ll-bg);
+  /* Fixed bottom bands (lesson footer, PWA status notice) must never hide a focused control (#199, WCAG 2.4.11). */
+  scroll-padding-bottom: calc(var(--ll-fixed-footer, 0px) + var(--ll-status-notice, 0px) + var(--ll-cookie-notice, 0px));
 }
 
 body {
@@ -82,6 +84,27 @@ body {
   font-size: 16px;
   line-height: 1.6;
   text-rendering: optimizeLegibility;
+  /* Room to scroll the last controls clear of the PWA status and cookie notices; zero while they are hidden. */
+  padding-bottom: calc(var(--ll-status-notice, 0px) + var(--ll-cookie-notice, 0px));
+}
+
+/* Short viewports (400% zoom of a 1280x900 window is 320x225 CSS px; landscape phones): the sticky lesson header, fixed
+   Previous / Continue bar and PWA notice together would cover the lesson, so they return to the page flow (#199,
+   WCAG 1.4.10 / 2.4.11). Nothing is hidden: each still renders and scrolls with the content. */
+@media (max-height: 25rem) {
+  html { scroll-padding-bottom: 0; }
+  body { padding-bottom: 0; }
+  .ll3-focus-header, .ll3-player-header, .ll3-footer, .ll4-read-pager { position: static; }
+  .ll3-stage { padding-bottom: 32px !important; } /* overrides the inline fixed-footer reserve */
+  [data-pwa-status] { position: static; margin: 8px 16px; }
+  [data-cookie-notice] { position: static; }
+}
+
+/* Very narrow screens (320 px phones; 400% zoom): the scene counter takes its own row above Previous / Continue
+   instead of wrapping one word per line between them (#199). */
+@media (max-width: 22.4375rem) {
+  .ll3-footer-inner { flex-wrap: wrap; }
+  .ll3-footer-count { order: -1; flex-basis: 100%; }
 }
 
 button,

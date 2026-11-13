@@ -1,9 +1,11 @@
+// route-policy: auth=session; scope=record; authority=school-admin; rationale=issues a password reset code for another account; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { sendGuardianSMS } from "@/lib/guardian/sms-service";
 import crypto from "crypto";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 
 export async function POST(
   req: Request,
@@ -12,6 +14,8 @@ export async function POST(
   try {
     const admin = await requireRole("ADMIN");
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const student = await prisma.student.findUnique({
       where: { id: params.id },
       include: {

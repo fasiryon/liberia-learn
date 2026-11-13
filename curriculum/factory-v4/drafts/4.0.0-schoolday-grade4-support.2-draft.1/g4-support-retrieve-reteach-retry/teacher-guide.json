@@ -1,0 +1,579 @@
+{
+  "role": "DIFFERENTIATED_SUPPORT: independent retrieval, selected guided reteach, fresh independent retry and extension. Cross-curricular role, not a new subject. ENGLISH is an allowed recorded carrier from the grade day, per CoS ROLE_CONTRACTS.",
+  "acceptedFoundations": [
+    {
+      "slot": "P1",
+      "version": "4.0.0-schoolday-primary-math.2-draft.1",
+      "key": "g4-math-three-digit-products",
+      "packageHash": "df24c30a680e745006ef124f671a26cccb1bdf64a8ec9f79b3273e8ba4d98eb2",
+      "candidateSha256": "4fe423deb164b80ee63f4144d15cd34fcf206b879c244f4631b2d136616fb2dc",
+      "subject": "MATH",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-math.2-draft.1/g4-math-three-digit-products",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-math.2-draft.1/g4-math-three-digit-products.json",
+      "reviewSha256": "96694b2babb199754c7e8d77f64c6fb406d6e1a1d1e02d8a701fac18c0f16ffc"
+    },
+    {
+      "slot": "P2",
+      "version": "4.0.0-schoolday-primary-science.2-draft.1",
+      "key": "g4-science-food-path-and-absorption",
+      "packageHash": "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a",
+      "candidateSha256": "b481157bde0e0a509c99220f2a80afd5ba65f97e6fa4efe23b04670d37e5c1d7",
+      "subject": "SCIENCE",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-science.2-draft.1/g4-science-food-path-and-absorption",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-science.2-draft.1/g4-science-food-path-and-absorption.json",
+      "reviewSha256": "6c90aa6e54fe7603e13e44524da7f4a88479eb178e536f94b21bc0cab5cc87e9"
+    },
+    {
+      "slot": "P3",
+      "version": "4.0.0-schoolday-primary-english.2-draft.1",
+      "key": "g4-english-predict-question-summarize",
+      "packageHash": "39c9cafb634914512bd4cf396cdb454b2770a9057e5bd93734a6787e8757f0e6",
+      "candidateSha256": "c28b735becfc291cdd5da0e91a1452ff5abc156bbb776ec7d937ebd6d631fdd0",
+      "subject": "ENGLISH",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-english.2-draft.1/g4-english-predict-question-summarize",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-english.2-draft.1/g4-english-predict-question-summarize.json",
+      "reviewSha256": "bc1ded25ff3aacf63721fc517720a5da366a0717aba907d0b77459a1461d12b1"
+    },
+    {
+      "slot": "P4",
+      "version": "4.0.0-schoolday-primary-social-studies.2-draft.1",
+      "key": "g4-social-studies-coast-inland-evidence",
+      "packageHash": "924e57dcc56e65c20eaedb5133c70d84a433f935c898349ac053df22b584cd04",
+      "candidateSha256": "3808f2a1237d0087852f813547ef3f7f77cef549d308dd66d737b09d1a52e1bb",
+      "subject": "SOCIAL_STUDIES",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-social-studies.2-draft.1/g4-social-studies-coast-inland-evidence",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-social-studies.2-draft.1/g4-social-studies-coast-inland-evidence.json",
+      "reviewSha256": "86929c3b76e785b3318a44c9082d8d0ad74190c8c2724133b1b2c594dd9d2962"
+    },
+    {
+      "slot": "P5",
+      "version": "4.0.0-schoolday-primary-computing.2-draft.1",
+      "key": "g4-computing-keep-score-with-variables",
+      "packageHash": "be00b57563b01f490e99768e2787fd46271e446bf97d8a6d8c790a7f4deaba43",
+      "candidateSha256": "ec40eb4790a453ceccbccbdb32a8cfc88cd47a56808d7084e4bac2cd67db85f1",
+      "subject": "COMPUTER_SCIENCE",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-computing.2-draft.1/g4-computing-keep-score-with-variables",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-computing.2-draft.1/g4-computing-keep-score-with-variables.json",
+      "reviewSha256": "87b064edaae94c957b8108ef1e598cf671d3a21ef6786f422b05bff42eb1bac4"
+    },
+    {
+      "slot": "P6",
+      "version": "4.0.0-schoolday-primary-engineering.2-draft.1",
+      "key": "g4-engineering-compare-flashlight-switches",
+      "packageHash": "202106a8bffa0afb8c05aa9338db458b5b913483f70a222c2bc1b8a579b7a7a1",
+      "candidateSha256": "68529397f37a3f68b7b0d6ab985f95c947bc71bef42f557c05d340daca014229",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-engineering.2-draft.1/g4-engineering-compare-flashlight-switches",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-engineering.2-draft.1/g4-engineering-compare-flashlight-switches.json",
+      "reviewSha256": "8947517fccb4b510ca5b43c7f00a8ba5d13eab33246c15bfea8523ac617e9bc7"
+    }
+  ],
+  "targetedPaths": [
+    {
+      "id": "p1-digits-without-place-value",
+      "period": "P1",
+      "sourcePackageHash": "df24c30a680e745006ef124f671a26cccb1bdf64a8ec9f79b3273e8ba4d98eb2",
+      "sourceMisconceptionId": "digits-without-place-value",
+      "sourceObjectiveId": "g4-math-three-digit-products-o1",
+      "diagnosticDescription": "The digits of a factor are multiplied as single units and their products are added.",
+      "activity": "Represent 312 as 300, 10 and 2. Multiply each full value by 3 before combining.",
+      "hints": [
+        "Name the full place values before multiplying: 2 hundreds is 200, not 2.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Find 214 times 4. Explain the value of each digit.",
+      "feedback": "Name the full place values before multiplying: 2 hundreds is 200, not 2."
+    },
+    {
+      "id": "p1-discard-regrouped-value",
+      "period": "P1",
+      "sourcePackageHash": "df24c30a680e745006ef124f671a26cccb1bdf64a8ec9f79b3273e8ba4d98eb2",
+      "sourceMisconceptionId": "discard-regrouped-value",
+      "sourceObjectiveId": "g4-math-three-digit-products-o2",
+      "diagnosticDescription": "Tens or hundreds formed by a partial product are discarded when writing the final digits.",
+      "activity": "Trade ten ones for one ten without throwing away value. Show how 4 times 4 ones becomes one ten and six ones.",
+      "hints": [
+        "Keep the value of every partial product and regroup it into the correct place rather than deleting it.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Find 214 times 4 and explain where the regrouped ten goes.",
+      "feedback": "Keep the value of every partial product and regroup it into the correct place rather than deleting it."
+    },
+    {
+      "id": "p2-food-through-support-organs",
+      "period": "P2",
+      "sourcePackageHash": "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a",
+      "sourceMisconceptionId": "food-through-support-organs",
+      "sourceObjectiveId": "g4-science-food-path-and-absorption-o1",
+      "diagnosticDescription": "The swallowed food route is drawn through the liver or pancreas instead of distinguishing the juices they supply.",
+      "activity": "Use one arrow for swallowed food and different arrows for digestive juices. Place liver and pancreas beside the food route.",
+      "hints": [
+        "Keep the continuous food route separate from the liver and pancreas, which supply digestive juices.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Trace food to the small intestine and explain one supporting organ.",
+      "feedback": "Keep the continuous food route separate from the liver and pancreas, which supply digestive juices."
+    },
+    {
+      "id": "p2-stomach-absorbs-everything",
+      "period": "P2",
+      "sourcePackageHash": "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a",
+      "sourceMisconceptionId": "stomach-absorbs-everything",
+      "sourceObjectiveId": "g4-science-food-path-and-absorption-o2",
+      "diagnosticDescription": "The stomach is treated as the place where all nutrients enter the body.",
+      "activity": "Compare the stomach with the small intestine. Locate where most digested nutrients enter the body.",
+      "hints": [
+        "Most digested nutrients are absorbed through the small-intestine wall.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Explain why the food route continues beyond the stomach.",
+      "feedback": "Most digested nutrients are absorbed through the small-intestine wall."
+    },
+    {
+      "id": "p2-absorbed-nutrients-disappear",
+      "period": "P2",
+      "sourcePackageHash": "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a",
+      "sourceMisconceptionId": "absorbed-nutrients-disappear",
+      "sourceObjectiveId": "g4-science-food-path-and-absorption-o2",
+      "diagnosticDescription": "Nutrients that cross the wall are treated as disappearing from the model total.",
+      "activity": "Move paper nutrient tokens into a body region while keeping every token visible. Transferred tokens still exist.",
+      "hints": [
+        "Keep transferred tokens visible in the body region. Count both regions to conserve the total.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Start with 16 tokens. Transfer 6. Explain where all 16 are now.",
+      "feedback": "Keep transferred tokens visible in the body region. Count both regions to conserve the total."
+    },
+    {
+      "id": "p2-starting-vs-remaining",
+      "period": "P2",
+      "sourcePackageHash": "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a",
+      "sourceMisconceptionId": "starting-vs-remaining",
+      "sourceObjectiveId": "g4-science-food-path-and-absorption-o2",
+      "diagnosticDescription": "The starting count is reported as still inside after tokens have crossed the wall.",
+      "activity": "Label the starting total before moving tokens. Label the tokens still in the first region separately.",
+      "hints": [
+        "The starting count describes both regions together. Subtract transferred tokens to find what remains inside.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Start with 16 and transfer 6. Find and distinguish the starting and remaining counts.",
+      "feedback": "The starting count describes both regions together. Subtract transferred tokens to find what remains inside."
+    },
+    {
+      "id": "p2-transferred-vs-remaining",
+      "period": "P2",
+      "sourcePackageHash": "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a",
+      "sourceMisconceptionId": "transferred-vs-remaining",
+      "sourceObjectiveId": "g4-science-food-path-and-absorption-o2",
+      "diagnosticDescription": "The number transferred during a round is confused with the number remaining inside.",
+      "activity": "Keep transferred and remaining tokens in two labelled groups. Point to the group named by each question.",
+      "hints": [
+        "Transferred and remaining name different groups. Track the inside count after every transfer.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Start with 16 and transfer 6. Find the transferred and remaining counts and explain the difference.",
+      "feedback": "Transferred and remaining name different groups. Track the inside count after every transfer."
+    },
+    {
+      "id": "p3-prediction-is-fact",
+      "period": "P3",
+      "sourcePackageHash": "39c9cafb634914512bd4cf396cdb454b2770a9057e5bd93734a6787e8757f0e6",
+      "sourceMisconceptionId": "prediction-is-fact",
+      "sourceObjectiveId": "g4-english-predict-question-summarize-o1",
+      "diagnosticDescription": "A plausible prediction is reported as something the story has already established.",
+      "activity": "Mark an early clue, your prediction and a later detail in the accepted reading text. Treat the prediction as a possibility.",
+      "hints": [
+        "Name the detail that makes the idea plausible, use might or may, and change the prediction if later evidence conflicts.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Name an unanswered question from the text without inventing an ending.",
+      "feedback": "Name the detail that makes the idea plausible, use might or may, and change the prediction if later evidence conflicts."
+    },
+    {
+      "id": "p3-summary-is-detail-list",
+      "period": "P3",
+      "sourcePackageHash": "39c9cafb634914512bd4cf396cdb454b2770a9057e5bd93734a6787e8757f0e6",
+      "sourceMisconceptionId": "summary-is-detail-list",
+      "sourceObjectiveId": "g4-english-predict-question-summarize-o3",
+      "diagnosticDescription": "A summary lists incidental details or invents an outcome instead of connecting the central problem, response and result.",
+      "activity": "Choose details that explain the main problem, response and result. Put minor details aside.",
+      "hints": [
+        "Keep the problem, the action taken and the result supported by the story; remove details that do not explain that connection.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Summarize the text and justify one detail you kept.",
+      "feedback": "Keep the problem, the action taken and the result supported by the story; remove details that do not explain that connection."
+    },
+    {
+      "id": "p4-inland-is-always-high",
+      "period": "P4",
+      "sourcePackageHash": "924e57dcc56e65c20eaedb5133c70d84a433f935c898349ac053df22b584cd04",
+      "sourceMisconceptionId": "inland-is-always-high",
+      "sourceObjectiveId": "g4-social-studies-coast-inland-evidence-o1",
+      "diagnosticDescription": "Every inland location is assumed to be high or mountainous.",
+      "activity": "Separate coastal or inland labels from evidence about elevation or a particular route. Use the accepted records.",
+      "hints": [
+        "Inland means away from the coast. A broad terrain description does not determine every local elevation.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Explain what further observation would support a claim about one site.",
+      "feedback": "Inland means away from the coast. A broad terrain description does not determine every local elevation."
+    },
+    {
+      "id": "p4-one-case-describes-everywhere",
+      "period": "P4",
+      "sourcePackageHash": "924e57dcc56e65c20eaedb5133c70d84a433f935c898349ac053df22b584cd04",
+      "sourceMisconceptionId": "one-case-describes-everywhere",
+      "sourceObjectiveId": "g4-social-studies-coast-inland-evidence-o2",
+      "diagnosticDescription": "One observation or place description is treated as evidence about all communities.",
+      "activity": "Compare what the two club records actually describe. One record does not describe every place.",
+      "hints": [
+        "Name the place and observation, limit the conclusion to that evidence and seek additional observations.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Give a conditional recommendation and state one limit of the records.",
+      "feedback": "Name the place and observation, limit the conclusion to that evidence and seek additional observations."
+    },
+    {
+      "id": "p4-place-label-proves-safety",
+      "period": "P4",
+      "sourcePackageHash": "924e57dcc56e65c20eaedb5133c70d84a433f935c898349ac053df22b584cd04",
+      "sourceMisconceptionId": "place-label-proves-safety",
+      "sourceObjectiveId": "g4-social-studies-coast-inland-evidence-o3",
+      "diagnosticDescription": "Coastal or inland is treated as enough evidence to select a safe site.",
+      "activity": "Match each room or route claim to its actual observation. A place name does not establish safety.",
+      "hints": [
+        "Compare the actual site, path and local observations. A region label alone does not establish safety.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Identify a missing observation before deciding whether a site meets a need.",
+      "feedback": "Compare the actual site, path and local observations. A region label alone does not establish safety."
+    },
+    {
+      "id": "p4-physical-region-equals-county",
+      "period": "P4",
+      "sourcePackageHash": "924e57dcc56e65c20eaedb5133c70d84a433f935c898349ac053df22b584cd04",
+      "sourceMisconceptionId": "physical-region-equals-county",
+      "sourceObjectiveId": "g4-social-studies-coast-inland-evidence-o1",
+      "diagnosticDescription": "General coast-to-inland landform descriptions are treated as exact county boundaries.",
+      "activity": "Use separate labels for a physical region and an administrative county. They answer different kinds of questions.",
+      "hints": [
+        "Use an administrative map for county boundaries. A physical sketch does not establish those lines.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Explain why a coastal label is not by itself the name of a county.",
+      "feedback": "Use an administrative map for county boundaries. A physical sketch does not establish those lines."
+    },
+    {
+      "id": "p4-one-criterion-proves-all-needs",
+      "period": "P4",
+      "sourcePackageHash": "924e57dcc56e65c20eaedb5133c70d84a433f935c898349ac053df22b584cd04",
+      "sourceMisconceptionId": "one-criterion-proves-all-needs",
+      "sourceObjectiveId": "g4-social-studies-coast-inland-evidence-o3",
+      "diagnosticDescription": "Evidence about a dry room or a clear path is treated as proving the other requirement too.",
+      "activity": "Make separate columns for room conditions and route access. Check each need with relevant evidence.",
+      "hints": [
+        "Check each requirement separately. Room and route observations answer different questions.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Explain how a dry room could still be reached by a difficult route.",
+      "feedback": "Check each requirement separately. Room and route observations answer different questions."
+    },
+    {
+      "id": "p5-name-changes-with-value",
+      "period": "P5",
+      "sourcePackageHash": "be00b57563b01f490e99768e2787fd46271e446bf97d8a6d8c790a7f4deaba43",
+      "sourceMisconceptionId": "name-changes-with-value",
+      "sourceObjectiveId": "g4-computing-keep-score-with-variables-o1",
+      "diagnosticDescription": "The variable's name is changed whenever its number changes.",
+      "activity": "Keep the score name card fixed and replace only the number card when its value changes.",
+      "hints": [
+        "Keep the name score fixed and replace the number stored beneath it.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Start score at 2 and add 3. Explain what changes and what stays fixed.",
+      "feedback": "Keep the name score fixed and replace the number stored beneath it."
+    },
+    {
+      "id": "p5-replacement-means-add",
+      "period": "P5",
+      "sourcePackageHash": "be00b57563b01f490e99768e2787fd46271e446bf97d8a6d8c790a7f4deaba43",
+      "sourceMisconceptionId": "replacement-means-add",
+      "sourceObjectiveId": "g4-computing-keep-score-with-variables-o2",
+      "diagnosticDescription": "Set score to a number is treated as adding that number.",
+      "activity": "Compare set to 2 with add 2 from the same starting score of 4. Set replaces; add uses the previous value.",
+      "hints": [
+        "Set replaces the current value. Add uses the current value to calculate the next one.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Start at 1. Add 3, set to 2, then add 3. Explain every state.",
+      "feedback": "Set replaces the current value. Add uses the current value to calculate the next one."
+    },
+    {
+      "id": "p5-reset-every-turn",
+      "period": "P5",
+      "sourcePackageHash": "be00b57563b01f490e99768e2787fd46271e446bf97d8a6d8c790a7f4deaba43",
+      "sourceMisconceptionId": "reset-every-turn",
+      "sourceObjectiveId": "g4-computing-keep-score-with-variables-o3",
+      "diagnosticDescription": "Initialization is repeated before every event, discarding the accumulated score.",
+      "activity": "Initialize at the start of a new game. Keep the updated value between hits unless a reset event occurs.",
+      "hints": [
+        "Initialize at new-game start and retain the updated value between events.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Start at 0 and add 2 for each of three hits. Explain why resetting before every hit loses the total.",
+      "feedback": "Initialize at new-game start and retain the updated value between events."
+    },
+    {
+      "id": "p5-replacement-does-nothing",
+      "period": "P5",
+      "sourcePackageHash": "be00b57563b01f490e99768e2787fd46271e446bf97d8a6d8c790a7f4deaba43",
+      "sourceMisconceptionId": "replacement-does-nothing",
+      "sourceObjectiveId": "g4-computing-keep-score-with-variables-o2",
+      "diagnosticDescription": "A set instruction is ignored and the previous value is retained.",
+      "activity": "Follow every instruction in order, including set. Replace the number even when no points were earned.",
+      "hints": [
+        "Follow every instruction in order. Set replaces the old value even if no points were earned.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Start at 7, set to 2, then add 3. Record all three states.",
+      "feedback": "Follow every instruction in order. Set replaces the old value even if no points were earned."
+    },
+    {
+      "id": "p5-new-game-keeps-old-score",
+      "period": "P5",
+      "sourcePackageHash": "be00b57563b01f490e99768e2787fd46271e446bf97d8a6d8c790a7f4deaba43",
+      "sourceMisconceptionId": "new-game-keeps-old-score",
+      "sourceObjectiveId": "g4-computing-keep-score-with-variables-o3",
+      "diagnosticDescription": "A new game starts without initialization and inherits an earlier game's score.",
+      "activity": "Show the end of one game and the starting value of a new game on separate cards. Initialize the new game.",
+      "hints": [
+        "Give each new game its stated starting value before processing events.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "One game ends at 9. A new game starts at 0. Explain the new score before its first hit.",
+      "feedback": "Give each new game its stated starting value before processing events."
+    },
+    {
+      "id": "p6-switch-creates-energy",
+      "period": "P6",
+      "sourcePackageHash": "202106a8bffa0afb8c05aa9338db458b5b913483f70a222c2bc1b8a579b7a7a1",
+      "sourceMisconceptionId": "switch-creates-energy",
+      "sourceObjectiveId": "g4-engineering-compare-flashlight-switches-o1",
+      "diagnosticDescription": "The switch creates the energy that lights the lamp.",
+      "activity": "Sketch the battery, lamp and conducting return path. Open and close the switch on the sketch.",
+      "hints": [
+        "The battery supplies energy. Closing the switch completes a conducting path; the switch does not create energy.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Explain why closing a switch does not create energy.",
+      "feedback": "The battery supplies energy. Closing the switch completes a conducting path; the switch does not create energy."
+    },
+    {
+      "id": "p6-one-pass-proves-reliability",
+      "period": "P6",
+      "sourcePackageHash": "202106a8bffa0afb8c05aa9338db458b5b913483f70a222c2bc1b8a579b7a7a1",
+      "sourceMisconceptionId": "one-pass-proves-reliability",
+      "sourceObjectiveId": "g4-engineering-compare-flashlight-switches-o2",
+      "diagnosticDescription": "One successful test proves the switch always works.",
+      "activity": "Read every actual or explicitly supplied trial from the accepted Engineering activity. Include failures and identify the source.",
+      "hints": [
+        "Record every trial, including failures. Five trials support a limited comparison, not a guarantee.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Explain what five trials support and what they do not guarantee.",
+      "feedback": "Record every trial, including failures. Five trials support a limited comparison, not a guarantee."
+    },
+    {
+      "id": "p6-change-everything-is-fair",
+      "period": "P6",
+      "sourcePackageHash": "202106a8bffa0afb8c05aa9338db458b5b913483f70a222c2bc1b8a579b7a7a1",
+      "sourceMisconceptionId": "change-everything-is-fair",
+      "sourceObjectiveId": "g4-engineering-compare-flashlight-switches-o2",
+      "diagnosticDescription": "Changing several components establishes which single change caused an outcome.",
+      "activity": "Name one contact feature to change. Keep battery, lamp, wires and procedure fixed.",
+      "hints": [
+        "Change one contact feature while keeping battery, bulb, wires and procedure fixed.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Propose a further test and explain which conditions you will keep fixed.",
+      "feedback": "Change one contact feature while keeping battery, bulb, wires and procedure fixed."
+    },
+    {
+      "id": "p6-tallest-bar-proves-best",
+      "period": "P6",
+      "sourcePackageHash": "202106a8bffa0afb8c05aa9338db458b5b913483f70a222c2bc1b8a579b7a7a1",
+      "sourceMisconceptionId": "tallest-bar-proves-best",
+      "sourceObjectiveId": "g4-engineering-compare-flashlight-switches-o3",
+      "diagnosticDescription": "The taller closed-switch bar proves the best design without checking open-switch control.",
+      "activity": "Read both closed-light bars, then inspect both open-dark counts. Both criteria matter.",
+      "hints": [
+        "Use both closed-light and open-dark observations, and acknowledge the limits of the tests.",
+        "Keep your first attempt. Explain how the evidence or representation changes your reasoning."
+      ],
+      "freshRetry": "Use available records to justify a choice. Without data, explain a plan only.",
+      "feedback": "Use both closed-light and open-dark observations, and acknowledge the limits of the tests."
+    }
+  ],
+  "selection": "Six retrieval prompts cover the six periods. Use the actual response to select relevant cards with the learner. Cards are passive reference material, not 23 mandatory lessons. The teacher chooses a path; no automatic adaptive router is claimed.",
+  "misconceptionScope": "Each of the 23 accepted source misconceptions has a specifically attributed activity, guidance and retry card. The candidate declares two cross-cutting support misconceptions; source IDs on cards remain source references, not machine diagnoses or mastery updates.",
+  "independentBoundary": "Do not open guidance before the first attempt. Offer the matching fresh question without worked guidance; oral explanations or pupil-directed scribing are valid. A lesson not attempted is not a deficit.",
+  "access": "Read the selected card aloud; use paper, counters, labels and oral/scribed responses. No dragging, color, typing speed or network dependency. Keep examples separate from independent evidence.",
+  "timing": "20 minutes is proposed, not measured. Use brief oral retrieval and one relevant card/retry; do not require every card or extension. Rehearsal remains a gate.",
+  "extension": "Offer the counterexample task when the teacher judges readiness from the work. Learners needing more practice explain their next relevant step instead; no self-declared mastery trigger.",
+  "engineering": "Preserve group-kit safety and rotation from P6. No kit or approved dataset is supplied here. Distinguish performed tests, group observation, analysed provided observations and sketch-only work.",
+  "assessment": "Formative only. No official grades, record writes, persistence or automatic mastery/diagnostic claims.",
+  "learnerFacingCards": [
+    {
+      "period": "P1",
+      "sourceMisconceptionId": "digits-without-place-value",
+      "text": "Card 1. A mistake to check: The digits of a factor are multiplied as single units and their products are added. Better idea: Name the full place values before multiplying: 2 hundreds is 200, not 2. Reconnect: Represent 312 as 300, 10 and 2. Multiply each full value by 3 before combining."
+    },
+    {
+      "period": "P1",
+      "sourceMisconceptionId": "discard-regrouped-value",
+      "text": "Card 2. A mistake to check: Tens or hundreds formed by a partial product are discarded when writing the final digits. Better idea: Keep the value of every partial product and regroup it into the correct place rather than deleting it. Reconnect: Trade ten ones for one ten without throwing away value. Show how 4 times 4 ones becomes one ten and six ones."
+    },
+    {
+      "period": "P2",
+      "sourceMisconceptionId": "food-through-support-organs",
+      "text": "Card 1. A mistake to check: The swallowed food route is drawn through the liver or pancreas instead of distinguishing the juices they supply. Better idea: Keep the continuous food route separate from the liver and pancreas, which supply digestive juices. Reconnect: Use one arrow for swallowed food and different arrows for digestive juices. Place liver and pancreas beside the food route."
+    },
+    {
+      "period": "P2",
+      "sourceMisconceptionId": "stomach-absorbs-everything",
+      "text": "Card 2. A mistake to check: The stomach is treated as the place where all nutrients enter the body. Better idea: Most digested nutrients are absorbed through the small-intestine wall. Reconnect: Compare the stomach with the small intestine. Locate where most digested nutrients enter the body."
+    },
+    {
+      "period": "P2",
+      "sourceMisconceptionId": "absorbed-nutrients-disappear",
+      "text": "Card 3. A mistake to check: Nutrients that cross the wall are treated as disappearing from the model total. Better idea: Keep transferred tokens visible in the body region. Count both regions to conserve the total. Reconnect: Move paper nutrient tokens into a body region while keeping every token visible. Transferred tokens still exist."
+    },
+    {
+      "period": "P2",
+      "sourceMisconceptionId": "starting-vs-remaining",
+      "text": "Card 4. A mistake to check: The starting count is reported as still inside after tokens have crossed the wall. Better idea: The starting count describes both regions together. Subtract transferred tokens to find what remains inside. Reconnect: Label the starting total before moving tokens. Label the tokens still in the first region separately."
+    },
+    {
+      "period": "P2",
+      "sourceMisconceptionId": "transferred-vs-remaining",
+      "text": "Card 5. A mistake to check: The number transferred during a round is confused with the number remaining inside. Better idea: Transferred and remaining name different groups. Track the inside count after every transfer. Reconnect: Keep transferred and remaining tokens in two labelled groups. Point to the group named by each question."
+    },
+    {
+      "period": "P3",
+      "sourceMisconceptionId": "prediction-is-fact",
+      "text": "Card 1. A mistake to check: A plausible prediction is reported as something the story has already established. Better idea: Name the detail that makes the idea plausible, use might or may, and change the prediction if later evidence conflicts. Reconnect: Mark an early clue, your prediction and a later detail in the accepted reading text. Treat the prediction as a possibility."
+    },
+    {
+      "period": "P3",
+      "sourceMisconceptionId": "summary-is-detail-list",
+      "text": "Card 2. A mistake to check: A summary lists incidental details or invents an outcome instead of connecting the central problem, response and result. Better idea: Keep the problem, the action taken and the result supported by the story; remove details that do not explain that connection. Reconnect: Choose details that explain the main problem, response and result. Put minor details aside."
+    },
+    {
+      "period": "P4",
+      "sourceMisconceptionId": "inland-is-always-high",
+      "text": "Card 1. A mistake to check: Every inland location is assumed to be high or mountainous. Better idea: Inland means away from the coast. A broad terrain description does not determine every local elevation. Reconnect: Separate coastal or inland labels from evidence about elevation or a particular route. Use the accepted records."
+    },
+    {
+      "period": "P4",
+      "sourceMisconceptionId": "one-case-describes-everywhere",
+      "text": "Card 2. A mistake to check: One observation or place description is treated as evidence about all communities. Better idea: Name the place and observation, limit the conclusion to that evidence and seek additional observations. Reconnect: Compare what the two club records actually describe. One record does not describe every place."
+    },
+    {
+      "period": "P4",
+      "sourceMisconceptionId": "place-label-proves-safety",
+      "text": "Card 3. A mistake to check: Coastal or inland is treated as enough evidence to select a safe site. Better idea: Compare the actual site, path and local observations. A region label alone does not establish safety. Reconnect: Match each room or route claim to its actual observation. A place name does not establish safety."
+    },
+    {
+      "period": "P4",
+      "sourceMisconceptionId": "physical-region-equals-county",
+      "text": "Card 4. A mistake to check: General coast-to-inland landform descriptions are treated as exact county boundaries. Better idea: Use an administrative map for county boundaries. A physical sketch does not establish those lines. Reconnect: Use separate labels for a physical region and an administrative county. They answer different kinds of questions."
+    },
+    {
+      "period": "P4",
+      "sourceMisconceptionId": "one-criterion-proves-all-needs",
+      "text": "Card 5. A mistake to check: Evidence about a dry room or a clear path is treated as proving the other requirement too. Better idea: Check each requirement separately. Room and route observations answer different questions. Reconnect: Make separate columns for room conditions and route access. Check each need with relevant evidence."
+    },
+    {
+      "period": "P5",
+      "sourceMisconceptionId": "name-changes-with-value",
+      "text": "Card 1. A mistake to check: The variable's name is changed whenever its number changes. Better idea: Keep the name score fixed and replace the number stored beneath it. Reconnect: Keep the score name card fixed and replace only the number card when its value changes."
+    },
+    {
+      "period": "P5",
+      "sourceMisconceptionId": "replacement-means-add",
+      "text": "Card 2. A mistake to check: Set score to a number is treated as adding that number. Better idea: Set replaces the current value. Add uses the current value to calculate the next one. Reconnect: Compare set to 2 with add 2 from the same starting score of 4. Set replaces; add uses the previous value."
+    },
+    {
+      "period": "P5",
+      "sourceMisconceptionId": "reset-every-turn",
+      "text": "Card 3. A mistake to check: Initialization is repeated before every event, discarding the accumulated score. Better idea: Initialize at new-game start and retain the updated value between events. Reconnect: Initialize at the start of a new game. Keep the updated value between hits unless a reset event occurs."
+    },
+    {
+      "period": "P5",
+      "sourceMisconceptionId": "replacement-does-nothing",
+      "text": "Card 4. A mistake to check: A set instruction is ignored and the previous value is retained. Better idea: Follow every instruction in order. Set replaces the old value even if no points were earned. Reconnect: Follow every instruction in order, including set. Replace the number even when no points were earned."
+    },
+    {
+      "period": "P5",
+      "sourceMisconceptionId": "new-game-keeps-old-score",
+      "text": "Card 5. A mistake to check: A new game starts without initialization and inherits an earlier game's score. Better idea: Give each new game its stated starting value before processing events. Reconnect: Show the end of one game and the starting value of a new game on separate cards. Initialize the new game."
+    },
+    {
+      "period": "P6",
+      "sourceMisconceptionId": "switch-creates-energy",
+      "text": "Card 1. A mistake to check: The switch creates the energy that lights the lamp. Better idea: The battery supplies energy. Closing the switch completes a conducting path; the switch does not create energy. Reconnect: Sketch the battery, lamp and conducting return path. Open and close the switch on the sketch."
+    },
+    {
+      "period": "P6",
+      "sourceMisconceptionId": "one-pass-proves-reliability",
+      "text": "Card 2. A mistake to check: One successful test proves the switch always works. Better idea: Record every trial, including failures. Five trials support a limited comparison, not a guarantee. Reconnect: Read every actual or explicitly supplied trial from the accepted Engineering activity. Include failures and identify the source."
+    },
+    {
+      "period": "P6",
+      "sourceMisconceptionId": "change-everything-is-fair",
+      "text": "Card 3. A mistake to check: Changing several components establishes which single change caused an outcome. Better idea: Change one contact feature while keeping battery, bulb, wires and procedure fixed. Reconnect: Name one contact feature to change. Keep battery, lamp, wires and procedure fixed."
+    },
+    {
+      "period": "P6",
+      "sourceMisconceptionId": "tallest-bar-proves-best",
+      "text": "Card 4. A mistake to check: The taller closed-switch bar proves the best design without checking open-switch control. Better idea: Use both closed-light and open-dark observations, and acknowledge the limits of the tests. Reconnect: Read both closed-light bars, then inspect both open-dark counts. Both criteria matter."
+    }
+  ],
+  "framing": "Every source misconception is explicitly a mistake to check, immediately followed by its correct idea. Source IDs, activities, guidance and retries are unchanged."
+}

@@ -1,0 +1,36 @@
+{
+  "baseCommit": "364f33280d2e45d16d2096dad4ac325a9aa6b9df",
+  "workBranch": "integration/g4-e2e-t2",
+  "focusedTests": {
+    "passed": 44,
+    "failed": 0,
+    "skipped": 1,
+    "skip": "Existing sealed-loader symlink test is Windows-skipped; Linux private CI must execute it."
+  },
+  "lint": "PASS; explicit --no-ignore for scripts",
+  "nodeSyntaxChecks": "PASS for two CJS test launch/egress scripts",
+  "playwrightDiscovery": {
+    "tests": 5,
+    "executed": false
+  },
+  "localDatabaseMutations": false,
+  "localBrowserRun": false,
+  "localBuild": false,
+  "localFullTypes": false,
+  "acceptedPackageDiffFromBase": false,
+  "privateSuiteEntrypoint": [
+    "node",
+    "--import",
+    "tsx",
+    "scripts/e2e/run-school-day.ts"
+  ],
+  "credentialHandling": "Generated per-identity in runner memory, inherited environment only, no credential files; GitHub masking, trace/video off; seed output contains IDs only.",
+  "previewCredentialFilePresent": false,
+  "remainingGates": [
+    "Private e2e-school-day actual run",
+    "Full type/build checks in private CI",
+    "Atlas independent admission/spec review",
+    "Preview isolated target seed support and DEMO_MODE guards on later candidate"
+  ],
+  "publication": false
+}

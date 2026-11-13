@@ -1,0 +1,116 @@
+{
+  "role": "END_OF_DAY_REFLECTION; ENGLISH is an allowed day-subject carrier, not a required full language lesson pattern.",
+  "acceptedFoundations": [
+    {
+      "slot": "P1",
+      "version": "4.0.0-schoolday-primary-math.2-draft.1",
+      "key": "g4-math-three-digit-products",
+      "packageHash": "df24c30a680e745006ef124f671a26cccb1bdf64a8ec9f79b3273e8ba4d98eb2",
+      "candidateSha256": "4fe423deb164b80ee63f4144d15cd34fcf206b879c244f4631b2d136616fb2dc",
+      "subject": "MATH",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-math.2-draft.1/g4-math-three-digit-products",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-math.2-draft.1/g4-math-three-digit-products.json",
+      "reviewSha256": "96694b2babb199754c7e8d77f64c6fb406d6e1a1d1e02d8a701fac18c0f16ffc"
+    },
+    {
+      "slot": "P2",
+      "version": "4.0.0-schoolday-primary-science.2-draft.1",
+      "key": "g4-science-food-path-and-absorption",
+      "packageHash": "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a",
+      "candidateSha256": "b481157bde0e0a509c99220f2a80afd5ba65f97e6fa4efe23b04670d37e5c1d7",
+      "subject": "SCIENCE",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-science.2-draft.1/g4-science-food-path-and-absorption",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-science.2-draft.1/g4-science-food-path-and-absorption.json",
+      "reviewSha256": "6c90aa6e54fe7603e13e44524da7f4a88479eb178e536f94b21bc0cab5cc87e9"
+    },
+    {
+      "slot": "P3",
+      "version": "4.0.0-schoolday-primary-english.2-draft.1",
+      "key": "g4-english-predict-question-summarize",
+      "packageHash": "39c9cafb634914512bd4cf396cdb454b2770a9057e5bd93734a6787e8757f0e6",
+      "candidateSha256": "c28b735becfc291cdd5da0e91a1452ff5abc156bbb776ec7d937ebd6d631fdd0",
+      "subject": "ENGLISH",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-english.2-draft.1/g4-english-predict-question-summarize",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-english.2-draft.1/g4-english-predict-question-summarize.json",
+      "reviewSha256": "bc1ded25ff3aacf63721fc517720a5da366a0717aba907d0b77459a1461d12b1"
+    },
+    {
+      "slot": "P4",
+      "version": "4.0.0-schoolday-primary-social-studies.2-draft.1",
+      "key": "g4-social-studies-coast-inland-evidence",
+      "packageHash": "924e57dcc56e65c20eaedb5133c70d84a433f935c898349ac053df22b584cd04",
+      "candidateSha256": "3808f2a1237d0087852f813547ef3f7f77cef549d308dd66d737b09d1a52e1bb",
+      "subject": "SOCIAL_STUDIES",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-social-studies.2-draft.1/g4-social-studies-coast-inland-evidence",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-social-studies.2-draft.1/g4-social-studies-coast-inland-evidence.json",
+      "reviewSha256": "86929c3b76e785b3318a44c9082d8d0ad74190c8c2724133b1b2c594dd9d2962"
+    },
+    {
+      "slot": "P5",
+      "version": "4.0.0-schoolday-primary-computing.2-draft.1",
+      "key": "g4-computing-keep-score-with-variables",
+      "packageHash": "be00b57563b01f490e99768e2787fd46271e446bf97d8a6d8c790a7f4deaba43",
+      "candidateSha256": "ec40eb4790a453ceccbccbdb32a8cfc88cd47a56808d7084e4bac2cd67db85f1",
+      "subject": "COMPUTER_SCIENCE",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-computing.2-draft.1/g4-computing-keep-score-with-variables",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-computing.2-draft.1/g4-computing-keep-score-with-variables.json",
+      "reviewSha256": "87b064edaae94c957b8108ef1e598cf671d3a21ef6786f422b05bff42eb1bac4"
+    },
+    {
+      "slot": "P6",
+      "version": "4.0.0-schoolday-primary-engineering.2-draft.1",
+      "key": "g4-engineering-compare-flashlight-switches",
+      "packageHash": "202106a8bffa0afb8c05aa9338db458b5b913483f70a222c2bc1b8a579b7a7a1",
+      "candidateSha256": "68529397f37a3f68b7b0d6ab985f95c947bc71bef42f557c05d340daca014229",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "directory": "curriculum/factory-v4/drafts/4.0.0-schoolday-primary-engineering.2-draft.1/g4-engineering-compare-flashlight-switches",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "reviewCommit": "a17bc28d5323ce392a1a83d2d699f0a65d47ccf6",
+      "reviewPath": "curriculum/program/stem-v1/reviews/4.0.0-schoolday-primary-engineering.2-draft.1/g4-engineering-compare-flashlight-switches.json",
+      "reviewSha256": "8947517fccb4b510ca5b43c7f00a8ba5d13eab33246c15bfea8523ac617e9bc7"
+    }
+  ],
+  "response": "Short written reflection or pupil-directed oral/scribed response, with labelled sketches if useful.",
+  "criteria": [
+    "Specific work actually attempted",
+    "Relevant evidence and honest source labels",
+    "Meaningful connection across periods",
+    "Justified revision, retained idea or uncertainty",
+    "One answerable question and possible evidence"
+  ],
+  "timing": "10 minutes is proposed, not a measured rehearsal.",
+  "boundaries": "No prefilled success, physical test or all-period completion claims; no official grade, mastery assignment or persistent intervention. A supplied example remains explicitly fictional."
+}

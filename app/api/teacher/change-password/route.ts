@@ -1,4 +1,4 @@
-// route-policy: auth=session; scope=record; authority=self; rationale=a signed-in teacher changes only their own password after re-entering the current one; revokes their earlier sessions
+// route-policy: auth=session; scope=record; authority=self; rationale=a signed-in teacher changes only their own password after re-entering the current one; revokes their earlier sessions; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
@@ -6,6 +6,8 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { advanceSecurityStamp } from "@/lib/auth/sessionRevocation";
 import { logAudit } from "@/lib/audit";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 const ChangePasswordSchema = z.object({
   currentPassword: z.string().min(1),
@@ -16,6 +18,8 @@ export async function PATCH(req: Request) {
   try {
     const teacher = await requireRole("TEACHER");
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json().catch(() => null);
     const parsed = ChangePasswordSchema.safeParse(body);
     if (!parsed.success) {
@@ -59,6 +63,8 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json({ ok: true, reauthenticate: true });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json(
       { error: err?.message ?? "Internal error" },
       { status: err?.status ?? 500 }

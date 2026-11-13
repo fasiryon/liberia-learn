@@ -1,4 +1,4 @@
-// route-policy: auth=session; scope=tenant; authority=placement-review; rationale=a same-school reviewer records an instructional recommendation and never changes the official grade
+// route-policy: auth=session; scope=tenant; authority=placement-review; rationale=school placement review pending founder decision (AT-GRADE-01-2D): a same-school reviewer (PLACEMENT_REVIEW) records an instructional recommendation and never changes the official grade; no platform-admin bypass of the school scope
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { recordPlacementReview } from "@/lib/placementAuthority/decisionService";

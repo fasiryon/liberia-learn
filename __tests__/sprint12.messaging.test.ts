@@ -22,7 +22,12 @@ vi.mock("@/lib/db", () => ({
     },
     student: {
       findFirst: vi.fn(),
+      findUnique: vi.fn(),
     },
+    // AT-GRADE-01-2C: the reply route checks the recipient's class through lib/authz/classAuthority.
+    studentGuardian: { findMany: vi.fn() },
+    class: { findUnique: vi.fn() },
+    teacherAssignment: { findMany: vi.fn() },
     enrollment: {
       findFirst: vi.fn(),
     },
@@ -243,6 +248,11 @@ describe("POST /api/teacher/messages/reply", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockPrisma.message.findFirst.mockResolvedValue({ senderRole: "STUDENT", recipientRole: "TEACHER", fromUserId: "student-1", toUserId: "teacher-1" });
+    // AT-GRADE-01-2C: the recipient is a school-1 STUDENT enrolled in teacher-1's class.
+    mockPrisma.user.findUnique.mockResolvedValue({ id: "student-1", role: "STUDENT", schoolId: "school-1" });
+    (mockPrisma as any).student.findUnique.mockResolvedValue({ enrollments: [{ classId: "class-1" }] });
+    (mockPrisma as any).class.findUnique.mockResolvedValue({ schoolId: "school-1", teacherId: "teacher-1" });
+    (mockPrisma as any).teacherAssignment.findMany.mockResolvedValue([]);
     mockPrisma.message.create.mockResolvedValue({ id: "reply-1" });
     mockPush.mockResolvedValue(undefined);
   });

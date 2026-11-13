@@ -17,6 +17,7 @@ import type { AgentDefinition } from "@/lib/agents/types";
  */
 export const liberialearnFamilyAgent: AgentDefinition = {
   name: "liberialearn-family",
+  audience: "guardian",
   description: "SMS assistant for guardians: student progress, attendance, homework, teacher contact.",
   systemPromptKey: "agent.liberialearn-family.system",
   toolAllowlist: [

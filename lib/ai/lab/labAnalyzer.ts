@@ -16,6 +16,20 @@ const LabAnalysisSchema = z.object({
 
 export type LabAnalysis = z.infer<typeof LabAnalysisSchema>;
 
+/**
+ * What the analyzer returns (AT-R-LAB). A withheld analysis (moderation refused or was uncertain) carries no score at
+ * all, never a zero. A model analysis carries its score only as a PROVISIONAL AI suggestion with scorer provenance;
+ * it is not learner performance until an independent (teacher) review admits a score. Scorer provenance is distinct
+ * from student assistance (aiAssistUsed), which this module does not decide.
+ */
+export type LabScoreProvenance = { scorer: "AI_MODEL"; status: "PROVISIONAL"; model: string | null };
+export type LabAnalysisResult = Omit<LabAnalysis, "suggestedScore"> & {
+  status: "ANALYZED" | "WITHHELD";
+  suggestedScore: number | null;
+  withheldReason: "INPUT_MODERATION" | "OUTPUT_MODERATION" | null;
+  scoreProvenance: LabScoreProvenance | null;
+};
+
 export type LabDefinition = {
   title: string;
   subject: string;
@@ -25,9 +39,12 @@ export type LabDefinition = {
   connectionToLesson?: string;
 };
 
-function safeFallbackAnalysis(): LabAnalysis {
+function safeFallbackAnalysis(reason: "INPUT_MODERATION" | "OUTPUT_MODERATION"): LabAnalysisResult {
   return {
-    suggestedScore: 0,
+    status: "WITHHELD",
+    withheldReason: reason,
+    suggestedScore: null,
+    scoreProvenance: null,
     observationFeedback: "We could not generate feedback for this observation right now. Please talk to your teacher.",
     conclusionFeedback: "We could not generate feedback for this conclusion right now. Please talk to your teacher.",
     whatWentWell: ["Your teacher will review this lab directly."],
@@ -52,7 +69,7 @@ export async function analyzeLabSession(params: {
   observations: Record<string, any>;
   conclusions: string;
   gradeLevel: number;
-}): Promise<LabAnalysis> {
+}): Promise<LabAnalysisResult> {
   const inputVerdict = await moderateText(params.conclusions, "input", { audience: "minor" });
   if (inputVerdict.verdict !== "SAFE") {
     await enqueueEscalation({
@@ -60,7 +77,7 @@ export async function analyzeLabSession(params: {
       reason: `Lab session conclusions flagged unsafe on input moderation (lab: ${params.lab.title}).`,
       priority: "HIGH",
     });
-    return safeFallbackAnalysis();
+    return safeFallbackAnalysis("INPUT_MODERATION");
   }
 
   const messages = [
@@ -102,6 +119,7 @@ export async function analyzeLabSession(params: {
   }
 
   let analysis = parseAnalysis(result.content);
+  let model: string | null = typeof result.model === "string" ? result.model : null;
 
   // Output moderation, same pattern as runtime.ts and groundedAnswerService:
   // one regeneration attempt with an explicit K-12 safety instruction, then
@@ -124,15 +142,16 @@ export async function analyzeLabSession(params: {
         throw new Error("still_unsafe_after_retry");
       }
       analysis = retryAnalysis;
+      model = typeof retryResult.model === "string" ? retryResult.model : model;
     } catch {
       await enqueueEscalation({
         agentName: "lib.ai.lab.labAnalyzer",
         reason: `Lab session AI feedback flagged unsafe twice for a K-12 audience (lab: ${params.lab.title}).`,
         priority: "HIGH",
       });
-      return safeFallbackAnalysis();
+      return safeFallbackAnalysis("OUTPUT_MODERATION");
     }
   }
 
-  return analysis;
+  return { ...analysis, status: "ANALYZED", withheldReason: null, scoreProvenance: { scorer: "AI_MODEL", status: "PROVISIONAL", model } };
 }

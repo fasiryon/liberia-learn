@@ -1,0 +1,163 @@
+{
+  "registryVersion": "teaching-blocks/1.2.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-schoolday-grade4-eod.1-draft.1",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g4-eod-evidence-connections",
+  "lessonId": "schoolday:g4-eod-evidence-connections",
+  "grade": 4,
+  "subject": "ENGLISH",
+  "title": "Connect the day with evidence",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-grade4-eod-author/1.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "ORIGINAL_FACTORY_DRAFT",
+    "authoringPlan": "lib/content-factory/v4/grade4Roles/lessonAuthor.ts",
+    "legacyRecordsReplaced": false
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "programOrderId": "GO-G04-EOD",
+  "courseId": null,
+  "unit": null,
+  "orderKind": "END_OF_DAY_REFLECTION",
+  "inputPins": {
+    "manifestSha256": "37ebeb608bad49b515b1de81f11c14c3d41d266a7fc74ee7bec5ae299a045748",
+    "frontendCommit": "ea3c033e4a6d1de2499633f92a86d322c74e207b"
+  },
+  "candidateSha256": "50a464fe28b34349e268bbddcc1ed5d2b657230239aa8619648b415b0d2fc17e",
+  "blueprintHash": "10b6a12db0900c159664cbd7d2cfd810277280c765f9dd5adc34a212c5ac32b0",
+  "learnerProjectionSha256": "4a81e464262dfa9fa2444e399fde16796c0720a6fe55906f952a417329638c8b",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "LANGUAGE",
+    "balance": {
+      "explanationSeconds": 74,
+      "activitySeconds": 680,
+      "activityShare": 0.902
+    },
+    "practice": {
+      "g4-eod-evidence-connections-o1": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 0,
+        "mistakes": 0,
+        "transfer": 4
+      },
+      "g4-eod-evidence-connections-o2": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 0,
+        "mistakes": 0,
+        "transfer": 4
+      },
+      "g4-eod-evidence-connections-o3": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 0,
+        "mistakes": 0,
+        "transfer": 4
+      }
+    },
+    "totals": {
+      "visuals": 3,
+      "workedExamples": 0,
+      "guided": 9,
+      "independent": 0,
+      "mistakes": 0,
+      "transfer": 12,
+      "problems": 7
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "90% activity (target 65â€“75%); do not pad with repetitive questions to reach it."
+      },
+      {
+        "code": "v4_explanation_too_thin",
+        "severity": "ADVISORY",
+        "detail": "Very little explanation; confirm learners are taught before they practise."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 3,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-eod-evidence-connections-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-eod-evidence-connections-o2",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-eod-evidence-connections-o3",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING",
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ],
+  "files": {
+    "candidate.json": "7f94125573dd475c3c8f6360a97f4d2523d2d71899cd2d4e56fb57c7fc956882",
+    "visual-teaching.json": "3dcc70ef6c6482f66db58a5abe6b66fa81207e36f8b18a017d5dc42eeab8991b",
+    "blueprint.json": "438cc54950023b45ded47153366bb486a81ff3b6f2517a063a069c24893230a4",
+    "factory-artifact.json": "9b96664feb14364783dd85873267bffa0575b0cdb6c20f75de5b715bf0bec292",
+    "learner-projection.json": "a5b4147bb8725feb196e3f6622a0452d2aa390b9346bde1a4b37de5de5009067",
+    "factory-receipt.json": "fd443369296a6f602aad3d01cf6bdf07d37172bde09122818413d856bb219e79",
+    "paper-alternative.txt": "3aeee66ce83e165b8ec27da4cdf351fd023365677f9f647284404f545ef57d73",
+    "academic-review.json": "9df4d3d9d9e26b8edd8f97cc1f70974dc9836267b14f17963a7f4755e88074af",
+    "teacher-guide.json": "a1aa1764c1a71e2d18e40db511cd77fe5426d493232159ef9ad87690ee460f4b"
+  },
+  "unicodeNormalization": "NFC",
+  "packageHash": "f99247e183ee0653787d97354202974d1d3ad26e92e09bf5a5898230e2ef7791"
+}

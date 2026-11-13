@@ -22,18 +22,13 @@ export type AttendanceServer = {
 };
 
 export function resolveAttendance(
-  server: AttendanceServer | null,
-  client: AttendanceClient
+  _server: AttendanceServer | null,
+  _client: AttendanceClient
 ): { action: "apply"; status: AttendanceClient["status"]; markedAt: Date } | { action: "conflict"; hint: string } {
-  // Policy: last-write-wins by timestamp (clientUpdatedAt vs server markedAt).
-  if (server?.markedAt) {
-    const serverTime = new Date(server.markedAt).getTime();
-    const clientTime = new Date(client.clientUpdatedAt).getTime();
-    if (serverTime > clientTime) {
-      return { action: "conflict", hint: "attendance_last_write_wins_by_timestamp" };
-    }
-  }
-  return { action: "apply", status: client.status, markedAt: new Date(client.clientUpdatedAt) };
+  // Device timestamps never grant canonical attendance write authority.
+  // Keep this compatibility resolver fail-closed; a staff-reviewed workflow
+  // must use its own authenticated attendance writer.
+  return { action: "conflict", hint: "attendance_requires_teacher_review" };
 }
 
 export type SubmissionClient = {

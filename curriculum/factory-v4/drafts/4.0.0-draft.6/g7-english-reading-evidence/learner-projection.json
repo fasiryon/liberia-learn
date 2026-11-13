@@ -1,0 +1,459 @@
+{
+  "contractVersion": "lesson-experience/1.0.0",
+  "id": "cv4-cand-g7-english-reading-evidence",
+  "version": "4.0.0-draft.6",
+  "title": "Generated: Read an informational explanation",
+  "subject": "ENGLISH",
+  "grade": 7,
+  "ageBand": "JUNIOR_SECONDARY",
+  "authority": {
+    "status": "CURRICULUM_V2_DRAFT",
+    "note": "Interactive Learning V4 DRAFT candidate for english-g7-waec-style-reading-and-writing-performance. Not bound to an MOE objective or release, not reviewed, not approved, not published.",
+    "candidateContentIds": [
+      "english-g7-waec-style-reading-and-writing-performance"
+    ],
+    "releaseId": null,
+    "releaseIdentity": null
+  },
+  "objectives": [
+    {
+      "id": "ll-g7-eng-read-infer",
+      "statement": "Read an informational text, explain words from context, and answer literal and inferential questions about it.",
+      "conceptId": "ll-g7-eng-read-infer",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ll-g7-eng-cite-evidence",
+      "statement": "Select and quote the sentences in a text that support an answer, and explain how they support it.",
+      "conceptId": "ll-g7-eng-cite-evidence",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ll-g7-eng-evidence-paragraph",
+      "statement": "Write and revise a short paragraph that makes a claim about a text, supports it with quoted evidence and explains it.",
+      "conceptId": "ll-g7-eng-evidence-paragraph",
+      "standardCodes": [],
+      "skillIds": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "generated-1",
+      "type": "EXPLANATION",
+      "title": "Read an informational explanation",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "This original informational passage explains an invented seed-library system. It gives definitions, procedures and reasons rather than telling a narrative. Keep the invented example separate from claims about real schools. Read the complete passage before answering."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "This original informational passage explains an invented seed-library system. It gives definitions, procedures and reasons rather than telling a narrative. Keep the invented example separate from claims about real schools. Read the complete passage before answering. How a seed library works. A seed library is a shared collection of seeds for planting. In this invented school example, families contribute in several ways. Some donate seeds; others clean storage tins or teach pupils when to plant. No family must pay money to take part. Pupils label each tin with the seed type and record each loan. The record helps the group know what is available. Borrowers return some seeds after their harvest so the collection can be used again. As a result, more pupils can borrow seeds in the next planting season. Dry storage helps protect the collection. Damp seeds may develop mould and become unsuitable for planting. Pupils inspect the tins each week and keep them in a dry cupboard. This example explains a possible system; it does not report measured results from a real school.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "READ",
+        "blocks": [
+          {
+            "type": "READING_PASSAGE",
+            "id": "seed-passage",
+            "title": "How a seed library works",
+            "paragraphs": [
+              "A seed library is a shared collection of seeds for planting. In this invented school example, families contribute in several ways. Some donate seeds; others clean storage tins or teach pupils when to plant. No family must pay money to take part.",
+              "Pupils label each tin with the seed type and record each loan. The record helps the group know what is available. Borrowers return some seeds after their harvest so the collection can be used again. As a result, more pupils can borrow seeds in the next planting season.",
+              "Dry storage helps protect the collection. Damp seeds may develop mould and become unsuitable for planting. Pupils inspect the tins each week and keep them in a dry cupboard. This example explains a possible system; it does not report measured results from a real school."
+            ],
+            "glossary": [],
+            "origin": {
+              "kind": "ORIGINAL_FOR_LIBERIALEARN",
+              "license": "Original synthetic teaching text; draft review only",
+              "attribution": "LiberiaLearn Content Factory draft.6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-2",
+      "type": "PRACTICE",
+      "title": "Read for meaning and causes",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "A literal answer restates information the text gives. An inference connects a detail to a reason. For example, the loan record helps pupils check availability because it tracks which seeds have been borrowed. Explain a word from its surrounding sentences before consulting a dictionary."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-2-response-0",
+            "prompt": "Explain unsuitable in your own words using the sentences about damp seeds and planting. Write a new sentence that uses the word correctly.",
+            "minLength": 20
+          },
+          {
+            "id": "generated-2-response-1",
+            "prompt": "Why does the passage recommend a dry cupboard? Quote a relevant detail and explain the cause-and-effect link.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "A literal answer restates information the text gives. An inference connects a detail to a reason. For example, the loan record helps pupils check availability because it tracks which seeds have been borrowed. Explain a word from its surrounding sentences before consulting a dictionary. What do pupils record? Options: Each loan; Only money paid by families. Explain unsuitable in your own words using the sentences about damp seeds and planting. Write a new sentence that uses the word correctly. Why does the passage recommend a dry cupboard? Quote a relevant detail and explain the cause-and-effect link.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "UNDERSTAND",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "literal-record",
+            "items": [
+              {
+                "id": "literal-record-item",
+                "prompt": "What do pupils record?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "Each loan",
+                    "feedback": "The passage explicitly states that pupils record each loan."
+                  },
+                  {
+                    "id": "other",
+                    "text": "Only money paid by families",
+                    "feedback": "No payment is required. A loan record tracks borrowing, not payments."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-english-misconception"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-3",
+      "type": "PRACTICE",
+      "title": "Distinguish direct evidence and consequences",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "A statement naming different contributions directly supports a claim about the ways families help. A statement describing more pupils borrowing is a consequence of the system. It can support a claim about access, but does not itself specify the forms of help. The precise claim determines which evidence answers the question."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-3-response-0",
+            "prompt": "For a separate claim that the system supports access in later seasons, quote a relevant sentence and explain its link. Another relevant quotation with sound reasoning is acceptable.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "A statement naming different contributions directly supports a claim about the ways families help. A statement describing more pupils borrowing is a consequence of the system. It can support a claim about access, but does not itself specify the forms of help. The precise claim determines which evidence answers the question. How a seed library works. Some donate seeds; others clean storage tins or teach pupils when to plant. As a result, more pupils can borrow seeds in the next planting season. Pupils inspect the tins each week and keep them in a dry cupboard. Which sentence explicitly names different ways families help? Select the sentence naming the family actions. For a separate claim that the system supports access in later seasons, quote a relevant sentence and explain its link. Another relevant quotation with sound reasoning is acceptable.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "ANALYZE",
+        "blocks": [
+          {
+            "type": "SOURCE_EVIDENCE",
+            "id": "direct-evidence",
+            "source": {
+              "title": "How a seed library works",
+              "kind": "PASSAGE",
+              "origin": {
+                "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                "license": "Original synthetic teaching text; draft review only",
+                "attribution": "LiberiaLearn Content Factory draft.6"
+              }
+            },
+            "question": "Which sentence explicitly names different ways families help? Select the sentence naming the family actions.",
+            "sentences": [
+              {
+                "id": "actions",
+                "text": "Some donate seeds; others clean storage tins or teach pupils when to plant.",
+                "supports": true,
+                "why": "Donating seeds, cleaning tins and teaching are explicitly named actions."
+              },
+              {
+                "id": "consequence",
+                "text": "As a result, more pupils can borrow seeds in the next planting season.",
+                "supports": false,
+                "why": "This states a consequence, improved access. It does not explicitly name the different forms of help; it can support a different claim about access."
+              },
+              {
+                "id": "storage",
+                "text": "Pupils inspect the tins each week and keep them in a dry cupboard.",
+                "supports": false,
+                "why": "This describes pupil storage routines, not the different forms of family help."
+              }
+            ],
+            "minSelect": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-4",
+      "type": "PRACTICE",
+      "title": "Write a supported paragraph",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "Choose one claim about this example: families can help without paying, returning seeds supports later borrowing, or dry storage matters. Quote one relevant sentence and explain its connection in your own words. Different well-supported claims and quotations are acceptable; there is no single compulsory paragraph."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Choose one claim about this example: families can help without paying, returning seeds supports later borrowing, or dry storage matters. Quote one relevant sentence and explain its connection in your own words. Different well-supported claims and quotations are acceptable; there is no single compulsory paragraph. Write 60 to 100 words with a claim, an exact quotation and an explanation. Limit your conclusion to this invented example. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "CONSTRUCT",
+        "blocks": [
+          {
+            "type": "WRITING_ORGANIZER",
+            "id": "seed-writing",
+            "prompt": "Write 60 to 100 words with a claim, an exact quotation and an explanation. Limit your conclusion to this invented example.",
+            "sourceBlockId": "seed-passage",
+            "fields": [
+              {
+                "id": "claim",
+                "label": "Answer or claim",
+                "guidance": "State a precise answer to the question.",
+                "minWords": 8
+              },
+              {
+                "id": "reason",
+                "label": "Evidence and explanation",
+                "guidance": "Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+                "minWords": 15
+              }
+            ],
+            "checklist": [
+              "My answer addresses the question.",
+              "I explained the evidence or calculation.",
+              "I checked the limits of my conclusion."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-5",
+      "type": "PRACTICE",
+      "title": "Revise the reasoning",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "Reread your paragraph with the passage. Verify the quotation, remove a claim the passage cannot establish and make the link between detail and claim clearer. For instance, this example cannot prove that all seed libraries always succeed. Keep your original and revised sentences to explain your revision."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-5-response-0",
+            "prompt": "Give one original sentence, its revision and the reason the change improves the support. Explain whether your evidence names a cause, an action or a consequence.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Reread your paragraph with the passage. Verify the quotation, remove a claim the passage cannot establish and make the link between detail and claim clearer. For instance, this example cannot prove that all seed libraries always succeed. Keep your original and revised sentences to explain your revision. Revise your paragraph for accurate quotation, precise scope and explained evidence. Different defensible revisions are welcome. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish. Give one original sentence, its revision and the reason the change improves the support. Explain whether your evidence names a cause, an action or a consequence.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "REVISE",
+        "blocks": [
+          {
+            "type": "WRITING_ORGANIZER",
+            "id": "seed-revision",
+            "prompt": "Revise your paragraph for accurate quotation, precise scope and explained evidence. Different defensible revisions are welcome.",
+            "sourceBlockId": "seed-passage",
+            "fields": [
+              {
+                "id": "claim",
+                "label": "Answer or claim",
+                "guidance": "State a precise answer to the question.",
+                "minWords": 8
+              },
+              {
+                "id": "reason",
+                "label": "Evidence and explanation",
+                "guidance": "Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+                "minWords": 15
+              }
+            ],
+            "checklist": [
+              "My answer addresses the question.",
+              "I explained the evidence or calculation.",
+              "I checked the limits of my conclusion."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-assess",
+      "type": "MASTERY_CHECK",
+      "title": "Independent assessment handoff",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessment": {
+          "assessmentId": "cv4-cand-g7-english-reading-evidence--generated-mastery",
+          "assessmentVersion": "4.0.0-draft.6",
+          "player": "ASSESSMENT_PLAYER_V2",
+          "scoring": "SERVER_AUTHORITY",
+          "objectiveIds": [
+            "ll-g7-eng-read-infer",
+            "ll-g7-eng-cite-evidence",
+            "ll-g7-eng-evidence-paragraph"
+          ],
+          "items": []
+        }
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+      },
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "objectiveIds": [
+          "ll-g7-eng-read-infer",
+          "ll-g7-eng-cite-evidence",
+          "ll-g7-eng-evidence-paragraph"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    }
+  ],
+  "offline": {
+    "packageable": true,
+    "requiredAssets": []
+  }
+}

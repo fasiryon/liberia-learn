@@ -1,0 +1,757 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "78cfaf819d4f3c3d767299571d4a5238af57abc3a2b88a496044b0fc6799cd22",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "ft07-o1",
+      "statement": "Represent fractions, including fractions equal to or greater than 1, on area models and a number line, naming the whole each fraction refers to.",
+      "standards": [
+        {
+          "reference": "moe-math-g7-s1-p2-fractions-con1",
+          "statement": "Operations on fractions",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj7",
+          "statement": "Find equivalent fraction.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft07-o2",
+      "statement": "Add and subtract fractions with like denominators, and with related denominators (e.g. halves, quarters, eighths), by using equivalent fractions.",
+      "standards": [
+        {
+          "reference": "moe-math-g7-s1-p2-fractions-con1",
+          "statement": "Operations on fractions",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj7",
+          "statement": "Find equivalent fraction.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft07-o3",
+      "statement": "Compare and order fractions using benchmarks (0, 1/2, 1), common denominators and the number line, and justify each comparison.",
+      "standards": [
+        {
+          "reference": "moe-math-g7-s1-p2-fractions-con1",
+          "statement": "Operations on fractions",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj7",
+          "statement": "Find equivalent fraction.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "FRACTION_MODEL",
+      "blockSha256": "5b4224ff1bf02e2b75d54201e4dfb35a7d6c956ec9b2458ba4c4f7b3edfc08b0",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Partition a whole and shade parts; connect the picture to the symbol. Learner action: Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "A bar split into 4 equal parts with 4 shaded: 4/4. One whole kilogram, split into four equal quarters.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: A bar split into 4 equal parts with 4 shaded: 4/4. One whole kilogram, split into four equal quarters.",
+        "responsePrompt": "Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 1,
+      "type": "FRACTION_MODEL",
+      "blockSha256": "e67d22fd720662e61cfc780bae45b44cd1f3af0b1fb4a9bbefd24a6381a0a9a2",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Partition a whole and shade parts; connect the picture to the symbol. Learner action: Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "A bar split into 4 equal parts with 1 shaded: 1/4. One quarter of a second equal kilogram bar. Together the two bars show 5/4 kilograms.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: A bar split into 4 equal parts with 1 shaded: 1/4. One quarter of a second equal kilogram bar. Together the two bars show 5/4 kilograms.",
+        "responsePrompt": "Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 2,
+      "type": "FRACTION_NUMBER_LINE",
+      "blockSha256": "0ca690141bb329ae58ebabcc15d830855392ce57a31c6e81ee6eaaeef3c621a3",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Place a fraction on a number line as a distance from zero. Learner action: Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Place 5/4. Count five quarter-steps from zero; one unit is one kilogram. A number line from 0 to 2 marked in 4ths.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Place 5/4. Count five quarter-steps from zero; one unit is one kilogram. A number line from 0 to 2 marked in 4ths.",
+        "responsePrompt": "Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 3,
+      "type": "FRACTION_EQUIVALENCE",
+      "blockSha256": "baae5faeb4b3a6a4646a9b4b404adc4f5e0f3cf604588f52f998c0ed47a93694",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Split every part again and see the same amount named differently. Learner action: Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "2/3 is the same amount as 4/6, 8/12. The same whole and amount: 2/3 = 4/6 = 8/12.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: 2/3 is the same amount as 4/6, 8/12. The same whole and amount: 2/3 = 4/6 = 8/12.",
+        "responsePrompt": "Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "e57b9e250db9c58a3ec268420a6e297c5fdbd6d7393423f18235c9bb07ab0072",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Add 1/2 and 1/3 of the same kilogram. Step 1: Rename both amounts in sixths. 1/2 = 3/6, 1/3 = 2/6 Step 2: Count pieces of the same size; keep the denominator. 3/6 + 2/6 = 5/6",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Add 1/2 and 1/3 of the same kilogram. Step 1: Rename both amounts in sixths. 1/2 = 3/6, 1/3 = 2/6 Step 2: Count pieces of the same size; keep the denominator. 3/6 + 2/6 = 5/6",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 1,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "9c524e17cfbb38ccf4020995cd31785b243858864115690591892a2fff82525f",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Order 1/2, 2/3 and 3/4. Step 1: On the same whole, use twelfths and the benchmarks zero, one half and one. 1/2 = 6/12, 2/3 = 8/12, 3/4 = 9/12 Step 2: Count equal intervals from zero. 1/2 < 2/3 < 3/4 < 1",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Order 1/2, 2/3 and 3/4. Step 1: On the same whole, use twelfths and the benchmarks zero, one half and one. 1/2 = 6/12, 2/3 = 8/12, 3/4 = 9/12 Step 2: Count equal intervals from zero. 1/2 < 2/3 < 3/4 < 1",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "e772863dff9d0c4323bec575861a200e6c21c139f97158014b5bbe537458d947",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Draw 6/4 on equal area bars, mark it on a number line and name the whole. Explain why it is beyond one.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "like-sum-item:OPTION:other",
+          "feedback": "You changed the size of the pieces. Three eighths plus two eighths is five eighths; the unit stays an eighth."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "3/8 + 2/8 = ? Options: 5/8; 5/16.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: 3/8 + 2/8 = ? Options: 5/8; 5/16.",
+        "responsePrompt": "Draw 6/4 on equal area bars, mark it on a number line and name the whole. Explain why it is beyond one. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "48669c7ea5ba50810805c16eb9f53dae247be6d0437fbe2cdbaedb1dbc4fe6b1",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Draw 6/4 on equal area bars, mark it on a number line and name the whole. Explain why it is beyond one.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "related-sum-item:OPTION:other",
+          "feedback": "You changed the size of the pieces. Rename 1/2 as 2/4, then add one quarter to make 3/4."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "1/2 + 1/4 = ? Options: 3/4; 2/6.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: 1/2 + 1/4 = ? Options: 3/4; 2/6.",
+        "responsePrompt": "Draw 6/4 on equal area bars, mark it on a number line and name the whole. Explain why it is beyond one. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 2,
+      "type": "FRACTION_NUMBER_LINE",
+      "blockSha256": "c954709a3a9fdddc46a85f1f304ac23a2a2ffc64c9c932e67d29e007b46df665",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Place a fraction on a number line as a distance from zero. Learner action: Draw 6/4 on equal area bars, mark it on a number line and name the whole. Explain why it is beyond one.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Place 4/4. Explain how four quarter-steps reach one whole. A number line from 0 to 2 marked in 4ths.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Place 4/4. Explain how four quarter-steps reach one whole. A number line from 0 to 2 marked in 4ths.",
+        "responsePrompt": "Draw 6/4 on equal area bars, mark it on a number line and name the whole. Explain why it is beyond one. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "d5d973dbfb8d5f0cfd75818c86378b2fd785244d9ade540aa42d8bb6ff202c16",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify. Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "related-difference-item:OPTION:other",
+          "feedback": "You changed the size of the pieces. One third is 2/6. Subtract 2/6 from 5/6 to get 3/6 = 1/2."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "5/6 - 1/3 = ? Options: 1/2, equivalently 3/6; 4/3.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: 5/6 - 1/3 = ? Options: 1/2, equivalently 3/6; 4/3.",
+        "responsePrompt": "Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify. Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "d5b6c1c15cefd1941bb0fe1b8960bb4ac13334c9684ad96e0e9eb420d0cfa31d",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify. Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "like-difference-item:OPTION:other",
+          "feedback": "You changed the size of the pieces. Remove three of seven eighth-pieces. Four eighths remain; a zero denominator has no meaning."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "7/8 - 3/8 = ? Options: 1/2, equivalently 4/8; 4/0.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: 7/8 - 3/8 = ? Options: 1/2, equivalently 4/8; 4/0.",
+        "responsePrompt": "Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify. Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 2,
+      "type": "FRACTION_COMPARE",
+      "blockSha256": "0a16433a92c6405495748c17ccff154f623b891447826597a27f2a8384737798",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Compare two fractions with aligned bars and choose <, = or >. Learner action: Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify. Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Compare 5/8 and 3/4 of equal wholes. Compare 5/8 and 3/4.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Compare 5/8 and 3/4 of equal wholes. Compare 5/8 and 3/4.",
+        "responsePrompt": "Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify. Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 3,
+      "type": "FRACTION_NUMBER_LINE",
+      "blockSha256": "38acd1b30932614ce50ba3fc34063d18ba0af01b8a7d875aada1d073648d5550",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Place a fraction on a number line as a distance from zero. Learner action: Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify. Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Locate 6/4 without support. A number line from 0 to 2 marked in 4ths.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Locate 6/4 without support. A number line from 0 to 2 marked in 4ths.",
+        "responsePrompt": "Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify. Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "MISTAKE_ANALYSIS",
+      "blockSha256": "85675699ed2f6a737bb26c1f29fb283ac1d84c6acc0b1ee9898d3c422cceb6da",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Diagnose a worked attempt that contains a common misconception. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "OPTION:bigger",
+          "feedback": "A common denominator of 6 works. The problem is preserving equivalent amounts, not making denominators smaller."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Find 1/2 + 1/3. A learner wrote: 1/2 + 1/3 = 2/5 Why is this method wrong? Options: It adds denominators and changes the unit instead of renaming both fractions in sixths.; Any denominator bigger than 3 makes a sum too small..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find 1/2 + 1/3. A learner wrote: 1/2 + 1/3 = 2/5 Why is this method wrong? Options: It adds denominators and changes the unit instead of renaming both fractions in sixths.; Any denominator bigger than 3 makes a sum too small..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-6",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "a850c770759cf2b46ea5f7e21096e466634f2402656088161305f2558f5df6ad",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Give the exact remaining mass and the approximation to two decimal places. Explain why the remainder is positive and smaller than 3/4 kg.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "seed-remainder-item:OPTION:other",
+          "feedback": "You treated a rounded estimate as an exact value. 5/12 is about 0.41666...; rounding to two places gives approximately 0.42 kg, not exact equality."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "After your calculation, which exact amount remains? Options: 5/12 kg, equivalently 10/24 kg; 0.42 kg exactly.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: After your calculation, which exact amount remains? Options: 5/12 kg, equivalently 10/24 kg; 0.42 kg exactly.",
+        "responsePrompt": "Give the exact remaining mass and the approximation to two decimal places. Explain why the remainder is positive and smaller than 3/4 kg. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

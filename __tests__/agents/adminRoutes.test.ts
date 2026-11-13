@@ -50,7 +50,7 @@ describe("GET /api/admin/agents/invocations", () => {
   });
 
   it("returns invocations and applies agentName/status filters", async () => {
-    requireUser.mockResolvedValue(admin);
+    requireUser.mockResolvedValue({ ...admin, isPlatformAdmin: true });
     const res = await invocationsGET(
       req("http://x/api/admin/agents/invocations?agentName=echo&status=SUCCESS")
     );
@@ -61,6 +61,13 @@ describe("GET /api/admin/agents/invocations", () => {
     const where = findMany.mock.calls[0][0].where;
     expect(where.agentName).toBe("echo");
     expect(where.status).toBe("SUCCESS");
+  });
+  it("denies school administrators before global invocation queries", async () => {
+    requireUser.mockResolvedValue(admin);
+    const res = await invocationsGET(req("http://x/api/admin/agents/invocations?userId=foreign-user"));
+    expect(res.status).toBe(403);
+    expect(findMany).not.toHaveBeenCalled();
+    expect(count).not.toHaveBeenCalled();
   });
 });
 

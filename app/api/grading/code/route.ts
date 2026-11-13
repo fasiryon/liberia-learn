@@ -1,4 +1,4 @@
-// route-policy: auth=session; scope=record; authority=student-self; rationale=grades the authenticated learner own code; idempotency keys replay only that learner submission
+// route-policy: auth=session; scope=record; authority=student-self; rationale=grades the authenticated learner own code for a lesson that reaches that learner through scheduled work or an active assignment to an own-school enrolled class (AT-SUBMIT-02; self-directed paths not authorized; non-disclosing 404) and its server-held exercise; an idempotency key replays only the same learner's exact request, otherwise 409; all before Judge0, writes or mastery (AT-GRADE-01 2e)
 /**
  * app/api/grading/code/route.ts  — NR-14C Phase 2
  *
@@ -26,6 +26,7 @@ import { requireRole } from "@/lib/auth";
 import { gradeCode, ALLOWED_LANGUAGE_ID_SET } from "@/lib/grading/gradeCode";
 import { checkRateLimit, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { recordAnswer, buildSkillKey } from "@/lib/adaptive/updateMastery";
+import { availableLessonForLearner, guardErrorStatus, idempotentReplay, lessonNotFound } from "@/lib/grading/studentSubmissionGuards";
 
 const RATE_LIMIT_WINDOW_MS = 3_600_000; // 1 hour
 const RATE_LIMIT_COUNT = 20;            // 20 submissions / student / hour
@@ -84,32 +85,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Idempotency — NR-14A pattern
-    if (clientSubmissionId) {
-      const existing = await prisma.gradedSubmission
-        .findUnique({ where: { clientSubmissionId } })
-        .catch(() => null);
-      if (existing) {
-        // An idempotency key replays only the caller's own submission; a key
-        // bound to another learner must never return that learner's work.
-        if (existing.studentId !== student.id) {
-          return NextResponse.json(
-            { error: "Idempotency key is already bound to a different submission", resolutionHint: "idempotency_key_payload_mismatch" },
-            { status: 409 },
-          );
-        }
-        return NextResponse.json({ ok: true, submission: existing }, { status: 200 });
-      }
-    }
-
-    // Look up lesson for grade/subject context
-    const lesson = await prisma.curriculumContent.findUnique({
-      where: { id: lessonId },
-      select: { grade: true, subject: true, unitId: true, contentId: true },
-    });
-    if (!lesson) {
-      return NextResponse.json({ error: "lesson_not_found" }, { status: 404 });
-    }
+    // The lesson must be available to this learner now (unknown and unavailable answer the same 404).
+    const lesson = await availableLessonForLearner(user, lessonId);
+    if (!lesson) return lessonNotFound();
 
     // Assessment authority is server-held. Learners may name an exercise but
     // never supply its expected outputs or hidden cases.
@@ -127,6 +105,12 @@ export async function POST(req: Request) {
     if (!Array.isArray(authoritativeCases) || authoritativeCases.length === 0 || authoritativeCases.length > 20) {
       return NextResponse.json({ error: "invalid_code_exercise_contract" }, { status: 500 });
     }
+
+    // Idempotency (NR-14A): only the same learner's exact request replays; anything else is 409.
+    const replay = await idempotentReplay(clientSubmissionId, {
+      studentId: student.id, lessonId, promptId, exerciseType: "code", submissionText: sourceCode,
+    });
+    if (replay) return replay;
 
     // Create pending submission
     const submission = await prisma.gradedSubmission.create({
@@ -196,9 +180,7 @@ export async function POST(req: Request) {
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "internal_error";
-    const status =
-      msg.includes("Unauthorized") ? 401 :
-      msg.includes("JUDGE0_API_KEY") ? 503 : 500;
+    const status = guardErrorStatus(err) ?? (msg.includes("JUDGE0_API_KEY") ? 503 : 500);
     return NextResponse.json({ error: msg }, { status });
   }
 }

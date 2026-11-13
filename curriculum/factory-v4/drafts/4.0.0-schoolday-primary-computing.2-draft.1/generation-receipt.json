@@ -1,0 +1,34 @@
+{
+  "version": "4.0.0-schoolday-primary-computing.2-draft.1",
+  "inputsSha256": "17064f4d9c9282c40223d247915b93c52f00232404daeeb8d3bb7c4a249b2608",
+  "independentDeterministicBuilds": 2,
+  "baselineDraft6ReceiptSha256": "c59d3623d3bd558398a50e30de62688bc066ca22238c3d188b2ef88c9cbe04ab",
+  "packages": [
+    {
+      "key": "g4-computing-keep-score-with-variables",
+      "programOrderId": "GO-G04-P5-COMPUTING-U1",
+      "packageHash": "be00b57563b01f490e99768e2787fd46271e446bf97d8a6d8c790a7f4deaba43",
+      "candidateSha256": "ec40eb4790a453ceccbccbdb32a8cfc88cd47a56808d7084e4bac2cd67db85f1"
+    }
+  ],
+  "productionWrites": false,
+  "approved": false,
+  "published": false,
+  "released": false,
+  "activated": false,
+  "previewEnabled": false,
+  "files": {
+    "g4-computing-keep-score-with-variables/candidate.json": "50d14b773b6132f56d9cee201eab045758e41e3002612b1aaa2cfba0b6742d9c",
+    "g4-computing-keep-score-with-variables/visual-teaching.json": "a23541823e904b12e9fb461cec2febf74027bfa8c308af586f85abf3dcd623b3",
+    "g4-computing-keep-score-with-variables/blueprint.json": "8b591ee3753a54d7b674a2041f10658629ae8523dc0c925fee64c84bf56d66a3",
+    "g4-computing-keep-score-with-variables/factory-artifact.json": "347dd90d2de14851a81918fe164d3e6d68e5c60235371ee4e8503ed8a35d2a02",
+    "g4-computing-keep-score-with-variables/learner-projection.json": "8c7e57ae09c5e6d50fa6e7e3751488dd0cfeb019ee3e7b6deeb744dd1c3d82b6",
+    "g4-computing-keep-score-with-variables/factory-receipt.json": "5a636f3cb981cd12fff5c13bcbaddb75e9758f0f2252b927c173f0a0a3e99d9f",
+    "g4-computing-keep-score-with-variables/paper-alternative.txt": "579f95a9aa0e9cbcd98f755d432671d5a021eda5ddf50a3c243dbd7572f160f7",
+    "g4-computing-keep-score-with-variables/academic-review.json": "c6e2d212865e7bf86074e0a89f4b384731765fd1576f10681758a87982d4a6d1",
+    "g4-computing-keep-score-with-variables/teacher-guide.json": "258b49eac6ec4b2a57173e73e402bf7d04e09feb4e94b93431fee65719636e8a",
+    "g4-computing-keep-score-with-variables/manifest.json": "57c8ff6bb32e2dbd9904a5c1569dc4d48c766dd953635f09270aff255df0aef4",
+    "review/complete-academic-packet.json": "950a3e03e270115068e86b8b36e0cc04241c480df5026761ef8e7788c923aa75",
+    "review/complete-academic-packet.md": "5c96a969a4d9b8cc08b6612565f44395e6985007df7b62b0ede7904ab13c017d"
+  }
+}

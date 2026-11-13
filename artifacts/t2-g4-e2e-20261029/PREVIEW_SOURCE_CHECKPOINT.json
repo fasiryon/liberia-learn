@@ -1,0 +1,79 @@
+{
+  "base": "364f33280d2e45d16d2096dad4ac325a9aa6b9df",
+  "priorPrivateFailure": {
+    "source": "02dae02e749576e187cca81f646e7be7d4355a30",
+    "run": 40910528300,
+    "status": "NOT_PASSED_AT_LOGIN; evidence publication succeeded",
+    "repairedBrowserOutcome": "PENDING_SINGLE_COORDINATED_RERUN"
+  },
+  "reusedProdCfg": {
+    "source": "27ea13680187135979ddd0163725d5f6a4dc77c1",
+    "independentAtlasDisposition": "ACCEPT code scope",
+    "exactThreeFileDiffVerified": true
+  },
+  "symlinkFixtureSource": "d4397b975a622e53161772e9f0effbb312f3f2fb",
+  "checks": {
+    "preview-final-focused.json": {
+      "numPassedTests": 81,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "g4-final-focused.json": {
+      "numPassedTests": 54,
+      "numFailedTests": 0,
+      "numPendingTests": 1
+    },
+    "preview-setup-refusal-check.json": {
+      "numPassedTests": 1,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "preview-build-RED.json": {
+      "numPassedTests": 3,
+      "numFailedTests": 3,
+      "numPendingTests": 0
+    },
+    "preview-build-GREEN.json": {
+      "numPassedTests": 6,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "preview-rate-limit-RED.json": {
+      "numPassedTests": 5,
+      "numFailedTests": 3,
+      "numPendingTests": 0
+    },
+    "preview-rate-limit-GREEN.json": {
+      "numPassedTests": 8,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "egress-options-RED.json": {
+      "numPassedTests": 1,
+      "numFailedTests": 2,
+      "numPendingTests": 0
+    },
+    "egress-options-GREEN.json": {
+      "numPassedTests": 7,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "preview-oauth-RED.json": {
+      "numPassedTests": 1,
+      "numFailedTests": 4,
+      "numPendingTests": 0
+    },
+    "preview-oauth-GREEN.json": {
+      "numPassedTests": 9,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    }
+  },
+  "playwrightDiscovered": 6,
+  "localBrowserRun": false,
+  "localFullTypesBuild": false,
+  "acceptedPackagesUnchanged": true,
+  "hostedSetupExecuted": false,
+  "productionMutation": false,
+  "deployment": false
+}

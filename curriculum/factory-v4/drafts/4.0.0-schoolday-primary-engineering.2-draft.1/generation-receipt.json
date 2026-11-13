@@ -1,0 +1,34 @@
+{
+  "version": "4.0.0-schoolday-primary-engineering.2-draft.1",
+  "inputsSha256": "8d49e6862a01673549db9ac1ad159ae385ca6aa50adfb3e46330fa6cf1191ba0",
+  "independentDeterministicBuilds": 2,
+  "baselineDraft6ReceiptSha256": "c59d3623d3bd558398a50e30de62688bc066ca22238c3d188b2ef88c9cbe04ab",
+  "packages": [
+    {
+      "key": "g4-engineering-compare-flashlight-switches",
+      "programOrderId": "GO-G04-P6-ENGINEERING-U1",
+      "packageHash": "202106a8bffa0afb8c05aa9338db458b5b913483f70a222c2bc1b8a579b7a7a1",
+      "candidateSha256": "68529397f37a3f68b7b0d6ab985f95c947bc71bef42f557c05d340daca014229"
+    }
+  ],
+  "productionWrites": false,
+  "approved": false,
+  "published": false,
+  "released": false,
+  "activated": false,
+  "previewEnabled": false,
+  "files": {
+    "g4-engineering-compare-flashlight-switches/candidate.json": "5606ae0b83ddb169b6539d823978830a707b6c1265d146b0d6ed1f346c4a0fe6",
+    "g4-engineering-compare-flashlight-switches/visual-teaching.json": "202e55a1961e1dcc874151cd50bf26f85df41aea0f6e151b5c0bcff31db0441c",
+    "g4-engineering-compare-flashlight-switches/blueprint.json": "736b635783721f6193927e7146af3ee27d19753aa7bfd07f17cc06c4cd8b8cf9",
+    "g4-engineering-compare-flashlight-switches/factory-artifact.json": "fb5d88b1e4f7e02c1b8ecb8fb738e237e27ffe5a0053d60ac05fd0da4a25b5c9",
+    "g4-engineering-compare-flashlight-switches/learner-projection.json": "dfd81e5d5e6608ef5e1b35b471a145f7d200b86990aa9c404c651c9357c02392",
+    "g4-engineering-compare-flashlight-switches/factory-receipt.json": "815f4916d569e4793809cdaca58355819f164bc6076a8e23cf2a2bf8d17a3a66",
+    "g4-engineering-compare-flashlight-switches/paper-alternative.txt": "aae62983704864255e98429254dfd0b74616b5be7869c8c38a6014a8e226198e",
+    "g4-engineering-compare-flashlight-switches/academic-review.json": "7a34f4409481c579562ada8761c8a7fd13613fd483f17b5a7e676da16da44b65",
+    "g4-engineering-compare-flashlight-switches/teacher-guide.json": "bacd8047d84715373aa5b974ef9a917222d5a7e390808002aaf944276d698dce",
+    "g4-engineering-compare-flashlight-switches/manifest.json": "7d1291eddef9c66c0670464812ce36430e1796b3c361f9c4f921b1b0c8c3d6a9",
+    "review/complete-academic-packet.json": "16278c800bc6e5ce98b4365189bd99ef881c1b30e86e015343c12902560eec92",
+    "review/complete-academic-packet.md": "46096133c69e2385e33b58d14f4383cd471376dec5129f106ae334029774bd26"
+  }
+}

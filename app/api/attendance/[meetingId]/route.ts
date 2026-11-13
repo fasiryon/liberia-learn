@@ -1,5 +1,6 @@
 // app/api/attendance/[meetingId]/route.ts
 import { NextResponse } from "next/server";
+// route-policy: auth=session; scope=tenant; authority=teacher-or-school-admin; rationale=Attendance requires a school-bound staff caller, meeting authority and membership validation for every submitted learner.
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { z } from "zod";
@@ -19,10 +20,21 @@ export async function PATCH(
 ) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
+    if (!user.schoolId?.trim()) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     const { meetingId } = params;
 
     const body = await req.json();
-    const parsed = Schema.parse(body);
+    const validation = Schema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json({ error: "Invalid attendance records" }, { status: 400 });
+    }
+    const parsed = validation.data;
+    const studentIds = parsed.records.map(record => record.studentId);
+    if (new Set(studentIds).size !== studentIds.length) {
+      return NextResponse.json({ error: "Duplicate student records" }, { status: 400 });
+    }
 
     // Verify the meeting belongs to the user's school
     const meeting = await prisma.meeting.findFirst({
@@ -35,6 +47,21 @@ export async function PATCH(
     }
 
     if (user.role === "TEACHER" && meeting.Class.teacherId !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // Authorize the complete batch before the first canonical write. A class
+    // link alone must not admit a student whose current tenant has changed.
+    const roster = await prisma.enrollment.findMany({
+      where: {
+        classId: meeting.classId, studentId: { in: studentIds },
+        Class: { schoolId: user.schoolId },
+        Student: { deletedAt: null, user: { schoolId: user.schoolId } },
+      },
+      select: { studentId: true },
+    });
+    const allowed = new Set(roster.map(record => record.studentId));
+    if (studentIds.some(id => !allowed.has(id))) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

@@ -14,10 +14,17 @@ const mockGradedCreate = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
   prisma: {
-    student: { findFirst: mockStudentFindFirst },
+    student: { findFirst: mockStudentFindFirst, findUnique: async () => ({ enrollments: [{ classId: "class-1", Class: { schoolId: "school-1" } }] }) },
+    // AT-SUBMIT-02: the lesson reaches the learner through an own-school enrolled class (a scheduled lesson).
+    scheduledWork: { findFirst: async () => ({ id: "work-1" }) },
+    teacherLessonAssignment: { findFirst: async () => null },
+    assignment: { findFirst: async () => null },
     gradedSubmission: { findUnique: mockGradedFindUnique, create: mockGradedCreate, update: vi.fn() },
-    aILiteracyExercise: { findUnique: vi.fn() },
-    curriculumContent: { findUnique: vi.fn() },
+    // AT-GRADE-01 2e: the lesson and exercise are available to the learner, so the key check is what decides.
+    aILiteracyExercise: { findUnique: vi.fn().mockResolvedValue({ lessonId: "lesson-1", promptId: "p-1", type: "ethics_scenario", scenario: "s", studentPromptInstruction: null, rubric: { criteria: [] } }) },
+    codeExercise: { findUnique: vi.fn().mockResolvedValue({ lessonId: "lesson-1", languageId: 71, validatedAt: new Date(0), testCases: [{ stdin: "", expectedStdout: "1" }] }) },
+    curriculumContent: { findUnique: vi.fn().mockResolvedValue({ id: "lesson-1", contentId: "c-1", grade: 7, subject: "CS", title: "t", unitId: "u",
+      schoolId: null, teacherCreated: false, visibility: "public", payload: {} }) },
   },
 }));
 vi.mock("@/lib/auth", () => ({
@@ -62,7 +69,9 @@ describe("grading idempotency keys are bound to the submitting learner", () => {
   });
 
   it("code grading still replays the caller's own submission", async () => {
-    mockGradedFindUnique.mockResolvedValue({ ...victimSubmission, studentId: "student-attacker" });
+    // The caller's own exact earlier request.
+    mockGradedFindUnique.mockResolvedValue({ ...victimSubmission, studentId: "student-attacker",
+      lessonId: "lesson-1", promptId: "p-1", exerciseType: "code", submissionText: "print(1)" });
     const { POST } = await import("@/app/api/grading/code/route");
     const res = await POST(post("http://localhost/api/grading/code", {
       lessonId: "lesson-1", promptId: "p-1", sourceCode: "print(1)", languageId: 71, clientSubmissionId: "own-key",

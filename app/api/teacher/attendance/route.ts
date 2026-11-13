@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=class-teacher-or-school-admin; rationale=attendance (class list, roster, upsert) only for the class teacher or an ADMIN of the class's school, decided by lib/authz/classAuthority class.attendance (a class-teacher-only function; a TeacherAssignment or Timetable entry never grants it); refused with 403 before the roster is read or attendance written (AT-GRADE-01 batch 3, CoS ruling 7)
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireUser } from "@/lib/auth";

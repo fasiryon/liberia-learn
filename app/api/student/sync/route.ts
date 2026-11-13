@@ -4,8 +4,9 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { classifyScheduledWork } from "@/lib/content-bundle/persistence/scheduledWork";
 import { loadAuthorizedPracticalSessions, studentSessionSummary } from "@/lib/student/labEligibility";
+import { isLockedForStudent, labelStudentScore } from "@/lib/labs/labReview";
 import { logAudit } from "@/lib/audit";
-import { resolveAttendance, resolveSubmission } from "@/lib/offline-sync/policies";
+import { resolveSubmission } from "@/lib/offline-sync/policies";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { getAssignmentTargetStudentIds } from "@/lib/assignments/targeting";
@@ -573,155 +574,9 @@ export async function POST(req: NextRequest) {
         }
 
         if (effectiveEntity === "attendance") {
-          const attendance = (payload ?? {}) as Record<string, unknown>;
-          const meetingId =
-            typeof attendance.meetingId === "string" ? attendance.meetingId : null;
-          const attendanceStudentId =
-            typeof attendance.studentId === "string" ? attendance.studentId : null;
-          const status =
-            typeof attendance.status === "string" ? attendance.status : null;
-          const clientTime =
-            typeof attendance.clientUpdatedAt === "string"
-              ? attendance.clientUpdatedAt
-              : clientUpdatedAt;
-
-          if (!meetingId || !attendanceStudentId || !status || !clientTime) {
-            skipped++;
-            results.push({ opId: opKey, entity, status: "skipped" });
-            continue;
-          }
-
-          const ownedStudent = await prisma.student.findUnique({
-            where: { userId: user.id },
-            select: { id: true },
-          });
-          if (!ownedStudent || ownedStudent.id !== attendanceStudentId) {
-            skipped++;
-            results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "attendance_student_mismatch" });
-            continue;
-          }
-          const meetingModel = (prisma as typeof prisma & {
-            meeting?: { findUnique?: (args: unknown) => Promise<any> };
-          }).meeting;
-          if (meetingModel?.findUnique) {
-            const meeting = await meetingModel.findUnique({
-              where: { id: meetingId },
-              select: { Class: { select: { schoolId: true } } },
-            });
-            if (!meeting || meeting.Class?.schoolId !== user.schoolId) {
-              skipped++;
-              results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "attendance_tenant_mismatch" });
-              continue;
-            }
-          }
-
-          const replayOf = await findReplaySourceEvent({
-            schoolId: user.schoolId ?? null,
-            userId: user.id,
-            eventType: "offline.sync.attendance.accepted",
-            clientEventId: syncIdentity.clientEventId,
-            dedupeKey: syncIdentity.dedupeKey,
-          });
-          if (replayOf) {
-            await logLearningEvent({
-              schoolId: user.schoolId ?? null,
-              userId: user.id,
-              studentId: user.id,
-              actor: { type: "user", id: user.id, role: "STUDENT" },
-              eventType: "offline.sync.replay_deduped",
-              source: "/api/student/sync",
-              status: "rejected",
-              clientEventId: syncIdentity.clientEventId,
-              dedupeKey: syncIdentity.dedupeKey,
-              originalOccurredAt: syncIdentity.originalTimestamp,
-              syncReceivedAt: syncIdentity.syncReceivedAt,
-              replayOfEventId: replayOf.id,
-              isReplay: true,
-              metadata: { entity, meetingId },
-            });
-            skipped++;
-            results.push({ opId: opKey, entity, status: "rejected" });
-            continue;
-          }
-
-          const existing = await prisma.attendanceRecord.findUnique({
-            where: { meetingId_studentId: { meetingId, studentId: attendanceStudentId } },
-          });
-
-          const resolution = resolveAttendance(
-            existing
-              ? {
-                  meetingId,
-                  studentId: attendanceStudentId,
-                  status: existing.status as any,
-                  markedAt: existing.markedAt,
-                }
-              : null,
-            {
-              meetingId,
-              studentId: attendanceStudentId,
-              status: status as any,
-              clientUpdatedAt: clientTime,
-            }
-          );
-
-          if (resolution.action === "conflict") {
-            await logLearningEvent({
-              schoolId: user.schoolId ?? null,
-              userId: user.id,
-              studentId: user.id,
-              actor: { type: "user", id: user.id, role: "STUDENT" },
-              eventType: "offline.sync.conflict",
-              source: "/api/student/sync",
-              status: "conflict",
-              clientEventId: syncIdentity.clientEventId,
-              dedupeKey: syncIdentity.dedupeKey,
-              originalOccurredAt: syncIdentity.originalTimestamp,
-              syncReceivedAt: syncIdentity.syncReceivedAt,
-              metadata: {
-                entity,
-                meetingId,
-                resolutionHint: resolution.hint,
-              },
-            });
-            results.push({
-              status: "conflict",
-              opId: opKey,
-              entity,
-              serverState: existing,
-              clientState: attendance,
-              resolutionHint: resolution.hint,
-            });
-            continue;
-          }
-
-          await prisma.attendanceRecord.upsert({
-            where: { meetingId_studentId: { meetingId, studentId: attendanceStudentId } },
-            update: { status: status as any, markedAt: resolution.markedAt },
-            create: {
-              meetingId,
-              studentId: attendanceStudentId,
-              status: status as any,
-              markedAt: resolution.markedAt,
-            },
-          });
-          synced++;
-          await logLearningEvent({
-            schoolId: user.schoolId ?? null,
-            userId: user.id,
-            studentId: user.id,
-            actor: { type: "user", id: user.id, role: "STUDENT" },
-            target: { type: "attendance", id: meetingId },
-            eventId: syncIdentity.clientEventId,
-            eventType: "offline.sync.attendance.accepted",
-            source: "/api/student/sync",
-            clientEventId: syncIdentity.clientEventId,
-            dedupeKey: syncIdentity.dedupeKey,
-            originalOccurredAt: syncIdentity.originalTimestamp,
-            syncReceivedAt: syncIdentity.syncReceivedAt,
-            metadata: { entity, meetingId, studentId: attendanceStudentId, operationFingerprint },
-          });
-          results.push({ opId: opKey, entity, status: "synced" });
+          // Student device reports cannot create or replace official attendance.
+          // Conflict keeps the device operation for explicit human resolution.
+          results.push({ opId: opKey, entity, status: "conflict", resolutionHint: "attendance_requires_teacher_review" });
           continue;
         }
 
@@ -884,7 +739,8 @@ export async function POST(req: NextRequest) {
             results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "lab_session_unavailable" });
             continue;
           }
-          if (session.completedAt && payload?.completedAt) {
+          // AT-LAB-STUDENT-SCORE: any replayed change to a submitted or reviewed lab is a conflict, never a write.
+          if (isLockedForStudent(session)) {
             results.push({ status: "conflict", opId: opKey, entity, serverState: studentSessionSummary(session), clientState: payload, resolutionHint: "completed_lab_session_requires_review" });
             continue;
           }
@@ -898,9 +754,8 @@ export async function POST(req: NextRequest) {
           await labModel?.update?.({
             where: { id: sessionId },
             data: {
-              observations: payload?.observations,
+              observations: typeof provisionalScore === "number" ? labelStudentScore(session.observations, payload?.observations, provisionalScore) : payload?.observations,
               conclusions: payload?.conclusions,
-              score: typeof provisionalScore === "number" ? provisionalScore : undefined,
               completedAt: typeof payload?.completedAt === "string" ? new Date(payload.completedAt) : undefined,
               masteryUpdated: false,
             },

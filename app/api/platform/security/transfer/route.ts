@@ -1,9 +1,12 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin-step-up; rationale=issues a platform transfer token; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 import { logAuditRequired } from "@/lib/audit";
 import { generateTokenPair } from "@/lib/tokens";
 import { requirePrivilegedStepUp } from "@/lib/auth";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +14,8 @@ export async function POST(req: Request) {
   try {
     const user = await requireMoePlatformAdmin();
     await requirePrivilegedStepUp(user);
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json().catch(() => ({}));
     const intendedUserId =
       typeof body?.intendedUserId === "string" ? body.intendedUserId.trim() : "";
@@ -53,6 +58,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, token: rawToken, expiresAt: expiresAt.toISOString() });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json(
       { error: err?.message ?? "Failed" },
       { status: err?.status ?? 500 }

@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=OneRoster roster import creates accounts with temporary passwords for the caller school; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
@@ -5,6 +6,7 @@ import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { parseOneRosterZip, type OneRosterValidationIssue } from "@/lib/interoperability/oneroster";
 import { createOneRosterImportBatch } from "@/lib/interoperability/onerosterService";
 import { resolveAdminSchoolScope } from "@/lib/records/systemOfRecord";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +26,8 @@ export async function POST(req: NextRequest) {
     if (user.role !== "ADMIN") {
       throw Object.assign(new Error("Forbidden"), { status: 403 });
     }
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const form = await req.formData();
     const mode = String(form.get("mode") ?? "preview");
     if (mode !== "preview" && mode !== "commit") {

@@ -100,8 +100,9 @@ const schemaChanged = files.some((file) =>
 const typeScriptChanged = files.some((file) => /\.[cm]?tsx?$/.test(file));
 const changedJavaScript = files.filter((file) => /\.[cm]?js$/.test(file));
 const changedTests = files.filter((file) =>
-  /^(?:__tests__|tests|e2e)\//.test(file.replaceAll("\\", "/")) && /\.[cm]?[jt]sx?$/.test(file)
+  /^__tests__\/.*\.(?:test|spec)\.(?:ts|tsx)$/.test(file.replaceAll("\\", "/"))
 );
+const changedBrowserHarnesses = files.filter((file) => /^e2e\//.test(file.replaceAll("\\", "/")));
 const relatedSources = files.filter((file) =>
   /\.[cm]?[jt]sx?$/.test(file) &&
   !/^(?:__tests__|tests|e2e|scripts)\//.test(file.replaceAll("\\", "/"))
@@ -110,6 +111,7 @@ const relatedSources = files.filter((file) =>
 console.log(`validate:changed source: ${changed.source}`);
 console.log(`validate:changed files: ${files.length}`);
 for (const file of files) console.log(`  ${file}`);
+if (changedBrowserHarnesses.length) console.log("Browser harness changes require separate browser acceptance; Vitest does not execute them.");
 
 if (listOnly) process.exit(0);
 

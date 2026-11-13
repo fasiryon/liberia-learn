@@ -1,0 +1,23 @@
+{
+  "version": "preview-db-policy/2",
+  "status": "UNAPPROVED",
+  "reviewId": null,
+  "projectRef": null,
+  "endpointHost": null,
+  "migrationMode": null,
+  "schemaSha256": null,
+  "fingerprints": {
+    "identity": null,
+    "roles": null,
+    "schemas": null,
+    "relations": null,
+    "policies": null,
+    "triggers": null,
+    "grants": null,
+    "defaults": null,
+    "functions": null,
+    "columns": null,
+    "remote": null,
+    "migrations": null
+  }
+}

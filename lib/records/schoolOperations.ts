@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { authorizeClassAccess } from "@/lib/authz/classAuthority";
 import { prisma } from "@/lib/db";
 import { resolveAdminSchoolScope } from "@/lib/records/systemOfRecord";
 
@@ -454,17 +455,6 @@ async function listAssignedClassIdsForTeacher(userId: string, schoolId: string) 
   );
 }
 
-export async function listAuthorizedClassIdsForTeacher(userId: string, schoolId: string) {
-  const [ownedClasses, assignedClassIds] = await Promise.all([
-    prisma.class.findMany({
-      where: { schoolId, teacherId: userId },
-      select: { id: true },
-    }),
-    listAssignedClassIdsForTeacher(userId, schoolId),
-  ]);
-  return Array.from(new Set([...ownedClasses.map((item) => item.id), ...assignedClassIds]));
-}
-
 export async function listTeacherScheduleForUser(user: {
   id: string;
   schoolId?: string | null;
@@ -548,15 +538,18 @@ export async function listTeacherAttendanceContext(user: {
     throw Object.assign(new Error("schoolId is required"), { status: 400 });
   }
 
-  const classIds =
-    user.role === "ADMIN"
-      ? (
-          await prisma.class.findMany({
-            where: { schoolId: user.schoolId },
-            select: { id: true },
-          })
-        ).map((row) => row.id)
-      : await listAuthorizedClassIdsForTeacher(user.id, user.schoolId);
+  // CoS ruling 7 (AT-GRADE-01 batch 3): attendance belongs to the class teacher and the school ADMIN only, decided by
+  // lib/authz/classAuthority (class.attendance). A TeacherAssignment or a Timetable entry never grants it.
+  const candidateIds = (
+    await prisma.class.findMany({
+      where: user.role === "ADMIN" ? { schoolId: user.schoolId } : { schoolId: user.schoolId, teacherId: user.id },
+      select: { id: true },
+    })
+  ).map((row) => row.id);
+  const classIds: string[] = [];
+  for (const id of candidateIds) {
+    if ((await authorizeClassAccess({ id: user.id, role: user.role as "TEACHER", schoolId: user.schoolId }, { classId: id, fn: "class.attendance" })).allowed) classIds.push(id);
+  }
 
   const classes = await prisma.class.findMany({
     where: { id: { in: classIds } },
@@ -573,7 +566,8 @@ export async function listTeacherAttendanceContext(user: {
     };
   }
 
-  if (!classIds.includes(classId)) {
+  if (!classIds.includes(classId) ||
+      !(await authorizeClassAccess({ id: user.id, role: user.role as "TEACHER", schoolId: user.schoolId }, { classId, fn: "class.attendance" })).allowed) {
     throw Object.assign(new Error("Forbidden"), { status: 403 });
   }
 

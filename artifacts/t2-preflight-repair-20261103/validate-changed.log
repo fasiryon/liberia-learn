@@ -1,0 +1,37 @@
+
+> liberia-learn-frontend@1.0.0 validate:changed
+> node scripts/validate-changed.mjs --base 61cae3bf --no-types
+
+validate:changed source: 61cae3bf...HEAD
+validate:changed files: 13
+  __tests__/preview-database-preflight.test.ts
+  artifacts/t2-preflight-repair-20261103/GREEN-final-topology.tap
+  artifacts/t2-preflight-repair-20261103/GREEN-final.tap
+  artifacts/t2-preflight-repair-20261103/GREEN.tap
+  artifacts/t2-preflight-repair-20261103/RED.tap
+  artifacts/t2-preflight-repair-20261103/REVIEW-REQUEST.md
+  artifacts/t2-preview-readiness-20261102/database-preflight.sql
+  scripts/preview/a2-b3-focused.vitest.config.mjs
+  scripts/preview/a2-b3-offline-metadata.test.mjs
+  scripts/preview/database-policy.template.json
+  scripts/preview/database-preflight.mjs
+  scripts/preview/database-preflight.sql
+  scripts/preview/run-database-preflight.mjs
+artifacts/t2-preflight-repair-20261103/RED.tap:215: trailing whitespace.
++
+artifacts/t2-preflight-repair-20261103/RED.tap:217: trailing whitespace.
++
+artifacts/t2-preflight-repair-20261103/RED.tap:241: trailing whitespace.
++
+artifacts/t2-preflight-repair-20261103/RED.tap:243: trailing whitespace.
++
+artifacts/t2-preflight-repair-20261103/RED.tap:267: trailing whitespace.
++
+artifacts/t2-preflight-repair-20261103/RED.tap:269: trailing whitespace.
++
+artifacts/t2-preflight-repair-20261103/RED.tap:293: trailing whitespace.
++
+artifacts/t2-preflight-repair-20261103/RED.tap:295: trailing whitespace.
++
+artifacts/t2-preflight-repair-20261103/RED.tap:323: trailing whitespace.
++

@@ -1,0 +1,82 @@
+{
+  "proposedMinutes": 45,
+  "timingEvidence": "NOT_MEASURED",
+  "segments": [
+    {
+      "minutes": 4,
+      "activity": "Predict and explain remembered state"
+    },
+    {
+      "minutes": 5,
+      "activity": "Separate name, value and instruction using cards"
+    },
+    {
+      "minutes": 6,
+      "activity": "Model replacement versus addition with a trace"
+    },
+    {
+      "minutes": 8,
+      "activity": "Two guided construction tasks"
+    },
+    {
+      "minutes": 6,
+      "activity": "Independent procedure and trace"
+    },
+    {
+      "minutes": 5,
+      "activity": "Choose tests and compare predictions"
+    },
+    {
+      "minutes": 5,
+      "activity": "Debug initialization and retest"
+    },
+    {
+      "minutes": 6,
+      "activity": "Partner-tested new game and reflection"
+    }
+  ],
+  "screenLimitMinutes": 25,
+  "materials": "Paper name/value/instruction cards, counters or drawn marks, pencil. No device or interpreter required.",
+  "support": "Read instructions aloud. A pupil may direct a partner or scribe who moves cards and records their decisions. Model before/after columns during guided work only. Keep independent traces unscaffolded.",
+  "extension": "Compare add-then-set with set-then-add. Explain when two event sequences produce different scores and create a counterexample to a claimed rule.",
+  "oversight": "Check the full state trace, reasons for set versus add, chosen boundary tests and actual repair. Choice success alone is insufficient evidence of the performance task.",
+  "assessment": "Formative practice only. No governed assessment, mastery attribution or official score. Independent assessment requires separately governed items.",
+  "offline": "Print scene text and cards. Use oral or written trace explanations. Do not require dragging, color, fast reading or precise motor control.",
+  "retention": "Propose a different scoring procedure after7 days, including initialization and replacement. No retrieval job is scheduled here.",
+  "expectedTraces": {
+    "guided": [
+      1,
+      4,
+      7,
+      2
+    ],
+    "independent": [
+      2,
+      5,
+      8,
+      1,
+      4
+    ],
+    "independentEvents": [
+      "hit",
+      "hit",
+      "reset",
+      "hit"
+    ],
+    "boundaryTests": {
+      "noEvents": "the learner's stated starting value",
+      "oneHit": "start value + increase",
+      "hitAfterReset": "reset value + increase"
+    },
+    "debug": {
+      "threeHitsFromZeroAtTwoPoints": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "separateNewGame": 0
+    },
+    "review": "Require each intermediate state and its explanation. Correctness on one trace is not a mastery claim. Accept coherent learner games with their own stated rules."
+  }
+}

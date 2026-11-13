@@ -1,0 +1,5189 @@
+[
+  {
+    "path": ".github/workflows/canonical-clean-bootstrap.yml",
+    "git_blob": "de1d3b4849a6ca68ccbeacb15b66afaf93c978a9",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "github-canonical-clean-bootstrap"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": ".github/workflows/deploy-ecs.yml",
+    "git_blob": "30f2d6bb15c53f6ef8bd7e18377488f59344afe3",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "github-deploy-ecs"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": ".github/workflows/evals.yml",
+    "git_blob": "8eebbad0ec88d69c14fc3665c8c796e13bd69f08",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "github-evals",
+      "rag-evaluation"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": ".github/workflows/lab-review-capture.yml",
+    "git_blob": "f030c327d0741a43baa5838471539abcf822cf98",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "github-lab-review-capture"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "SPRINT_COVERAGE_AUDIT.md",
+    "git_blob": "e05ebeaade02a529b9cc0ce400018f397080a7e3",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/adminRoutes.test.ts",
+    "git_blob": "46bdac2d6a5d44e0cbe25790cf955c21ac65573b",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/adminStats.test.ts",
+    "git_blob": "74ebd3811c90d15a501bc1599f1ec59a5448519c",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/agentTickRoute.test.ts",
+    "git_blob": "0a5eed87227595af30626565315915c8d1f99239",
+    "categories": [
+      "scheduler",
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/costCapHarness.test.ts",
+    "git_blob": "cfe960bdd5fcf7558fa1e958c9258ba629f2b199",
+    "categories": [
+      "llm",
+      "agent"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/districtUpdateRoutes.test.ts",
+    "git_blob": "9e054cf447c57647da66d2eff7a9d5d34f776e63",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/echoAgent.e2e.test.ts",
+    "git_blob": "9502f09f627870bec9bcd12687edc3ca6f68e0f1",
+    "categories": [
+      "llm",
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/moeNarrativeReportRoutes.test.ts",
+    "git_blob": "35926758961c112e5aebc490accd38fe9f117ba6",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/morningBriefRoutes.test.ts",
+    "git_blob": "80690d5a4a0dbf94dd754e3aeac8afcdfea3e1c1",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/opsSentinelActions.test.ts",
+    "git_blob": "a59832a85d9ba35f1b93402252c6976054e9c641",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/opsSentinelDetectors.test.ts",
+    "git_blob": "dc14a08c7d53e350840a345c3b94c3f7e77f8c87",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/opsSentinelHeartbeat.test.ts",
+    "git_blob": "683f3ad208d0d2cee42bbbd8642c2f8acb4a8b2f",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/opsSentinelRoute.test.ts",
+    "git_blob": "d7189c8fb75dec170bae7f4df7da9ccf5a207673",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/opsSentinelSweep.test.ts",
+    "git_blob": "e0165e5b236f77f4e96e5178266fbb382b5fc61e",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/registry.test.ts",
+    "git_blob": "c4a6b45c3b4c0481235f9da9eb8ec052e55092df",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/runtime.crosscutting.test.ts",
+    "git_blob": "0d37075d5bdd60193dd8e4c9f5a541863aba4d09",
+    "categories": [
+      "llm",
+      "agent",
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/runtime.test.ts",
+    "git_blob": "906aa7ee5e42e3a285600a1d4c49195394abaf7f",
+    "categories": [
+      "llm",
+      "agent",
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/scheduler.test.ts",
+    "git_blob": "f64f1b0b470e5055bd27f7cb7386feabecc2ba05",
+    "categories": [
+      "llm",
+      "scheduler",
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/testHarness.test.ts",
+    "git_blob": "6673fa633c7c5d0692f87e8a0542d675a5ecb344",
+    "categories": [
+      "llm",
+      "agent"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/agents/triggers.test.ts",
+    "git_blob": "a7293884da8b01286dfd8592db856efad60908b0",
+    "categories": [
+      "llm",
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/alerts/teacher-alerts.test.ts",
+    "git_blob": "734dae5d5ad74398a71df0a753c9f46ded9092da",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/audit-immutability.test.ts",
+    "git_blob": "10e5fc0c193b6059fce161963d6620ab1a03a225",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.actions.test.ts",
+    "git_blob": "f23dbf8d3fade7cdfe91ddc3f3d6c1016d123c14",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.detectors.test.ts",
+    "git_blob": "41d1c37261160f7eda810027b22c7c1befe96abd",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.evaluationMemory.test.ts",
+    "git_blob": "6986d4aeef7f7da6ff8c27029749ac1a1522f813",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.executionHardening.test.ts",
+    "git_blob": "1676f600615256175814fdb1a1fd9b03369c24af",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.optimization.test.ts",
+    "git_blob": "9cf5682d0aba4772570ca3f7f549abaf523fb260",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "categories": [
+      "scheduler",
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "categories": [
+      "scheduler",
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.phase13.signals.test.ts",
+    "git_blob": "e25b845f8c7e7f6febbac6b871980175140dc1cc",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.phase14.predictions.test.ts",
+    "git_blob": "bdd94903a379aff692779d4ea084d55a0234a551",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous.phase8.feedbackLoop.test.ts",
+    "git_blob": "c272a2178f6482e15635966ea0457b0259ef42bd",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous/phase10.replayConsole.test.ts",
+    "git_blob": "a7da31f748f61d3e735415be8f4b417feb1b0b05",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "categories": [
+      "scheduler",
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/canva.env-health.test.ts",
+    "git_blob": "7249a36d4527dd97535219140084b7c2b1546a11",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/curriculum-excellence/reviewer-governance.test.ts",
+    "git_blob": "1a8f8cdb1431ead63c6ca21966bf3d7e961a4b41",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/curriculum-v2/compatibility-governance-race.pg.test.ts",
+    "git_blob": "e2ba70ede21e7270a0f6eecf9186a856dc14b631",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/curriculum.factory.tone.test.ts",
+    "git_blob": "24f68a49279046f4839ba4e8ff804da980f51067",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/curriculum.regenerationScheduler.test.ts",
+    "git_blob": "871178afc8a3716f0668482c2bd6e68eebddd2d7",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/curriculum/audioGenerationRoutes.test.ts",
+    "git_blob": "48a14163376b7c91cea91a8c75bf358b337a4cc5",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/curriculum/p2a-writer-guard.test.ts",
+    "git_blob": "d83fa4f617f5beee69f30408dffab3ecaf0db8be",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/curriculum/processLessonAudio.test.ts",
+    "git_blob": "51d1e7e3ba325f4fe91ae3d4c21e0eba9d450bcb",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/curriculum/textbookGenerationRoutes.test.ts",
+    "git_blob": "89685daf0d0b2fe10ef8163259a678de7867af70",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/delivery-profile.test.ts",
+    "git_blob": "cbe56f4bfb6bede40a2d829f50df9557730150ea",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/dr/healthCheck.test.ts",
+    "git_blob": "3bb13664010396e513ae235208c7284a78ad7d31",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/evals/runner.test.ts",
+    "git_blob": "b87a9a79a9dea92b791bc3ddfe112dbda19fd9ad",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/health.endpoint.test.ts",
+    "git_blob": "00cb3b63c3749c12733ed3af66585dc12f67fad7",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/integration/learning-evidence.postgres-race.test.ts",
+    "git_blob": "063b70f628d2fb1496222755edd262f1d8783bb2",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/interactive-labs/determinism.test.ts",
+    "git_blob": "5b5fba4cf0a21e91f9e18a9879323cf0dcdf13c7",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/interactive-labs/renderer-chunks.test.ts",
+    "git_blob": "75f37249f26a93ffeb61ab20727d10db2292552d",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/league/leagueDistrict.test.ts",
+    "git_blob": "c87010c84014be179348a1a922adab11bc97bcde",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/learner-experience/classes-v2.test.tsx",
+    "git_blob": "dcc9bcbe0376c4bca01c14fe94f62e1198b727e5",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/ops/cronGetAlias.test.ts",
+    "git_blob": "ce19c9c820cb7cbdaaa5f4358eb9618c2c38ff05",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/ops/nightlyBackup.test.ts",
+    "git_blob": "2ef183e17a227ae543d7fa86c1dd963bf12963f8",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/os-vault-context-wiring.test.ts",
+    "git_blob": "f12f7c9749602c5fa2ef07eca39984ad63f33ea7",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/packs/packs.test.ts",
+    "git_blob": "7f3a2e7f4d40a915d4854ed45f3ec4475efb49b7",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/rag.hybrid.test.ts",
+    "git_blob": "d0eaf15c5f339d65aa74abb19f41efa8d851f9f4",
+    "categories": [
+      "llm",
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/rag.services.test.ts",
+    "git_blob": "64fc00ecb3afabef1f02f53a4fa93fc759eec1d6",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/security/middleware-auth.test.ts",
+    "git_blob": "0ba651c94706eaf6f06db085ab5ab05049e9755a",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/security/p1c-credential-enforcement.test.ts",
+    "git_blob": "dd0a2094d47df29a84f6c76ba1793334992d06e7",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/security/p1c-privileged-identity.test.ts",
+    "git_blob": "42c272670907a4b1ab91cb9da2a417b4d52d03f5",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/security/p1c-session-invalidation.test.ts",
+    "git_blob": "7ff8520b00edc238bb4beb0d338a8870cf2caa31",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/security/p1c-step-up-middleware.test.ts",
+    "git_blob": "98a2894cb98b56be9e6dfcc3d4e06a2c5b580947",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/serverFlags.aiTutor.test.ts",
+    "git_blob": "b8db87fd3bcccf2efb2b61fc68b0ec6c9d35f58a",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/serverFlags.rag.test.ts",
+    "git_blob": "37ce9680f4939f5629d7fa12c7a7afd280b43a37",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/sms.dryRun.test.ts",
+    "git_blob": "2b568724ce4df594cb823c123bf30361d8b5cb7a",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/sms.test.ts",
+    "git_blob": "643e3929488ef8bc3c86bc889d1cfb478bb21c5d",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/sprint24/sprint24.test.ts",
+    "git_blob": "30ac1c144d94b4cb2f300a36f42ded88abdf3b10",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/sprint26/sprint26.test.ts",
+    "git_blob": "5bb2ec584e83049b3b601558543c6b3e2435a810",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/sprint8.guardian.test.ts",
+    "git_blob": "50d9d8bf785c080a68a57946a9603b0b9582315b",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/teacher/gradingAssist.test.ts",
+    "git_blob": "962486062f68d22bac7d92ea7dfdec54c97af849",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/textbook-hub-visual-fixtures.test.tsx",
+    "git_blob": "4c73bb989672fc8d546b2427c906c23845c39a07",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/admin/audio-generation/AudioGenerationClient.tsx",
+    "git_blob": "953c6009e50c3d9634268126eb019928c115a211",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/admin/curriculum/units/page.tsx",
+    "git_blob": "f13f58f55b37564f31c419a97ddd173fb0a87738",
+    "categories": [
+      "scheduler",
+      "external"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/admin/ops/effectiveness/page.tsx",
+    "git_blob": "775303537f295b388d332714466b3b1775b246fe",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/admin/ops/page.tsx",
+    "git_blob": "1b01ef6bad85c9e34c02a74e3953913e4ca8c2f8",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/admin/ops/runtime/cron/page.tsx",
+    "git_blob": "f477ce40fc1d113e616f9f86aec556f35fc42bd1",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/admin/ops/runtime/page.tsx",
+    "git_blob": "975f7c594b1b034a848b35cfa25c09cfb699dcfd",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/admin/ops/runtime/recovery/page.tsx",
+    "git_blob": "d30fa32199198448a6f5743d015f1630ec842c09",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/admin/ops/runtime/smoke/page.tsx",
+    "git_blob": "a229963980f9cb068df8884bbd1db306fa0cb7a6",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/admin/ops/runtime/workers/page.tsx",
+    "git_blob": "e766c47680b70a5be5f8e20f10a068370becbf0b",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/admin/textbook-generation/TextbookGenerationClient.tsx",
+    "git_blob": "01d4d453f5f707ca5613d1fa32e440a48aa63506",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/admin/agents/district-update/run/route.ts",
+    "git_blob": "762c7bb85336c1a7636f69b0f080a14ea669bfc0",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "district-update"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/admin/agents/echo/run/route.ts",
+    "git_blob": "28af0d09a65c995f5008cc68d36273973bb3782a",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "echo"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/admin/agents/moe-narrative-report/run/route.ts",
+    "git_blob": "e19fac83ebb3c716b9fffbe39200bd33bfcb7237",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "moe-narrative-report"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/admin/agents/morning-brief/run/route.ts",
+    "git_blob": "91c5743b1905d0d78fe96955b410faba88b1086d",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "Manual dispatcher for morning-brief, not a separate agent"
+  },
+  {
+    "path": "app/api/admin/audio-generation/status/route.ts",
+    "git_blob": "6c3cbab77b1f8d51b7d3b119d65e891ec98b0a67",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/admin/canva/disconnect/route.ts",
+    "git_blob": "20769f20dae255aa8ccfb2957257306e23908679",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/admin/ops/runtime/recovery/route.ts",
+    "git_blob": "a9d1445e2b2eb1d91bb96f96da39c80e3af5adb3",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/admin/schools/route.ts",
+    "git_blob": "c15c99d7046ff1254321b9bd9c751572aaf788df",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/admin/textbook-generation/status/route.ts",
+    "git_blob": "7b702b7bb8ca0ad871ad521ea108266fb84b5bc5",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/auth/reset-password/route.ts",
+    "git_blob": "6f82147e92d73d1ac5c33c962d256aeb7c352e67",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/auth/reset-with-code/route.ts",
+    "git_blob": "1db4e0bdb10cf17c71f8cf13ba29615c9962aec1",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/cron/agents/tick/route.ts",
+    "git_blob": "22af5acad4d315f5d7dec452d246cda4b963cc33",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-agents-tick"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/alert-inactive/route.ts",
+    "git_blob": "404c8d84cc8632ddc5fd7f4bb2585741a93ad80a",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-alert-inactive"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/alert-low-grade/route.ts",
+    "git_blob": "79f10793d92e73b8ee852c1b922d64f298d82b4e",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-alert-low-grade"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/check-ai-budget/route.ts",
+    "git_blob": "67c52ad6106b0a4ca8615dab9ed01c3e3469a3c2",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-check-ai-budget"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/check-dlq/route.ts",
+    "git_blob": "88be2014d9136ad2636c3f0ad92bed5af9a59a82",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-check-dlq"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/content-qa-sweep/route.ts",
+    "git_blob": "2f6665c8535ad9e6c10bc3501ca033d47c1a079d",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-content-qa-sweep"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/guardian-weekly-digest/route.ts",
+    "git_blob": "f7886a0454ac6627deedf0372a610f12e6e62f68",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-guardian-weekly-digest"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/morning-brief-sweep/route.ts",
+    "git_blob": "c9fcdf617dac567724dd562d61d3dd8989b82b88",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-morning-brief-sweep"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/ops-sentinel/route.ts",
+    "git_blob": "0ac6a861f614ee2302f887cfff6f9557f6d8f351",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-ops-sentinel"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/rebuild-leaderboards/route.ts",
+    "git_blob": "a3618b074c9f67ea592b1e9afaf9aa5791c6a2fc",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-rebuild-leaderboards"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/refresh-demo-schedule/route.ts",
+    "git_blob": "f5b8b2049fbea9d5e3c55c4ee9a9141ee9795d9d",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-refresh-demo-schedule"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/release-stale-grades/route.ts",
+    "git_blob": "ce97b092fdb1ccf695e536cee0e79fdf47a009c1",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-release-stale-grades"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/cron/safeguarding-sla-check/route.ts",
+    "git_blob": "1f3c0e3fc3f50e5b2eff09cef30a157e587546b4",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "cron-safeguarding-sla-check"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "app/api/curriculum/[contentId]/route.ts",
+    "git_blob": "a95fecf61f8b6af3a2e25c88dd59c0a39daae5e5",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/homework/grade/route.ts",
+    "git_blob": "2e2237e1cdeee807c500c5fbc1e45a5cabfb3e23",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/moe/dashboard/route.ts",
+    "git_blob": "2d04a4d80e522a010b8e076b406cf7333219aeeb",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/notifications/unsubscribe/route.ts",
+    "git_blob": "be397535b906189a7a4dd88855857b0ecff95d1c",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/platform/schools/route.ts",
+    "git_blob": "cd17b32714d038e7ea2ad33e1001127c719e6dcc",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/search/route.ts",
+    "git_blob": "c5814e240f11f05fb51bd78a3e4f50170a41f77a",
+    "categories": [
+      "interface-reference"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/student/exams/route.ts",
+    "git_blob": "bf74af668f973a5f99d69c0c7cda2cc374512e35",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/teacher/dashboard/route.ts",
+    "git_blob": "4dd447e08a6463e6001d622c8120259c50e95fec",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/teacher/exams/route.ts",
+    "git_blob": "9a49e519ddd1680d40c4c1e95eaa2e6cefb91e27",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/teacher/lessons/[contentId]/route.ts",
+    "git_blob": "51ce20c2ee18f4b3fe6e0c13018a6a30964ecc3c",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/api/teacher/lessons/[contentId]/share/route.ts",
+    "git_blob": "1995eaf52b0b41f63add42428cea24735a839012",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/moe/curriculum/page.tsx",
+    "git_blob": "5ac7086cee254cc599ff6087e29660f4f7c87e86",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/student/exams/[examId]/StudentExamSessionClient.tsx",
+    "git_blob": "5d1bf9eb50de467ba3a9a1d381a05f5abc755fb2",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/student/layout.tsx",
+    "git_blob": "465ae2767b05531808aff0be9a7fc0c0070d4b0e",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/student/lessons/[id]/LessonDeliveryClient.tsx",
+    "git_blob": "f537a7a507ea20d88e9df362bf32d2773b4d2bc4",
+    "categories": [
+      "scheduler",
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/teacher/TeacherShell.tsx",
+    "git_blob": "b74047c27a2579e7badcdc92c218dbac4f7ea1de",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/teacher/dashboard/page.tsx",
+    "git_blob": "427e3decf96de00a4b589ffc095b938b0f4fe418",
+    "categories": [
+      "scheduler",
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/teacher/lesson/[contentId]/video/page.tsx",
+    "git_blob": "454e7100809ac74950cff6e3dbad47de5ac37c41",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/teacher/messages/page.tsx",
+    "git_blob": "78c3f81544515b4a6f0df4a92a12588d96fe4647",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "app/teacher/schedule/page.tsx",
+    "git_blob": "8b59b160c01032af1a86c50965b24b607dfe60af",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "build-os.md",
+    "git_blob": "bef23afc39fa81ae71d5b66d5f95d5221173a3aa",
+    "categories": [
+      "scheduler",
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "components/AiReviewButton.tsx",
+    "git_blob": "dde4fcad2e6d49b0bb72a9dbc2fbdcbbccb9c1c0",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "components/admin/AdminNav.tsx",
+    "git_blob": "8ef25b3b07891802942d83f6ef7afc2f033c4a92",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "components/admin/ManualRuntimeControls.tsx",
+    "git_blob": "c25945d74020e211367d0a2cb450c08db7eadfec",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "components/league/DistrictRankWidget.tsx",
+    "git_blob": "684ee66229e36f8a0aed0696f87cd0f390fdde0b",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "components/moe/LiveDashboardClient.tsx",
+    "git_blob": "0a81f627cc699057a3a0e11c7172ea0e18059fde",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "components/student/TodayV2.tsx",
+    "git_blob": "f0105e85c5886386b5bac0d4e54e1a8801dd861c",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "components/textbooks/README.md",
+    "git_blob": "fe839e4425c5cc8e3eb53b4a29d13f1539bf1349",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "components/toolkit/tools/Timer.tsx",
+    "git_blob": "c441e69e6ded53fc0bb4aa06698a7d777f5575b8",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "components/waec/WaecPracticeClient.tsx",
+    "git_blob": "66c4bcae2ca64a523f692663e409c5edb0013ff8",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft01-g7-civics-counties-capitals.blind.json",
+    "git_blob": "761eeb701c25d215027382a1c78de83d0519d7f4",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft01-g7-civics-counties-capitals.review.json",
+    "git_blob": "8016546f817d81e9f3800582d24bc62cfde60e24",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft04-g7-science-states-of-matter.blind.json",
+    "git_blob": "2d5c490700bbd3ffce688042f45c686d50b9e950",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft04-g7-science-states-of-matter.review.json",
+    "git_blob": "3e515b81b84a3b84851d5ebf38c707e6cacc5a92",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft05-g5-science-photosynthesis.blind.json",
+    "git_blob": "cf611bcec96ca23db82e19ea49e7790b6127a5e1",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft05-g5-science-photosynthesis.review.json",
+    "git_blob": "b80cda36145f5544a250312563156fe4d864d9e7",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/P7C_QUALITY_OPERATIONS.md",
+    "git_blob": "ef9d1959aa234ea04cae60451c3e4c50e9d971f6",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/adr/0013-impact-and-workflow-loop.md",
+    "git_blob": "d4aa1a44f2395f4c6ffe48f9d2e4847097cf1e53",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/adr/0016-role-variant-schema-decision.md",
+    "git_blob": "d32af99aa01285a77ff99b7d2058e973e234857c",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/adr/README.md",
+    "git_blob": "ce112442ec961d64f320564ed0b3fcaeb8c9c053",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/agents/CORE_AGENT_RULES.md",
+    "git_blob": "cbad80c37b8f1ce7e1e69f21fb16f507bd92422a",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/agents/OPS_SENTINEL.md",
+    "git_blob": "3087eef358a38da2b38a79d94a33e40dbecfad19",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ai/RUNTIME_OPERATIONS.md",
+    "git_blob": "ab37e9afd788564d8fa205f271dc49c4e858b2f5",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ai/SQS_WORKER_DEPLOYMENT.md",
+    "git_blob": "eaaaa0019091335fe31a730c7743adac0a56b3ad",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/architecture/content-factory/ACTIVITY_DEFINITION_V1.md",
+    "git_blob": "00b711d3ab5b9386b97e71d462291de90bf30f91",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/architecture/content-factory/CONTENT_BUNDLE_RESOLVER_V1.md",
+    "git_blob": "fa2166db470af1cb80914ebb0c064159318c17e0",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/architecture/content-factory/CONTENT_FACTORY_READINESS_V1.md",
+    "git_blob": "ad00b4e0926fac27e730f3b620d4b9e53d05c2ab",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/architecture/content-factory/CONTENT_PRODUCT_DELIVERY_AUDIT_V1.md",
+    "git_blob": "82d81d88634db5af04b6803c4186726a7658e4ad",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/architecture/content-factory/evidence/reproduce-v021-browser.cjs",
+    "git_blob": "b92ac410e37f57acca09abd67632992583406c96",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/architecture/content-factory/evidence/reproduce-v021-media.cjs",
+    "git_blob": "d8cc47d95062bc1876cb47c7d53eda079eacaa2a",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/architecture/learner-experience-v2/CURRICULUM_V2.md",
+    "git_blob": "e361478e91bd445f7868e2604f87674760e0e6b3",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/architecture/records/ACADEMIC_RECORDS_PROMOTION_V2.md",
+    "git_blob": "744e9f5421999fcfc91ca95a2c10c726ef89e076",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/audits/2026-06-audit-summary.md",
+    "git_blob": "f88f4174dc6725b830328148012ff55f0f0b62ac",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/audits/2026-06-national-rollout-roadmap.md",
+    "git_blob": "cddde12b145db4fd10cf66b0f7dbe24bb186c307",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/audits/2026-06-pre-pilot-blockers.md",
+    "git_blob": "9f5f33b05db648c14faaa299afae306fa4c7d1bf",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/audits/2026-09-december-assurance-audit-v1.json",
+    "git_blob": "77e183c25245ee99851fecbc108f4a2887d475d3",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/audits/AUDIT_GATE_1.md",
+    "git_blob": "31189336822dd023fb2f1094c16c21da203b905b",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/audits/AUDIT_GATE_1_REPORT_20260226.md",
+    "git_blob": "b94847eda3b8c37d1c4d9c9afa51ee3ce9b1a6e5",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/audits/TEACHING_RUNTIME_V1_FINAL_REPORT.md",
+    "git_blob": "5aa5ba1546481c8dd63578819e65e2b735d3871d",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/audits/december-assurance/DECEMBER_ASSURANCE_V1.md",
+    "git_blob": "93814b3c5807964f3b5efe0590d10d5e4a5dbddb",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/audits/december-assurance/december-assurance-v1.json",
+    "git_blob": "cf005b60f8a691d233b876b3bac00bd0c7e33585",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/curriculum/modernization/MODERNIZATION_PIPELINE_V1.md",
+    "git_blob": "6cfadee4d12606a10497cd031defc0e31e1ff289",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/interview-prep/resume-rewrite.md",
+    "git_blob": "6276d0ad75ab864c612fce4e7a11c731edb6ad40",
+    "categories": [
+      "scheduler",
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/interview-prep/salesforce-fde-deep-dive.md",
+    "git_blob": "bc834e05f5cd014218224afe3388e07bf92c9104",
+    "categories": [
+      "scheduler",
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/labs/mount-coffee-hydropower/STAGE_B_REVIEW.md",
+    "git_blob": "4628c397f6e2784e694f325aaef0956689a3b9cf",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/labs/mount-coffee-hydropower/design/02-EXPERIENCE_STORYBOARD_AND_BENCHMARK.md",
+    "git_blob": "89942affef863a3e08a703b6b25683769a37130b",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/labs/mount-coffee-hydropower/production.json",
+    "git_blob": "5c4c8d8a8ab3dd6ec9b11761042dec22565863f3",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ops/ALERTS.md",
+    "git_blob": "a93b5ed2a978394ab1faab111859b5d366aa6025",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ops/BACKUP_SCHEDULE.md",
+    "git_blob": "294ce1762a4dc554a18dfe7a0fa70eeb0b769da2",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "docs/ops/CRONS_PAUSED.md",
+    "git_blob": "d7831c5ea1947a4e79a56374cb28237f4046c305",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "docs/ops/CRON_MIDDLEWARE_FIX.md",
+    "git_blob": "cdc57f7fd9403a681ecc81a1526121353ffe48ce",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ops/NR0_BASELINE.md",
+    "git_blob": "ab2fa3eec5fb2cf093e169a6e7b9323cbb9b733f",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ops/OFFLINE_SYNCHRONIZATION_P5B.md",
+    "git_blob": "f6f7220d39b226198e3a4a51cab2cdffdbc84990",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ops/P2C_PRECUTOVER_PREPARATION_RECORD.md",
+    "git_blob": "9fdf6d7d1caaffe83b46b4284bede8bf92ef0153",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ops/P2C_PRODUCTION_CUTOVER_RUNBOOK.md",
+    "git_blob": "009ad4fca68badfbc9c9a670b37cb7a9f0998686",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ops/P5A_PHASE_C_OPERATIONAL_CLOSURE.md",
+    "git_blob": "2bfa209f1b4b56cd955784b71abc46b3097295cd",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ops/QUERY_TIMEOUTS.md",
+    "git_blob": "40012f2f97f4f882afb12a2ddfab946e3b661241",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ops/RUNBOOK.md",
+    "git_blob": "399ac83f345419206e7115c3c86ac753306dbf16",
+    "categories": [
+      "scheduler",
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/ops/SCHEMA_DEPLOYMENT_GATE_RECOMMENDATION.md",
+    "git_blob": "e31080cc42db189c47e10862be9a46b7947d9f5b",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/product-design-v2/COMPETITIVE_UX_BENCHMARK.md",
+    "git_blob": "e4d467b2f9340276f30019a745b8ce473be58192",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/product-design-v2/CURRENT_SURFACE_INVENTORY.md",
+    "git_blob": "a624b8fb526a5f2854213d2e2d469f30c8541b2b",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/qa/PR195_CONTROLLED_INTEGRATION.md",
+    "git_blob": "330faf5728f38715643ae6c47590c6a2ccc6fdf9",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/qa/PR195_INTEGRATION_REPAIR.md",
+    "git_blob": "dacb4dc9983d17e72632ca62d3bfc80adac97b63",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/reviews/PR191_CANDIDATE_REPAIR_CONTRACT_2026-10-16.md",
+    "git_blob": "1c34876d9b4401f6c970c42fad7e2e6b51e0eb8f",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/roadmaps/CONSOLIDATED_BACKLOG.md",
+    "git_blob": "7105deec8023d981b095913db98689380a52907a",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/roadmaps/CURRENT_EXECUTION_STATE.md",
+    "git_blob": "54620a61eb70612876e91522a9f1a7ad9e35a216",
+    "categories": [
+      "scheduler",
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/roadmaps/NR12_LESSON_GENERATION_GUIDELINES.md",
+    "git_blob": "0de0860dac91d802bfa5a88a3f64aa5a691be82c",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/roadmaps/national-curriculum-pipeline/AGENT.md",
+    "git_blob": "e3ce82ad7bd18cf3fd03e37cfcac5ec06b503453",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/roadmaps/national-curriculum-pipeline/CURRENT_EXECUTION_STATE.md",
+    "git_blob": "57fca2dce7ada0a492da37f70fec17332d7cf38e",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/roadmaps/national-curriculum-pipeline/EXECUTION.md",
+    "git_blob": "3ba6ba2814494c05f3702664c03dd5e1096a1110",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/roadmaps/national-curriculum-pipeline/PHASES.md",
+    "git_blob": "582ee3267816a6a12b3fab942f4e423e301ea348",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/roadmaps/national-curriculum-pipeline/PIPELINE_ARCHITECTURE.md",
+    "git_blob": "3d455d3cb2093cb5e2011b86c7e7394d3109c352",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/roadmaps/teacher-portal-sprint7/PHASES.md",
+    "git_blob": "ffbe3c951fb982b16833953cb2a1fd1c980b394f",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/rollout/BLOCK28_MOE_PORTAL.md",
+    "git_blob": "f5233da15e520f5b42825ac6e8bb913e029e9eec",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/security/INTERNAL_SECURITY_REVIEW_2026-08-10.md",
+    "git_blob": "3875e8e3335447a1f5162fd2b4cd75bbe09c1fe6",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "docs/security/PEN_TEST_BRIEF.md",
+    "git_blob": "423a0b16557332f6ead3153261a8bcd79755bc2b",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/security/PRODUCTION_RLS_EXPOSURE_AUDIT.md",
+    "git_blob": "664b1bdd696f756b868802560bb9979a07f1e4da",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "docs/superpowers/plans/2026-07-28-teaching-runtime-v1.md",
+    "git_blob": "98d1d36d93be5d4c8a545311323d750942462888",
+    "categories": [
+      "llm",
+      "agent",
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "docs/superpowers/specs/2026-07-06-agent-platform-foundation-design.md",
+    "git_blob": "8b5a43a0e3a960884ae73eb97fa258af8c2ed183",
+    "categories": [
+      "llm",
+      "agent",
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/content-bundle-teacher-preview/validate.mjs",
+    "git_blob": "325178c8bbd711f078b758527a75eabe626ba955",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/full-review-flow.spec.ts",
+    "git_blob": "bb547d20df70f94f93bc022eecae1f8a7dbd4435",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/fullscreen-slides-v2/run.mjs",
+    "git_blob": "622ea8548b30aff4a05ef34ed90c0f82a0d43463",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/g4-fractions-activities/validate.mjs",
+    "git_blob": "f8c274c64112c72e43dd8926a987ebed0ab3b2ec",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/g7-native/capture-g7-native.cjs",
+    "git_blob": "7cb1c39fff897b3702bf5ac5e0c1a1da0f5a6bda",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/library-modernization/capture-pilot.cjs",
+    "git_blob": "af85e1a626fd248177cd9aa71f15b63a8677ee95",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/product-design-v2/capture-v3-p1.mjs",
+    "git_blob": "595be5db3a734e36d49880e3f24154367ecefdfd",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/product-design-v2/capture-v3.mjs",
+    "git_blob": "c38af1ed5dfa19231911a5f823ca5a7ec8cfe88a",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/product-design-v2/classFixtures.ts",
+    "git_blob": "9256514c5374423a347a816fa1a43b874d659dcf",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/product-design-v2/validate-classes.mjs",
+    "git_blob": "95b6eb59766c07831d4a7020bc87193fb2cf0b86",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/product-design-v2/validate-labs.mjs",
+    "git_blob": "1bf9a05df5f43efa223211781d2fda586498a997",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/product-design-v2/validate-learn.mjs",
+    "git_blob": "0a4475a705eaefd015928ef733b9e433505980c0",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/product-design-v2/validate-lesson.mjs",
+    "git_blob": "26a9c5032ce5db8c319b91c292b86439cdfb89c9",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/product-design-v2/validate-v3-p1.mjs",
+    "git_blob": "334312996047b0912f2da4249597990f7a88cba6",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/product-design-v2/validate-v3.mjs",
+    "git_blob": "6b8e3cd20ee0513a9829fba40578ee7fbada435b",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/product-design-v2/validate.mjs",
+    "git_blob": "eafd8d9d4a6780b107f1074ff39205137ae25223",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/student-shell-v3/run.mjs",
+    "git_blob": "fb4939e6f77378466cfacbdf754061904cf870d5",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/student-v3-integration/lesson-details.mjs",
+    "git_blob": "bdad65f7f232e2dd6dd6ce6df3e72ed9ec16208e",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/student-v3-integration/production-smoke.mjs",
+    "git_blob": "bda7dd716aa0b57fddd3ba90c7e3ed3415f1b0b1",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/student-v3-integration/run.mjs",
+    "git_blob": "08bc86d6f3eea7d73ba6daafa6bc08c03f36def2",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/textbooks/verify.cjs",
+    "git_blob": "bb12355f457f7d94a5ceae2b135021a28b32dc56",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "e2e/wave3-verification.spec.ts",
+    "git_blob": "e7e69536f830a73442c84f04b3062ec3732f4941",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/adaptive/generateScaffold.ts",
+    "git_blob": "26b6e37002e3843e36f8422e30161045931b9b02",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "scaffold-generation"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/adaptive/practiceGenerator.ts",
+    "git_blob": "ee0613a8693fc78d69005a07ed13c078a45a41b7",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "adaptive-practice-generator"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/agents/content-qa.agent.ts",
+    "git_blob": "1e25a849da595fdec92e0b3ea3ef8ba420dcd382",
+    "categories": [
+      "agent",
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "content-qa"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/agents/district-update.agent.ts",
+    "git_blob": "dce98e679903818b39efde824d893d9184070549",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "district-update"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/agents/echo.agent.ts",
+    "git_blob": "158f29ac8a87f191e837ce88fb99ebef33cf759c",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "echo"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/agents/liberialearn-family.agent.ts",
+    "git_blob": "c0682f5109124b5108c6124ea805798bfb07febd",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "liberialearn-family"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/agents/moe-narrative-report.agent.ts",
+    "git_blob": "46cd6e79352d280def60699e2887c71d6586d8c6",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "moe-narrative-report"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/agents/morning-brief.agent.ts",
+    "git_blob": "707b2941ac480b6a8941f2fb3558f63e53042f6d",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "morning-brief"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/agents/ops-sentinel.agent.ts",
+    "git_blob": "90d5abf868116ddd87a56d3716af1af7006223fb",
+    "categories": [
+      "agent",
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "ops-sentinel"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/agents/teaching-runtime.agent.ts",
+    "git_blob": "c1e4a2b8b0fbcb896f07cf319d404eb5bcbaf3d4",
+    "categories": [
+      "llm",
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "teaching-runtime"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/contentqa/sweep.ts",
+    "git_blob": "d02fb2c3db3fd64ce096ebfc2119397c07c9921a",
+    "categories": [
+      "llm",
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "content-qa"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/goals/tick.ts",
+    "git_blob": "f3de0da996512dd59a80c81b83549114fe4790cc",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "lib/agents/moderation.ts",
+    "git_blob": "dd652bdc155c1420e9141122b1a8abd3d291694b",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "agent-safety-language"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/morningBrief/sweep.ts",
+    "git_blob": "3d87a4000b0d461851bcefc731022fcca0cd32ec",
+    "categories": [
+      "llm",
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "morning-brief"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/opsSentinel/actions.ts",
+    "git_blob": "4a4ae30a28e56b8f27f1df3c2c0c74ca1c01648f",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "lib/agents/opsSentinel/detectors.ts",
+    "git_blob": "3ef4e301da5b2a482a9c6634931cb2c45774a503",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/agents/opsSentinel/sweep.ts",
+    "git_blob": "c09c1ba8ee55810e7f4b8b394d348db1b1fef133",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "ops-sentinel"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/prompts.ts",
+    "git_blob": "57596afd5802d641d9e2d1ae4f907a4cbbb95fca",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/agents/prompts/ops-sentinel.md",
+    "git_blob": "d73bd4edba49864a1f4ee51f27312f2f594d47f6",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/agents/registry.ts",
+    "git_blob": "01ae4f2be3a6c80ecf2790a542f4f7374138ca7d",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/agents/runtime.ts",
+    "git_blob": "8793997d26a7e91050f4ce027c1a67d480bf8667",
+    "categories": [
+      "llm",
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "Shared bounded runtime, not a separate agent"
+  },
+  {
+    "path": "lib/agents/scheduler.ts",
+    "git_blob": "65851444d60c1499325b25e15f1bc7f02cd1193d",
+    "categories": [
+      "llm",
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "Registration/dispatch API; no non-test schedules found"
+  },
+  {
+    "path": "lib/agents/sms/guardianInbound.ts",
+    "git_blob": "f56e549fe10d2f4a4e1a23790b94460be4cce47a",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "liberialearn-family"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/toolRegistry.ts",
+    "git_blob": "0ee8383a1f1ddc29c6a2df38002b126c34c9529e",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "lib/agents/tools/opsSentinel.tools.ts",
+    "git_blob": "6746de8e1ee2145132916c0109a5467c3f10f936",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "ops-sentinel"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/translation.ts",
+    "git_blob": "3bef9e55dc15b33bf0cfe5dfc86a32ed44269c2c",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "agent-safety-language"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/agents/triggers.ts",
+    "git_blob": "fcf386cd66a5c063179cc2ac7edd043d51ef9831",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "Event dispatch API; no non-test registrations found"
+  },
+  {
+    "path": "lib/agents/types.ts",
+    "git_blob": "91ad5b3025ec1d5859b03451c08257ee46858a0a",
+    "categories": [
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "lib/ai/curriculum-factory.ts",
+    "git_blob": "19a1ead3b1a280a6f8f4da2d4a234a6b23bfc6f8",
+    "categories": [
+      "llm",
+      "agent"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "legacy-curriculum-generation"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/curriculum/curriculumOptimizer.ts",
+    "git_blob": "7d59830fe60c45b6d5e729ba6e5226add5681080",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "curriculum-optimizer"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/homework-grader.ts",
+    "git_blob": "6e42d46e95ae5147560a423e49c112f323cff20a",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "homework-grader-legacy"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/homeworkGrader.ts",
+    "git_blob": "3d7b6ebff412c8fe36bf1d990f351f202de1eac3",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "assignment-ai-grader"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/interventions/recommendationEngine.ts",
+    "git_blob": "0bbf6594b46bbe610200c6d6ca0722cb50a5f149",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "school-intervention-advisor"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/lab/labAnalyzer.ts",
+    "git_blob": "d497449adfba4f332752d7857b870c67a2676018",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "virtual-lab-analyzer"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/lessonQuiz.ts",
+    "git_blob": "6d21a444ab0e5bb589e53bf7ef5981912f6a3af0",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "lesson-quiz-generator"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/openaiClient.ts",
+    "git_blob": "ecd68850513793863de0ef66feecfc46866b8721",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "Provider client factory, part of ai-provider-router"
+  },
+  {
+    "path": "lib/ai/rag/embeddingService.ts",
+    "git_blob": "663b9de562932aa7ceff1cd79c17366135cd1adb",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "rag-indexing"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/rag/groundedAnswerService.ts",
+    "git_blob": "5e70b9a42feb4cacd28abfb75ebfcf2f2f6edb53",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "grounded-role-assistant"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/rag/hybridRetrieval.ts",
+    "git_blob": "4d331114389d9be8e2e15ec912d49baa4c748972",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "rag-reranking"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/rag/ragIngestionService.ts",
+    "git_blob": "0b984303a20b56e0a0d95d6d91cfc1927ccb7549",
+    "categories": [
+      "privilege",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "rag-indexing"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/rag/ragReranker.ts",
+    "git_blob": "24c2ce2a36ba09538d0b7c7d331d05b689f7bd8b",
+    "categories": [
+      "llm",
+      "external"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "rag-reranking"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/rag/sparseRetrieval.ts",
+    "git_blob": "807ac37689c7d969db9713458e7f51414f84a967",
+    "categories": [
+      "interface-reference"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/ai/routedCompletion.ts",
+    "git_blob": "aa562ef90d3fd4b3c9c95ecb922ea21db8c36754",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "ai-provider-router"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/rubric-generator.ts",
+    "git_blob": "ead5629b1e00124397b57a677a4fce4008d67a31",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "homework-grader-legacy"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/teacher/classInsights.ts",
+    "git_blob": "faae3b7f676833ea51ccf7458ff45c4781e4213e",
+    "categories": [
+      "agent",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "teacher-class-insights"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/teacher/lessonPlanner.ts",
+    "git_blob": "3c3d3c8d2d2f9beaa2a7ae826fa18e544e9c6404",
+    "categories": [
+      "agent",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "teacher-lesson-planners"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/teacher/teacherAssist.ts",
+    "git_blob": "ed8a075f2457085f65bbe025bcc502c49a312c2e",
+    "categories": [
+      "agent",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "teacher-ai-assist"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ai/units/unitAssembler.ts",
+    "git_blob": "2879afb40f5d465c9c2bb5027821567f6801accc",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "unit-assembler"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/aiQuality/groundedness.ts",
+    "git_blob": "b32fa97009c5479ecc3f294e7c42826a243b27d2",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/audio/lessonAudioProvider.ts",
+    "git_blob": "6f17765343e6d6c56c5d39808b68bc6bfa90b393",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "lesson-narration"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/auth/privilegedIdentity.ts",
+    "git_blob": "11ecf84f000c859b8d535e5d2ceb807a086e5a19",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "lib/automation/cronRunLog.ts",
+    "git_blob": "df6f0fd469b65ad8d9b7daf2b2c7e88dc4cd1c51",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/autonomous/incidentTimelineService.ts",
+    "git_blob": "a4aba5c6e540a0e4194fbac3422a60dd3cdef92f",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/autonomous/runtime/autonomousCronLog.ts",
+    "git_blob": "d37bb09b34db4485ab88d13e2b81d94c6627a1ee",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/autonomous/runtime/autonomousSchedulerService.ts",
+    "git_blob": "14c244ec61ad49610e4360d05a2fa7259d90c0f6",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "autonomous-governance"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/autonomous/runtime/manualRuntimeRunService.ts",
+    "git_blob": "7ad43240f62c2df50e2eeea3f5312ef64d0f81d3",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/autonomous/runtime/runtimeRunbookService.ts",
+    "git_blob": "0a7a2006f1a51680f43bd542f2a676b27f1bfb62",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/autonomous/runtime/runtimeSmokeVerificationService.ts",
+    "git_blob": "d15230484700884ebf4f2bd54f21989ebe607511",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/autonomous/signals/productSignalService.ts",
+    "git_blob": "8963417fe634df7793348e7185a24fd59bde00de",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/cache/redisCache.ts",
+    "git_blob": "9b9e1d2ba2ea78fe5bcd1e5d5d07408445583bc1",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/canva/canvaMcp.ts",
+    "git_blob": "481bd0272de00c10b6fead67268b0f293253da9f",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "canva-generation"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/canva/canvaOAuth.ts",
+    "git_blob": "909f3d5781dc4b615a95a1b67419db8b5e1d16f8",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/content-factory/v2/batch.ts",
+    "git_blob": "10f34f34117c7ae770715a24a1e630f5286e1add",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/content-factory/v2/contractPolicySource.ts",
+    "git_blob": "032a3da114ace2523ba2f90bd8781b31e069d5c6",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/content-factory/v2/partialBatch.ts",
+    "git_blob": "3a586188ea8164716cab81702267bfa401f6d9f2",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/benchmarking/aiWaecAlignment.ts",
+    "git_blob": "3f5d1909d0ec786e478f37eba6f7cfa95325afed",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "waec-alignment-assessor"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/curriculum/eliteUpgrade.ts",
+    "git_blob": "c591bf742713f2bc66f9f0b8c19572b9c35a1eda",
+    "categories": [
+      "agent",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "elite-upgrade"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/curriculum/excellence/g7GapReportSources.ts",
+    "git_blob": "4cc4dfb488064f9d91f9f7e125b503b042b14f0b",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/framework.ts",
+    "git_blob": "f6084d7f1f8eb6f825ce85b319f978abfc137a9d",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/generateLessonV2.ts",
+    "git_blob": "8805cff744be18101ac067f494e9eb50428eb023",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "legacy-curriculum-generation"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/curriculum/modernization/build.ts",
+    "git_blob": "417193736f3238060bc619277fc674b9a1ae3bad",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/modernization/ledger.ts",
+    "git_blob": "223af7f4be576d1694b51b3e23c2bdc60c692959",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/modernization/pipeline.ts",
+    "git_blob": "972307addd8847df4e6b8556acc6e0ae94b46fd6",
+    "categories": [
+      "privilege",
+      "external"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/mutations/repository.ts",
+    "git_blob": "37a3655bb9c4f0c58a917d7e5d2b73c8b38c6096",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/nr12GradeDeserts.ts",
+    "git_blob": "4d4d4bc5e8601826acef92d15106ef084651f953",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/nr13Grades58.ts",
+    "git_blob": "ca68c08d55f3c4cacd3b523df9303413facbd0fb",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/regenerationAdmin.ts",
+    "git_blob": "497d67f2ceff32b96607cab496e3c3a6054ed493",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/review/aiReview.ts",
+    "git_blob": "865526c974644721e4e1089e9374fa070452d60e",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "curriculum-review-adjudicator",
+      "curriculum-review-pedagogy-sme",
+      "curriculum-review-subject-sme",
+      "curriculum-review-waec-sme"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/curriculum/review/legacyAdapter.ts",
+    "git_blob": "e6ff14980bc0f57009c47e837ae6dde67f104eb6",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/curriculum/v2/validate.ts",
+    "git_blob": "12ae7a28e8747ec0ec07b0baf425f63241deda75",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/db.ts",
+    "git_blob": "62ad4bcb558b2dcb027be57a20c6ee6fec5e44de",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/demo/reset.ts",
+    "git_blob": "f4491c84a82e52608ee36d1e02cb1885291a97d5",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/evals/runner.ts",
+    "git_blob": "009a830482afc80c69e5b1993f6f57cd4e69bc60",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "rag-evaluation"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/evals/types.ts",
+    "git_blob": "85ad5bfbf9da61c321d16a516cb43aa2acce7406",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/exams/examGenerator.ts",
+    "git_blob": "aa62cbc2143fa3c3daba05c7fc6822715faa6057",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "exam-generation"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/exercises/generateAILiteracy.ts",
+    "git_blob": "b05f753d764c28c0833316f3911f6a37d1f14766",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "exercise-generation"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/exercises/generateCodeExercise.ts",
+    "git_blob": "6a862129ad414795fdd436ab901b4354e403e9ca",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "exercise-generation"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/featureFlags.ts",
+    "git_blob": "96509907c669f8bb5cc310cdc4bf532a31433b58",
+    "categories": [
+      "flag",
+      "interface-reference"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/grading/gradeAILiteracy.ts",
+    "git_blob": "15de7d9e7b42a3d8a2577be866e1fda2e03b9876",
+    "categories": [
+      "agent",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "specialist-response-grading"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/grading/gradeEssay.ts",
+    "git_blob": "c9bb0d9c0d16c74e5576e79b17652db119d75bee",
+    "categories": [
+      "agent",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "specialist-response-grading"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/guardian/sms-service.ts",
+    "git_blob": "b2a26ea0bbe6b487ac709e762da9cf1326882799",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/hooks/useAssignmentPolling.ts",
+    "git_blob": "6fe81d6569b5d12b5eada296e72617b122ae3ee0",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/hooks/useVisibleInterval.ts",
+    "git_blob": "8939b118a58365cbb4e26116a2563549052a33d1",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/intelligence/recordPerformanceEvent.ts",
+    "git_blob": "ed21971fafbaa1c629f5f77ac90ec4efb5402967",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "lib/interactive-labs/v2/review/walkthroughs.ts",
+    "git_blob": "921b512bf75539de625f8b8e26b71102865e3794",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/labs/ai/explainLabState.ts",
+    "git_blob": "a63ff8708fe4df0119e591e3f7ec1d3858465b20",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "ai-lab-explainer"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/labs/ai/planLabAction.ts",
+    "git_blob": "2b66f6f27bf2eaddba1429b165ee7c1e48ff2d51",
+    "categories": [
+      "agent",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "ai-lab-action-planner"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/media/imageQA.ts",
+    "git_blob": "2c6ab8de809e302c4c6dd69a2bd41447fd5a1c83",
+    "categories": [
+      "external",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "lesson-illustration"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/moe/alignment-engine.ts",
+    "git_blob": "656a5bf2542b822eff2fb63f7fdbcbd6547131a6",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "moe-alignment"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/ops/cronHeartbeat.ts",
+    "git_blob": "dfb3c48d3334c5499bd8fadf0a6c39a25870d210",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "lib/pipeline/gradeOrchestrator.ts",
+    "git_blob": "ab87f09ff7cabbbede667faa790b70c6a5039f77",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/placementAuthority/items.ts",
+    "git_blob": "931dd48f958c9bb4adfc0134e67c39be76ef18f1",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "placement-item-generator"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/push/sendPush.ts",
+    "git_blob": "01f5a23bf5fe28472b7fdda3792c0ffc5375e06c",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/quality/fixtures/regression.ts",
+    "git_blob": "498a3c4d781df3c45f4ee81ad425f8b74a78bb6c",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "Test fixture prose, false positive"
+  },
+  {
+    "path": "lib/school-operations.ts",
+    "git_blob": "42f74fb53ff29f9a8c1d95ed838e2951dcc44849",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/security/contentSecurityPolicy.ts",
+    "git_blob": "b5ebf4084ec01d4959d05fa4a263099892bc39d9",
+    "categories": [
+      "external",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "CSP provider URL policy, false positive"
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "categories": [
+      "scheduler",
+      "interface-reference"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "lib/student/classes.server.ts",
+    "git_blob": "1c53894d4548212d932df32a41368c489336511b",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/teacher/gradingAssist.ts",
+    "git_blob": "b7530aef471153dcc9f1b870b0f2a961c8a4c854",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "teacher-grading-assists"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/teacher/lessonPlanner.ts",
+    "git_blob": "bc483d93c7c69dfbf0a63bf163fccac06e77691d",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "teacher-lesson-planners"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/teaching/runtime.ts",
+    "git_blob": "26f42a8645e23505787678272f5fca9ac573876f",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "teaching-runtime"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/timetable/timetableService.ts",
+    "git_blob": "fc55c3f22c2fb7eb748e7828b213fb6570399717",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "lib/waec/practice.ts",
+    "git_blob": "42d49a46fe2b9fa119fc1432472381e314c111c5",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "waec-practice"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/workflows/ai/assignmentTutor.ts",
+    "git_blob": "f2be40b2f1fddcabfceedf9445298753b3b4213e",
+    "categories": [
+      "agent",
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "assignment-tutor"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "lib/workflows/ai/gradingAssist.ts",
+    "git_blob": "10fbb7b709f5db213e295fcc4bef931feeb05a24",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "teacher-grading-assists"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "middleware.ts",
+    "git_blob": "b24d3192d703eace85eab4df540217b201a83b4a",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "next.config.js",
+    "git_blob": "b15d7468d945f811f1bb2c6b9dccf74ea1e0333c",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "os-vault/02-PROJECTS/LiberiaLearn/sprints/SPRINT-ROADMAP.md",
+    "git_blob": "ce630392e69a29d2d7465aae4259fe9b5b2a6dcb",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "os-vault/02-PROJECTS/LiberiaLearn/sprints/sprint-20.md",
+    "git_blob": "11abc6d9de13a5619b0f9704388a1f2c42d67e45",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "os-vault/02-PROJECTS/LiberiaLearn/sprints/sprint-23.md",
+    "git_blob": "9778ecbc4e98fe13c8d65f982bd4720252661b12",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "os-vault/02-PROJECTS/LiberiaLearn/sprints/sprint-24.md",
+    "git_blob": "ed6826c295c836427780d2a55bf1efcb9cdf88d9",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "os-vault/02-PROJECTS/LiberiaLearn/sprints/sprint-26.md",
+    "git_blob": "583123253f06a9513126df484a74906adc43ec4c",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "os-vault/SYSTEM/setup/n8n-workflows/daily-pulse-workflow.json",
+    "git_blob": "d9d0ca5cf428a263b5ebfd95863230fbdc3830a6",
+    "categories": [
+      "scheduler",
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "n8n-daily-pulse"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "os-vault/SYSTEM/setup/setup-guide.md",
+    "git_blob": "2fbb2aea67a9f65ef819c038c4e134670847fb22",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "os-vault/SYSTEM/workflows/02-moe-brief-generator.md",
+    "git_blob": "0ac9ff2db6e668ac923cb7bde5a47bf7c2657d87",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "persona-02-moe-brief-generator"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "os-vault/SYSTEM/workflows/03-security-audit-runner.md",
+    "git_blob": "61051058b7907c77314923c671f953f1b83443f7",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "persona-03-security-audit-runner"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "os-vault/daemon/context.node-test.mjs",
+    "git_blob": "0273cc59fa65f2cf4b57f40c3ad4c8c61c9466dd",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "os-vault/daemon/watcher.mjs",
+    "git_blob": "c3e2a6ccfdee4a2cc1e226313614a0f9d97086b3",
+    "categories": [
+      "llm",
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "os-vault-daemon"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "package.json",
+    "git_blob": "575cc48e73402af2ca1a94b4a68425d928bf8a26",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "prisma/schema.prisma",
+    "git_blob": "3a8f0af567d3dc00ccf904348872ffe9110702ce",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "prisma/seed-week-curriculum-pcs9a.ts",
+    "git_blob": "aa91dc226eb1b27d06ee9d57f1b8d2013f8b4cfa",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "prisma/seed-week-curriculum.ts",
+    "git_blob": "02e0c24922b81e373b8d99f171e0d3a95e489445",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "prisma/seeds/cha-demo.ts",
+    "git_blob": "3b3df403ccda7a62575b743d7d86aeafae53da27",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/audit-api-route-policies.mjs",
+    "git_blob": "0d7f44074c191ad9bf756b87b8c9ec0c3985b330",
+    "categories": [
+      "scheduler",
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/audit-gate-1.ps1",
+    "git_blob": "8adfa7cbc97a837cff46f1027ffd9ec5076b3594",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/audit-wave3-completion.ts",
+    "git_blob": "59ba4d404aaee5f4696a1ceaf6b283afffc589b6",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/backfill-demo-dates.ts",
+    "git_blob": "a94da44cefcdb478a3abf5b5cd7418d814f63986",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/build-curriculum-excellence-g7-gap-reports.ts",
+    "git_blob": "d81566dec77174feba72ad29913419c1002e33fb",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/build-curriculum-v2-g4-proof.ts",
+    "git_blob": "1c6d79f7897ebf5de528c490cf13ca9bdfaeb0a6",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/build-curriculum-v2-g7-native.ts",
+    "git_blob": "123afae1a13f9cbe25962dd3af792fd34f1f9432",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/build-first-ten-manifest.ts",
+    "git_blob": "df15aabb0d9f502ea06268cd9aef9316cdac5f71",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/build-g4-math-review-package.ts",
+    "git_blob": "a4a30c9db87bf7ec6abe051c1df29d8a0aa78ee0",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/build-library-modernization.ts",
+    "git_blob": "ea9f77d07cf2288d98c393fa5aabd24b108657e9",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/certify-template-cell-v1.ts",
+    "git_blob": "be03dfed9b6c37229b39e115a473f828508a6e12",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/check-modernization-ledger-diff.ts",
+    "git_blob": "ae76fc9052a1d1c65aa9f125f8915b09bcb15ec6",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/cleanup-junk-schools.mjs",
+    "git_blob": "1cc9794c5bb566e1828133a883481a454d1076dd",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/cleanup-load-test-users.ts",
+    "git_blob": "6effb5d4e0678b36fc3411ef63fb57486ea3b5a0",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/content-factory-v2-reconcile-v021.ts",
+    "git_blob": "8b06ea2d9f2ad56e98591bcc3954914e0da9dbb0",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/content-factory-v2/amend-v021.cjs",
+    "git_blob": "e5f103686c93875f87396c8f2f671abf72623dbe",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/content-factory-v2/isolated-validation.cjs",
+    "git_blob": "299ce241645ed61b72ccfbceed13ed00172ec5dd",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/content-persistence-runtime-check.ts",
+    "git_blob": "0809c984fc5c698c429473f235d8b3cfb1afcfff",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/curriculum-cleanup-plan-v1.ts",
+    "git_blob": "91db942c717f561cc7c215cc4e539bf1b175be2f",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/curriculum-cleanup-snapshot-v1.ts",
+    "git_blob": "baf3423ed93ae2eeb282aa05e3ccf13b9c0dd90e",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/data/desert-lesson-titles.ts",
+    "git_blob": "f2a7f181be3bf33f1e1f0a1d965327d7da4e3d70",
+    "categories": [
+      "external"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/diag-demo-window.ts",
+    "git_blob": "628ec4ec6756587b3257624b7562ee0b5aecafd4",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/dr/healthCheck.ts",
+    "git_blob": "9d87cf48747d171c5c854ce6818eeb7aae0093fa",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/e2e/prepare-day1-env.ts",
+    "git_blob": "78903e9c6d1ce32cdacab3ccb866205e1f12bb67",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/export-load-test-credentials.ts",
+    "git_blob": "0c99fc453393b069183beec38db1a977cfc11c7c",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/extract-g7-legacy-revisions.ts",
+    "git_blob": "150f98b5c853b83b028a1d9193d93f4a02e13176",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/extract-library-modernization-inventory.ts",
+    "git_blob": "670d720bc4db535cf4c99b763565ce89982fee9e",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/extract-moe-curriculum-archives.ts",
+    "git_blob": "6ee425165282b75203d7f012f0d2cbd8133e1dea",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/finetune/eval-compare.ts",
+    "git_blob": "ab53c9f79f30df3b6c30f051cba074bfe8afa3bd",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "maintenance-generation-tools"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "scripts/finetune/export-sft-dataset.ts",
+    "git_blob": "96184f9c192a48feef2259e429d4b230541e3b30",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/finetune/submit-finetune.ts",
+    "git_blob": "5cf30e1a262f221343b9ad98f53cf07cfabded14",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/fix-demo-timetable.ts",
+    "git_blob": "3cf885a077a4db90dd29346bd26be41e7561ca79",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/generate-all-curriculum.ts",
+    "git_blob": "67fa511b5574e17027390319dddd3e6718a7dfb1",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/generate-icons.mjs",
+    "git_blob": "77f50cb5aaa37ba5f1b132f25f5b8b464b6cb072",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/generate-labs-for-approved.ts",
+    "git_blob": "77bf687f9f953429ddc2a53e35a81417e8fe0b16",
+    "categories": [
+      "llm",
+      "agent"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "maintenance-generation-tools"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "scripts/generate-lesson-media.ts",
+    "git_blob": "82fdd28398e5acc67a8238f73f64334a36d39987",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/generate-load-test-tokens.ts",
+    "git_blob": "db2202a318a0ac87df10e189581c680c4c5a99e5",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/generate-missing-curriculum-content.ts",
+    "git_blob": "48b01935ba956db13e36f3a9f1a27501681239d3",
+    "categories": [
+      "agent",
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "maintenance-generation-tools"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "scripts/generate-textbooks-for-approved.ts",
+    "git_blob": "93bc54d5db0e716c326fe1bf16b6fb22da178b65",
+    "categories": [
+      "llm",
+      "agent"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "maintenance-generation-tools"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "scripts/joint-repairs/pwa.mjs",
+    "git_blob": "9790864b100bfa1489f91ef9d88bef1e5e96150a",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/joint-repairs/run.mjs",
+    "git_blob": "2cb8764d22d8f22ed61eb017bd04c404a84b473e",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/labs/capture-lab-review.ts",
+    "git_blob": "9831248e34879091c135060c2be2fd3b7294c9fa",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/labs/compare-lab-captures.ts",
+    "git_blob": "b519e69375cdea9fdc8f32c6c6d63b645276b4d3",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/labs/interaction-walkthrough.ts",
+    "git_blob": "b8f785f9f1d9d31586ed07e2b069b9f8df1614f5",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/labs/measure-renderer-chunks.ts",
+    "git_blob": "84aa55bacd73e840857d550fcc91ca1da0c26f3f",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/labs/prepare-review-consent.cjs",
+    "git_blob": "091f1c2fa249d3ff3f36f388b3a6fbffcc4fc39a",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/labs/runtime-acceptance.ts",
+    "git_blob": "1919eec86212170316a22169fe5d6a1175c3c1db",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/labs/update-lab-budget-baseline.ts",
+    "git_blob": "1c73f40b94a6f670c043c7162125aa8c7195cf59",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/lib/canonicalMigrationBytes.ts",
+    "git_blob": "b51fbaab7e54a357244f4ca4f342b1f3db1341f4",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/live-curriculum-reconciliation-v2.ts",
+    "git_blob": "4da2b1ad520ede26a4030b9e3c3ca34c0bb3a6ee",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/load-test-kill-switch/supervisor.ts",
+    "git_blob": "0dd805942ce46a2a3c20d3a08e39442ad7c44c19",
+    "categories": [
+      "scheduler",
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/moe-alignment-dry-run.ts",
+    "git_blob": "0779da3d07c57645cb09a4a81c4adb994f244b8a",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "maintenance-generation-tools"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "scripts/moe-objective-structuring-v1.ts",
+    "git_blob": "b6d8208a97585418e182a3852c78a358d7498495",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/ocr-moe-scanned-pages-v1.ts",
+    "git_blob": "76931ea8ea07790fd7a73b89108a1013be5bfffd",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2a-production-post-cutover.ts",
+    "git_blob": "72c1091b625349e5c5bf8cc761c85c3e12d3897d",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2a-staging-e2e.ts",
+    "git_blob": "8101e8dc54d9d0e9c0e917ec11295436812bdf7d",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2a-staging-preflight.ts",
+    "git_blob": "9a64ca80a8cf5c839d4fa1e9f8e6cf1a5d0abf8b",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2ab-staging-grant-hardening.ts",
+    "git_blob": "c7e8d53fad9058e681dd69c7942efc52f895e93f",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2abc-readonly-forensics.ts",
+    "git_blob": "5f7467d567e7066447e46d9465a8c374cf51df93",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2b-configure-vercel-staging.ts",
+    "git_blob": "eb73377a1ae553af22c53810a08117fdcd88509d",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2b-staging-e2e.ts",
+    "git_blob": "6c54fa2a6a9d4773984a94d7eabacd83d279d527",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2b-staging-preflight.ts",
+    "git_blob": "d973c714b90bec6daade4234b737aaef8c16e647",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2b-staging-shadow-parity.ts",
+    "git_blob": "ac2358da789027ff0a5fd6ef5504d38b9b840f6e",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-distributed-dedup-proof.ts",
+    "git_blob": "33fce0de74b46efd5f8ac0c8340e802cf0a7931c",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-distributed-dedup-writer.ts",
+    "git_blob": "c19bf6313e853e974519d47c30d1c89f08b2551c",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-live-ai-sme-proof.ts",
+    "git_blob": "7756fbc52e23a9f3b0a0b5a2aacd635db96cd99f",
+    "categories": [
+      "privilege",
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-live-dedup-proof.ts",
+    "git_blob": "4feb4ae15595876422351827393607f613f1c85d",
+    "categories": [
+      "privilege",
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-production-ai-canary.ts",
+    "git_blob": "ce97e84ae5fdf6ac5bb6f448be378d16352ce86f",
+    "categories": [
+      "privilege",
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-production-apply-evidence-specificity-migration.ts",
+    "git_blob": "a724dfacbfadfc7d32ad2d5147fd9f4b167303b8",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-production-apply-schema-migration.ts",
+    "git_blob": "d0c8e2f0c79fc8d5e0ac950556a208fca6e0e2b6",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-production-dedupekey-ledger.ts",
+    "git_blob": "fab9f44f02c8330e1bb569f4f2e01251afa68bbd",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-production-enable-rls.ts",
+    "git_blob": "e7a5dba8c7d5655f93068a4b3810e931885c8f62",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-production-grant-hardening.ts",
+    "git_blob": "bf3df7408a0734c6dac285e77c984208f97294be",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-reconcile-ai-proof-telemetry.ts",
+    "git_blob": "494fb64e00fc04a43fb37a22724ce4d43140419e",
+    "categories": [
+      "privilege",
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-staging-apply-dedupekey-unique-migration.ts",
+    "git_blob": "4a2a8b5ae457c6742e5fe7f0ad38fe4fca78b23b",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-staging-apply-evidence-specificity-migration.ts",
+    "git_blob": "e42317c8cd493399533a168b0f3650a02ec1204c",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/p2c-staging-grant-hardening.ts",
+    "git_blob": "185534f3f33524f120f9832d2b2d12bf5c2e5fd1",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/patch-vitest-offline-wildcard.mjs",
+    "git_blob": "ee34e54d520353db44529e599e8eaa2cb4c29357",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/playwright-standalone-server.mjs",
+    "git_blob": "fdb38f18661502fe9c5f90234d99a62fa00364b1",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/process-lesson-audio.ts",
+    "git_blob": "2e9ae747fd68ae6cf9665bea905e5950f80aa784",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/qa/build-pr195-sequential.cjs",
+    "git_blob": "893f47baccaf03c4ebb2d0a453bbb08c2056a262",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/qa/inspect-pr195-authored-input.ts",
+    "git_blob": "d5ba00510906a4d1fb66307b7ba42642dd84db89",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/qa/pr195-review-browser.cjs",
+    "git_blob": "9d24cc6d37060ffd27d4da2bf7dbe044fbca4168",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/qa/pr195-review-db.cjs",
+    "git_blob": "90be3017a4cedf975c0892a889f68f35f27be5bc",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/qa/pr195-review-receipt.cjs",
+    "git_blob": "4ff5d2e773ef350a9aeee47407efe10cf05deb20",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/qa/pr195-review-server.cjs",
+    "git_blob": "d98562ec3ef49e68584a971dd33ec93151da745f",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/qa/probe-first-three-availability.cjs",
+    "git_blob": "09935b1474ef31d8eb1d6ad9fb1817abe0b61e9c",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/qa/recompute-pr195-inventory.ts",
+    "git_blob": "a42cb808b38b67c408fd418a22844130a7d86429",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/qa/verify-pr195-sequential.cjs",
+    "git_blob": "974480418330cac79a9497a16940b203720acec5",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/qa/verify-pr195-snapshot.cjs",
+    "git_blob": "fdfa967186cf4154adceb251e12b00726c12c0bf",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/render-first-ten-modernization-spec.ts",
+    "git_blob": "2d7d53f9cc7c279b7b33fc8196f33061d55ac87a",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/run-library-modernization-pilot.ts",
+    "git_blob": "a7267df1024afc30984f8850b68b1f593ac02422",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/scaffold-priority.ts",
+    "git_blob": "b4b5ac7982c07da9df264703d6be79df7860eec3",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "scaffold-generation"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "scripts/seed-full-timetable.ts",
+    "git_blob": "3f9d83e27af32c9f998f56337cbd9ac26015b712",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/seed-g4-learning-target.ts",
+    "git_blob": "d493c59ae60389d700f950df112ede251e70e0a0",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/seed-press-conference-data.ts",
+    "git_blob": "8056efe19f12691162630b8149016df675be1d15",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/seed-waec-demo-mastery.ts",
+    "git_blob": "dc54972b710c38afe14008614c1475e98a0c4cef",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/tag-waec-content.ts",
+    "git_blob": "e0b4e3ba0c449ebf47c9f0c2dcfb340985d64263",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "maintenance-generation-tools"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "scripts/teaching-runtime-cost-sim.ts",
+    "git_blob": "6ce7bb0042828ade054b346f726b4eb4ec0a1762",
+    "categories": [
+      "flag"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/test-gen-single.ts",
+    "git_blob": "f30199b09d775ed607714289832ec9455488b322",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [
+      "maintenance-generation-tools"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "scripts/thin-content-purge-dry-run.ts",
+    "git_blob": "bd58eb00e20e06c02df986653a3c6254acece8b0",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/thin-content-purge-live.ts",
+    "git_blob": "7db5e18f4c5a165a846a82d9fc48ea445fb92f68",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/validate-changed.mjs",
+    "git_blob": "c35820bfb2b7c70ad09f269a92f6e777658ac8fb",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/verify-content-local-boot.cjs",
+    "git_blob": "6f918572620eb45d9cab086463b9c6ce57e8a77e",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/verify-first-ten-source-bindings.ts",
+    "git_blob": "64110a1d2444c73e9aa49595c1fe5decb392c2fd",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/verify-guardian-agent-e2e.ts",
+    "git_blob": "bccd67b0297b0512fc5439cf800aef3f1ff860ee",
+    "categories": [
+      "flag",
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/verify-legacy-manifest-canonical-bytes.ts",
+    "git_blob": "7c15da0266a805d5465aa5622563c51d7c90f142",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "scripts/verify-schema-authority-diff.ts",
+    "git_blob": "e3cb05bb31af246d7bc2bbf37841d0c5a2ffc06f",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "tools/agent-scan/scan.mjs",
+    "git_blob": "631e4377b96542ab0be465b96ecf78f433554cf8",
+    "categories": [
+      "privilege",
+      "external",
+      "interface-reference"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "agent-scan"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "tools/mergeops/cli.mjs",
+    "git_blob": "05e48f61e37902a704dd3be12a364b14e279b1ee",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "mergeops-controller"
+    ],
+    "review": "classified implementation"
+  },
+  {
+    "path": "tools/mergeops/core.mjs",
+    "git_blob": "bea456d88097e4060586743180a6501e62712466",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "tools/mergeops/demo.mjs",
+    "git_blob": "3dfd3e6d30ed6c4336befd1ab71873e3dae90b3e",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "tools/mergeops/fixtures/pr190.json",
+    "git_blob": "b8bb55e97e0c0c8a31db64677799fe7053d04c80",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "tools/mergeops/ignore-build.mjs",
+    "git_blob": "d7215f8170e88fd494061461b2b5d900e39584c3",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "tools/mergeops/localgit.mjs",
+    "git_blob": "b27a13f01365b67c18219d070d0408745438736d",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "tools/mergeops/operations.node-test.mjs",
+    "git_blob": "a508d780bd0831fb9c4a3244864994e13134a8f1",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "tools/mergeops/repair.mjs",
+    "git_blob": "1e949846a50c2bdde2cc4d7d0479087ba9ba3ff0",
+    "categories": [
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "tools/mergeops/safety.node-test.mjs",
+    "git_blob": "2aa8392d37a3c533ba83c97edf04fe83e996d421",
+    "categories": [
+      "flag",
+      "privilege"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [],
+    "review": "discovery-only reference; not established as separate agent"
+  },
+  {
+    "path": "vercel.json",
+    "git_blob": "2cb8d2605bea3f76ad6d01ad4e0e20241202e6fe",
+    "categories": [
+      "scheduler"
+    ],
+    "runtime_candidate": false,
+    "registry_ids": [],
+    "review": "reviewed support module"
+  },
+  {
+    "path": "worker/handlers/embeddings.ts",
+    "git_blob": "bd9783f73bcd33eb86795bd6ef43b14e0812346c",
+    "categories": [
+      "llm"
+    ],
+    "runtime_candidate": true,
+    "registry_ids": [
+      "rag-indexing"
+    ],
+    "review": "classified implementation"
+  }
+]

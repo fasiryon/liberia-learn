@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g4-computing-keep-score-with-variables-v4",
+  "version": "4.0.0",
+  "contentHash": "5d64f85926ce80a03d75efe70e599ddba3e6d14882625c3ff9d400218991473b",
+  "grade": 4,
+  "subject": "COMPUTER_SCIENCE",
+  "unitId": "g4-computing-keep-score-with-variables",
+  "title": "g4-computing-keep-score-with-variables",
+  "repositoryCommit": "3e3f6cf46e2dee4da5853ef240f3c11dfd39f35b",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "17064f4d9c9282c40223d247915b93c52f00232404daeeb8d3bb7c4a249b2608",
+      "sourceRef": "curriculum/factory-v4/primary-computing.2-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "g4-computing-keep-score-with-variables-o1",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Distinguish a variable's name, current value and an instruction that changes its value.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-computing-keep-score-with-variables-o1",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-computing-keep-score-with-variables-o2",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Trace ordered scoring instructions, distinguishing replacement from adding to the current value.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-computing-keep-score-with-variables-o2",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-computing-keep-score-with-variables-o3",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Build, test and debug an unplugged scoring procedure using fresh event sequences.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-computing-keep-score-with-variables-o3",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g4-computing-keep-score-with-variables-outcome",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g4-computing-keep-score-with-variables-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g4-computing-keep-score-with-variables-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g4-computing-keep-score-with-variables-practice",
+      "resourceId": "g4-computing-keep-score-with-variables-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "17064f4d9c9282c40223d247915b93c52f00232404daeeb8d3bb7c4a249b2608",
+      "sourceRef": "curriculum/factory-v4/primary-computing.2-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "teachingRegistryVersion": "teaching-blocks/1.2.0"
+}

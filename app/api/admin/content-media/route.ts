@@ -1,5 +1,6 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin; rationale=global content and cost operations require a canonical platform ADMIN before domain work
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requirePlatformContentAdmin } from "@/lib/auth/platformContentAuthority";
 import { prisma } from "@/lib/db";
 import { signMediaUrl } from "@/lib/media/blobStorage";
 import { categorizeLesson } from "@/lib/media/categorize";
@@ -17,7 +18,7 @@ const BANDS: Record<string, number[]> = {
 
 export async function GET(req: Request) {
   try {
-    await requireRole("ADMIN");
+    await requirePlatformContentAdmin();
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category"); // VISUAL|PHOTO|ABSTRACT|FAILED
     const band = searchParams.get("band");

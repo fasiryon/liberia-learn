@@ -12,7 +12,7 @@
  */
 import type { GovernedEvidenceType } from "@/lib/learning-evidence/evidenceContract";
 
-import type { SceneTeaching } from "./teaching/instruction";
+import type { LessonSceneTeaching } from "./teaching/stemBlocks";
 export const LESSON_EXPERIENCE_CONTRACT_VERSION = "lesson-experience/1.0.0" as const;
 
 export const SCENE_TYPES = [
@@ -156,7 +156,7 @@ export type Scene = Readonly<{
    * Interactive Learning V4: visual teaching blocks from the Visual Teaching Block Registry. Formative only:
    * they gate Continue on this device and never score, write evidence or change mastery.
    */
-  teaching?: SceneTeaching;
+  teaching?: LessonSceneTeaching;
 }>;
 
 export type LessonExperience = Readonly<{

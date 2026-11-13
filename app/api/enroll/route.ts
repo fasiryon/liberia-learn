@@ -1,7 +1,9 @@
+// route-policy: auth=public; scope=none; authority=rate-limited-applicant; rationale=school enrollment request creates a pending school and its ADMIN account with a temporary password; refused on any deployed Preview/staging before data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createSchoolEnrollmentRequest, LIBERIAN_COUNTIES } from "@/lib/school-operations";
 import { checkRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rateLimit";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +19,8 @@ const EnrollmentSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const frozen = previewIdentityFrozen();
+  if (frozen) return frozen;
   try {
     const ip = req.headers.get("x-forwarded-for") ?? "unknown";
     const rl = await checkRateLimit(ip, { ...RATE_LIMIT_POLICIES.AUTH, namespace: "enrollment" });

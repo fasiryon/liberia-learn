@@ -80,6 +80,9 @@ vi.mock("@/lib/db", () => ({
     strandCatalog: {
       findFirst: mockStrandCatalogFindFirst,
     },
+    // AT-GRADE-01: lab linking needs class authority; the synthetic teacher is the scheduled class's teacher.
+    class: { findUnique: async () => ({ schoolId: "school-1", teacherId: "teacher-1" }) },
+    teacherAssignment: { findMany: async () => [] },
   },
 }));
 

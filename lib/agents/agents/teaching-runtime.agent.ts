@@ -11,6 +11,7 @@ import type { AgentDefinition } from "@/lib/agents/types";
  */
 export const teachingRuntimeAgent: AgentDefinition = {
   name: "teaching-runtime",
+  audience: "minor",
   description:
     "Delivers one turn of a live, curriculum-grounded classroom lesson: narration, comprehension checks, and honest out-of-scope deferrals, plus private facilitator coaching prompts.",
   systemPromptKey: "agent.teaching-runtime.system",

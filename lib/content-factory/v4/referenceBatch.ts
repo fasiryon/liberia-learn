@@ -13,10 +13,10 @@ const json = (value: unknown) => JSON.stringify(value, null, 2) + "\n";
 export const DRAFT_ROOT = `curriculum/factory-v4/drafts/${CANDIDATE_VERSION}`;
 
 export const REFERENCE_PROFILE = { version: CANDIDATE_VERSION, executor: LESSON_AUTHOR_VERSION, author: authorLesson, inputs: referenceInputs, lessons: V4_LESSONS };
-export type ReferenceProfile = Omit<typeof REFERENCE_PROFILE, "version" | "executor"> & { version: string; executor: string };
+export type ReferenceProfile = Omit<typeof REFERENCE_PROFILE, "version" | "executor"> & { version: string; executor: string; inputPath?: string };
 
 export async function buildReferenceCandidate(lesson: V4Lesson, profile: ReferenceProfile = REFERENCE_PROFILE) {
-  const blueprint = referenceBlueprint(lesson, profile.inputs);
+  const blueprint = referenceBlueprint(lesson, profile.inputs, profile.inputPath);
   const factory = await runFactory({ blueprint, executors: referenceExecutors(lesson, profile.author), authoringOnly: true,
     appendAudit: async () => {}, maxAttempts: 1 });
   if (factory.status === "FAILED" || factory.artifacts.length !== 1) throw new Error(`reference_factory_failed:${lesson.key}:${factory.events.at(-1)?.error}`);

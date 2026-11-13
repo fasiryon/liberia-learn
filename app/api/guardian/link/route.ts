@@ -1,8 +1,11 @@
+// route-policy: auth=session; scope=record; authority=guardian-invite-token; rationale=guardian accepts a link invite (consumes the invite, creates the guardian relation); refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isGuardianLinkingEnabled } from "@/lib/serverFlags";
 import { findInviteByToken } from "@/lib/inviteTokens";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +16,8 @@ export async function POST(req: Request) {
     }
 
     const user = await requireRole("GUARDIAN");
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const { token } = await req.json();
 
     if (!token || typeof token !== "string") {
@@ -60,6 +65,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, studentId: student.id });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json(
       { error: err?.message ?? "Internal error" },
       { status: err?.status ?? 500 }

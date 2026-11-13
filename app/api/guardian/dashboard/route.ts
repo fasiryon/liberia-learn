@@ -12,6 +12,7 @@
 // Scope        : guardian sees ONLY their linked children — hard enforced
 // PII          : no data from non-linked students can appear
 
+import { isTeacherReviewed } from "@/lib/labs/labReview";
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -348,10 +349,11 @@ export async function GET() {
             const subject = String(submission.Assignment.Class.subject).replace(/_/g, " ");
             return `Submitted ${subject} assignment`;
           }),
+          // Only a teacher review counts as "reviewed" (AT-R-LAB); a provisional score is still pending.
           ...todayLabSessions.map((session) =>
-            session.score === null
-              ? "Science lab pending review"
-              : `Science lab reviewed with score ${session.score}`
+            isTeacherReviewed(session)
+              ? `Science lab reviewed with score ${session.score}`
+              : "Science lab pending review"
           ),
           ...todayGrades.map((submission) => `Received ${submission.score}/100 on ${submission.Assignment.title}`),
           ...todayPlacementUpdates.map((placement) => {

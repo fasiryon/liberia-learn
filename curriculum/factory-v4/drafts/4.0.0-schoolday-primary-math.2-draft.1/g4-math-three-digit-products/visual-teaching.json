@@ -1,0 +1,391 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "4fe423deb164b80ee63f4144d15cd34fcf206b879c244f4631b2d136616fb2dc",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "g4-math-three-digit-products-o1",
+      "statement": "Multiply a three-digit whole number by one digit using a partitioned area model and a written calculation.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-math-three-digit-products-o1",
+          "statement": "Multiply a three-digit whole number by one digit using a partitioned area model and a written calculation.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-math-three-digit-products-o2",
+      "statement": "Explain regrouping as preserving place value, including a zero digit in a product or factor.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-math-three-digit-products-o2",
+          "statement": "Explain regrouping as preserving place value, including a zero digit in a product or factor.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "see-place-values",
+      "slot": "blocks",
+      "index": 0,
+      "type": "AREA_MODEL",
+      "blockSha256": "7c2e100d14bb85ebc6e6f789f80bb9d79c0fadecaad3f05c6702d5be74a34a2a",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "instructionalPurpose": "Split a multiplication by place value and fill in the partial products. Learner action: Inspect the hundreds, tens and ones regions and identify which product counts each region.",
+      "misconceptionIds": [
+        "digits-without-place-value",
+        "discard-regrouped-value"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Connect each region to its full place-value quantities. Find 214 × 3 by splitting it into parts.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Connect each region to its full place-value quantities. Find 214 × 3 by splitting it into parts.",
+        "responsePrompt": "Inspect the hundreds, tens and ones regions and identify which product counts each region. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryMath2/lessonAuthor.ts",
+          "sha256": "0ddfd8a804483abd50c3ecbb1312aae4566031d458d2db375031ea9a70cbce9a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "worked-product",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "83c14de483e6b325eb66fdb64db4f095278d3a9ec3e3f6b9fbecf80595d342f9",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Reveal the partial products and explain where the extra ten from twelve ones belongs.",
+      "misconceptionIds": [
+        "digits-without-place-value",
+        "discard-regrouped-value"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Find three exercise books for each of 214 pupils. Step 1: Multiply each place-value quantity. 214 × 3 = (200 × 3) + (10 × 3) + (4 × 3) Step 2: Combine the complete partial products. 600 + 30 + 12 = 642 Step 3: Regroup twelve ones without losing their value. 600 + 40 + 2 = 642",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find three exercise books for each of 214 pupils. Step 1: Multiply each place-value quantity. 214 × 3 = (200 × 3) + (10 × 3) + (4 × 3) Step 2: Combine the complete partial products. 600 + 30 + 12 = 642 Step 3: Regroup twelve ones without losing their value. 600 + 40 + 2 = 642",
+        "responsePrompt": "Reveal the partial products and explain where the extra ten from twelve ones belongs. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryMath2/lessonAuthor.ts",
+          "sha256": "0ddfd8a804483abd50c3ecbb1312aae4566031d458d2db375031ea9a70cbce9a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "column-algorithm",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "0d11f9d92475e2c604a19304b471f87d135f713c000dd592a2bc4fb752ec196c",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Reveal the column calculation and explain how the carried ten comes from the ones region.",
+      "misconceptionIds": [
+        "digits-without-place-value",
+        "discard-regrouped-value"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Write 214 times 3 in hundreds, tens and ones columns. Step 1: Align the place-value columns. 214 × 3 Step 2: Ones: keep two ones and carry one ten. 4 × 3 = 12 = 10 + 2 Step 3: Tens: add the carried ten to the three tens. (1 × 3) + 1 = 4 tens Step 4: Hundreds: six hundreds complete the result. 600 + 40 + 2 = 642",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Write 214 times 3 in hundreds, tens and ones columns. Step 1: Align the place-value columns. 214 × 3 Step 2: Ones: keep two ones and carry one ten. 4 × 3 = 12 = 10 + 2 Step 3: Tens: add the carried ten to the three tens. (1 × 3) + 1 = 4 tens Step 4: Hundreds: six hundreds complete the result. 600 + 40 + 2 = 642",
+        "responsePrompt": "Reveal the column calculation and explain how the carried ten comes from the ones region. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryMath2/lessonAuthor.ts",
+          "sha256": "0ddfd8a804483abd50c3ecbb1312aae4566031d458d2db375031ea9a70cbce9a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "guided-products",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "f3e3d5480e2be0a47d139118ee5fff4b1562d32b04bc75f5bfe4bb0ebaec6510",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Write the column algorithm for 143 times 3, find both totals, then determine how many tens are formed by eight ones multiplied by four.",
+      "misconceptionIds": [
+        "digits-without-place-value",
+        "discard-regrouped-value"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "digits-without-place-value",
+          "responsePattern": "guided-three-digit-0:NUMBER:24",
+          "feedback": "The 1 names 100 and the 4 names 40. Their products are 300 and 120, not 3 and 12."
+        },
+        {
+          "misconceptionId": "digits-without-place-value",
+          "responsePattern": "guided-three-digit-1:NUMBER:40",
+          "feedback": "Two hundreds times four is 800; treating the 2 as two ones loses the hundreds."
+        },
+        {
+          "misconceptionId": "discard-regrouped-value",
+          "responsePattern": "guided-three-digit-2:NUMBER:0",
+          "feedback": "Eight ones times four makes 32 ones: three tens and two ones, even though the starting tens digit was zero."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Calculate and interpret the products. 143 times 3: write your answer. 208 times 4: write your answer. Tens formed by 8 times 4 ones: write your answer.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Calculate and interpret the products. 143 times 3: write your answer. 208 times 4: write your answer. Tens formed by 8 times 4 ones: write your answer.",
+        "responsePrompt": "Write the column algorithm for 143 times 3, find both totals, then determine how many tens are formed by eight ones multiplied by four. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryMath2/lessonAuthor.ts",
+          "sha256": "0ddfd8a804483abd50c3ecbb1312aae4566031d458d2db375031ea9a70cbce9a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "independent-products",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "51aee55f250f3a460dd63a001280499e557c4dbced19788a2ab15f1a9a80ef5a",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Show column multiplication and an area-partition check for 125 times 4. Calculate 321 times 6 and explain every regrouped value independently.",
+      "misconceptionIds": [
+        "digits-without-place-value",
+        "discard-regrouped-value"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "discard-regrouped-value",
+          "responsePattern": "independent-three-digit-0:NUMBER:480",
+          "feedback": "The 20 ones formed by 5×4 contribute two tens. Dropping those two tens leaves 480 instead of the complete value."
+        },
+        {
+          "misconceptionId": "discard-regrouped-value",
+          "responsePattern": "independent-three-digit-1:NUMBER:1826",
+          "feedback": "The 120 from 20×6 includes an additional hundred. Keep it when combining with 300×6 and 1×6."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Find each product. 125 times 4: write your answer. 321 times 6: write your answer.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find each product. 125 times 4: write your answer. 321 times 6: write your answer.",
+        "responsePrompt": "Show column multiplication and an area-partition check for 125 times 4. Calculate 321 times 6 and explain every regrouped value independently. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryMath2/lessonAuthor.ts",
+          "sha256": "0ddfd8a804483abd50c3ecbb1312aae4566031d458d2db375031ea9a70cbce9a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "regrouping-diagnosis",
+      "slot": "blocks",
+      "index": 0,
+      "type": "MISTAKE_ANALYSIS",
+      "blockSha256": "2e194fdebebe7adbd945580846722699d2fdb465bbf73e511a27a30fdb478ffd",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "instructionalPurpose": "Diagnose a worked attempt that contains a common misconception. Learner action: Identify how the twenty ones affect the tens and hundreds places, and justify the corrected total.",
+      "misconceptionIds": [
+        "digits-without-place-value",
+        "discard-regrouped-value"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "discard-regrouped-value",
+          "responsePattern": "OPTION:drop-zero",
+          "feedback": "The zero ones digit does not remove the two tens represented by 20."
+        },
+        {
+          "misconceptionId": "discard-regrouped-value",
+          "responsePattern": "OPTION:append-digits",
+          "feedback": "Appending digits changes place values. Add the quantities instead."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Combine the partial products 400, 80 and 20. A fictional pupil wrote: 400 + 80 + 20 = 480 Which correction preserves every partial product? Options: Ignore 20 because its ones digit is zero.; Combine 80 and 20 as 100, then add it to 400.; Append 20 to 480 to make 48020..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Combine the partial products 400, 80 and 20. A fictional pupil wrote: 400 + 80 + 20 = 480 Which correction preserves every partial product? Options: Ignore 20 because its ones digit is zero.; Combine 80 and 20 as 100, then add it to 400.; Append 20 to 480 to make 48020..",
+        "responsePrompt": "Identify how the twenty ones affect the tens and hundreds places, and justify the corrected total. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryMath2/lessonAuthor.ts",
+          "sha256": "0ddfd8a804483abd50c3ecbb1312aae4566031d458d2db375031ea9a70cbce9a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "reading-project",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "abfd5701fa452c6732fd1e12b740c1e9bf0bd746babeb4f7008fc7fbf4ebe4fc",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Find the total kilograms, explain what 40×4 counts and compare a second valid calculation as an advanced challenge.",
+      "misconceptionIds": [
+        "digits-without-place-value",
+        "discard-regrouped-value"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "digits-without-place-value",
+          "responsePattern": "rice-delivery-transfer-0:NUMBER:864",
+          "feedback": "The forty-bag region is 40×4=160. Treating it as only 40 discards part of the plan."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "What total mass of rice is planned? Kilograms of rice: write your answer.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: What total mass of rice is planned? Kilograms of rice: write your answer.",
+        "responsePrompt": "Find the total kilograms, explain what 40×4 counts and compare a second valid calculation as an advanced challenge. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryMath2/lessonAuthor.ts",
+          "sha256": "0ddfd8a804483abd50c3ecbb1312aae4566031d458d2db375031ea9a70cbce9a",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

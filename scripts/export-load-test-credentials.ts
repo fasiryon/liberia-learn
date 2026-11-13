@@ -1,3 +1,4 @@
+import { requiredSecret } from "./security/required-secret.cjs";
 /**
  * Exports comma-separated credential lists for k6 env vars.
  * Writes load-tests/fixtures/load-test-env.sample (no secrets in repo — copy locally).
@@ -8,6 +9,7 @@
 
 import { PrismaClient } from "@prisma/client"
 import { mkdirSync, writeFileSync } from "fs"
+import { execFileSync } from "node:child_process"
 import path from "path"
 
 // DIRECT_URL has been intermittently unreachable from this working
@@ -16,7 +18,7 @@ import path from "path"
 // carry-forward rule 3.
 
 const prisma = new PrismaClient()
-const PASSWORD = "LoadTest2026!"
+const PASSWORD = requiredSecret("LOAD_TEST_PASSWORD");
 const BATCH = 200
 
 async function main() {
@@ -46,9 +48,10 @@ async function main() {
 
   const outDir = path.join(process.cwd(), "load-tests", "fixtures")
   mkdirSync(outDir, { recursive: true })
-  const outPath = path.join(outDir, "load-test-env.sample")
-  writeFileSync(outPath, lines.join("\n") + "\n")
-  console.log(`Wrote ${outPath} (${emails.length} students in DB, ${Math.min(BATCH, emails.length)} in sample)`)
+  const outPath = path.join(outDir, "load-test.env")
+  execFileSync("git", ["check-ignore", "--quiet", "--", outPath], { stdio: "ignore" });
+  writeFileSync(outPath, lines.join("\n") + "\n", { mode: 0o600 })
+  console.log(`Wrote ${outPath} (${emails.length} students in DB, ${Math.min(BATCH, emails.length)} in local export)`)
 }
 
-main().catch(console.error).finally(() => prisma.$disconnect())
+main().catch(() => { console.error("Credential export failed; no credential details emitted"); process.exitCode = 1; }).finally(() => prisma.$disconnect())

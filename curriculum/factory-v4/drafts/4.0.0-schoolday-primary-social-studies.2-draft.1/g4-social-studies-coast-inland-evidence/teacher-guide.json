@@ -1,0 +1,81 @@
+{
+  "proposedMinutes": 45,
+  "timingEvidence": "NOT_MEASURED",
+  "screenLimitMinutes": 25,
+  "segments": [
+    {
+      "minutes": 6,
+      "activity": "Read geography, explain words and sketch sea/coast/inland"
+    },
+    {
+      "minutes": 5,
+      "activity": "Model a comparison with limits"
+    },
+    {
+      "minutes": 5,
+      "activity": "Guided geographical claim check"
+    },
+    {
+      "minutes": 8,
+      "activity": "Read and select relevant community evidence"
+    },
+    {
+      "minutes": 6,
+      "activity": "Independent comparison"
+    },
+    {
+      "minutes": 4,
+      "activity": "Independent source-scope check"
+    },
+    {
+      "minutes": 5,
+      "activity": "Counterargument and conditional recommendation"
+    },
+    {
+      "minutes": 6,
+      "activity": "Community evidence checklist and revision"
+    }
+  ],
+  "materials": "Printed passages, paper and pencil. A pupil may describe a sketch orally or direct a scribe.",
+  "support": "Read each record aloud without supplying the comparison. During guided work only, offer room/path headings. Independent responses must retain the same reasoning demand with oral or scribed access.",
+  "extension": "Identify a new observation that would change the recommendation and explain why. Compare two different defensible recommendations that use the same evidence.",
+  "factualScope": "The order is Regions of Liberia. Stable physical geography is used; no historical narrative, current population, official safety policy or officeholder claim is added. These would require separately verified sources.",
+  "sourceChecks": {
+    "version": "primary-social-studies-source-notes/1.0.0",
+    "checkedAt": "2026-10-26",
+    "scope": "Geography only. No historical dates, population estimates, current officeholders or official policy claims are used.",
+    "sources": [
+      {
+        "id": "liberia-local-government-overview",
+        "title": "Overview of Liberia, Ministry of Local Government",
+        "url": "https://mlg.gov.lr/general/overview-liberia",
+        "locator": "National Overview, geographical setting and landscape paragraphs",
+        "usedFacts": [
+          "Liberia is in West Africa beside the Atlantic Ocean.",
+          "Its terrain includes coastal lowlands and interior hills, plateaus and mountains."
+        ],
+        "reuse": "Original short paraphrase only. No website map or photograph copied. Distribution-rights review remains pending."
+      },
+      {
+        "id": "fao-liberia-geography",
+        "title": "FAO, Liberia: Geography, population and water resources",
+        "url": "https://www.fao.org/4/v8260b/V8260B10.htm",
+        "locator": "Geography, population and water resources, first paragraph",
+        "usedFacts": [
+          "The physical terrain includes coastal plains, hills, plateaus and mountainous areas."
+        ],
+        "limits": "Historical country profile. Its old demographic, economic and agricultural statistics are not used. Exact elevation cutoffs are not presented as universal boundaries.",
+        "reuse": "Original short paraphrase, not a quotation; independent academic and rights review pending."
+      }
+    ],
+    "fictionalEvidence": "All reading-club sites, paths, observations and community decisions in the lesson are explicitly invented teaching cases, not measurements from a real school.",
+    "mapping": "Physical regions are generalized terrain descriptions, not county borders. Learner sketches have no scale and cannot locate a real site precisely.",
+    "academicApproval": false
+  },
+  "originalWording": "No map, photograph or long text is copied. Geographic statements are short original paraphrases; fictional records are labelled on first presentation. Exact-version rights and academic review remain pending.",
+  "oversight": "Read the full comparison and recommendation. Check use of both records, separation of observation/inference, a counterargument and an honest uncertainty. Formative choice success is not independent mastery evidence.",
+  "safety": "No outdoor investigation is required. Adults must decide actual venue and route safety; pupil writing is a reasoning exercise, not authorization to use a site.",
+  "offline": "Keep geography and both case records available in print. Use a paper sketch or oral description. Do not require an online map, color discrimination, dragging, a field trip or a real location disclosure.",
+  "retention": "Propose a different pair of local records after seven days. Ask for a comparison and a limited conclusion. Nothing is scheduled or scored here.",
+  "assessment": "All work is formative. No governed test, official grade, promotion decision or canonical mastery update is supplied."
+}

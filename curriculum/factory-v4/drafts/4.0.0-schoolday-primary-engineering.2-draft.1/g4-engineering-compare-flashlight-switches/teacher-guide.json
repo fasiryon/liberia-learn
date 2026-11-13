@@ -1,0 +1,73 @@
+{
+  "classification": "Grade 4 applied STEM learning component. Primary standard: Engineering Design. Formal classification is provisional until standards mapping is completed. No official Ministry subject claim.",
+  "paperReasoning": "Sketch and explain the complete/open circuit. From Design 1 observations, propose one controlled change before seeing Design 2 observations. Analyze both rows, draw the graph, justify a choice and identify a further test.",
+  "providedData": "Use a separate MEASUREMENT_TABLE with origin ILLUSTRATIVE and originNote: Provided by the lesson. These are not your measurements. Label SUPPLIED and record empirical adult/teacher source (who, when, kit) or constructed status, protocol and dataset hash. CoS independently reviews the dataset before use. No dataset is supplied by this input revision.",
+  "virtualData": "Only CoS-approved scientific model/version and contract-permitted use. Label SIMULATED in scene text and originNote, identify model limits, and never call it physical contact-reliability evidence. Provided virtual results follow the separately reviewed SUPPLIED dataset route.",
+  "routeHonesty": "Use the completion label analysed provided observations for the provided-data route; do not mark tested two designs fulfilled. A group observer says observed my group's test, not I built and measured. Both routes use the same reasoning rubric without penalizing access to equipment.",
+  "noEvidence": "If neither reviewed data nor observed group trials are available, offer sketch and test-plan only. Keep counts missing and the comparison incomplete; never invent counts or substitute zero.",
+  "sharedKits": "Use 3–5 learners per teacher-checked kit; rotate planner/explainer, supervised builder, observer/counter, recorder and evidence-checker. Combine roles for smaller groups and obtain each learner's reasoning. Adults make safety decisions.",
+  "assessment": "Reasoning-only formative evidence; no official grades, records or persistent mastery. Separate governed assessment remains a release dependency.",
+  "safety": "Teacher checks enclosed low-voltage batteries and a compatible bulb. No mains, loose button cells, damaged cells, direct shorts or hot wires. Stop if parts warm. Adults handle cutting and real safety decisions.",
+  "criteria": [
+    {
+      "id": "closed-light",
+      "comparison": "AT_LEAST",
+      "target": 4,
+      "unit": "trials"
+    },
+    {
+      "id": "open-dark",
+      "comparison": "AT_LEAST",
+      "target": 5,
+      "unit": "trials"
+    }
+  ],
+  "fairTest": "Change one contact feature while holding battery, bulb, wires and test procedure fixed. State what you changed, why the first results motivated it and how the second test informs the decision.",
+  "continuousActivity": "DESIGN_CYCLE and linked MEASUREMENT_TABLE remain in the same scene and ActivityScope for both attempts. Copy observations/source labels to paper before leaving. The graph is drawn on paper, not a GRAPH_BUILDER block.",
+  "recording": "Use one row per design and track every closed/open trial separately on paper before recording counts. Record integers 0–5, with missing counts left missing. The design identifiers are fixed row headers, never measurements.",
+  "graphTask": {
+    "mode": "HAND_DRAWN_STRUCTURED_RESPONSE_NOT_GRAPH_BUILDER",
+    "sourceTableId": "switch-trials",
+    "sourceValueColumn": "closed-lit",
+    "fixedLabels": [
+      "Design 1",
+      "Design 2"
+    ],
+    "valueLabel": "Successful closed-switch trials out of 5",
+    "minimum": 0,
+    "maximum": 5,
+    "integerTicks": true,
+    "instructions": "Draw two bars on paper or squared paper: Design 1 and Design 2 across the bottom; successful closed-switch trials from 0 to 5 up the side. Copy each height from the matching row, then compare both open-switch counts in the table before choosing.",
+    "responseFields": [
+      "evidence class and source reference",
+      "Design 1 bar height from row 1",
+      "Design 2 bar height from row 2",
+      "CALCULATED difference between the two counts",
+      "INFERRED comparison and choice, checking open-switch counts too"
+    ],
+    "teacherCheck": "Check both bar heights and fixed labels against the selected source table, a zero baseline and scale to 5. A missing observation is not zero; the comparison stays incomplete.",
+    "provenance": "Label the graph MEASURED when based on actual learner/group observations; SUPPLIED when using reviewed provided data; SIMULATED when based on approved model trials. Graphing does not change the source class."
+  },
+  "review": "Check both attempts, the changed contact feature, controls, both table rows, graph heights, open-dark results and justified choice. Read the pupil's individual explanation, not merely a group answer.",
+  "secondDesignFeedback": "Judge Design 2 on its own results; compare with Design 1. Do not presume that a revision improves performance. Do not grade equipment performance.",
+  "completionLabels": {
+    "physical": "performed two design tests",
+    "group": "observed my group's test",
+    "provided": "analysed provided observations",
+    "noData": "sketch and test-plan only; comparison incomplete"
+  },
+  "providedDataStatus": "NONE_INCLUDED. Separate dataset/source/hash review and separately labelled ILLUSTRATIVE table required before use. Do not auto-fill the learner-measured table.",
+  "simulatedRoute": "UNAVAILABLE until circuit-lab scientific validation and CoS model-version approval.",
+  "duration": "45 minutes is a proposed allocation, not a measured classroom rehearsal. Use shared kits and teacher-managed turns; do not rush safety or fabricate missing results.",
+  "retention": "After seven days retrieve the complete/open-path explanation and propose a controlled comparison without reopening worked support. No scheduler is activated.",
+  "learnerPaperRecord": {
+    "instructions": "Use these labels on your paper record. Record only available observations. Row 1 is Design 1; Row 2 is Design 2. Keep both original rows and your graph.",
+    "evidence": "counted (MEASURED): actual counts you observed or your group observed; name the observer/group. given to us (SUPPLIED): independently reviewed provided observations; identify the source. Never call supplied observations your own measurements.",
+    "design1": "Source label and reference: ____ . Closed-light successes out of five: ____ . Open-dark successes out of five: ____ .",
+    "revision": "Contact feature changed: ____ . My reason from Design 1 observations: ____ . Kit and procedure kept fixed: ____ .",
+    "design2": "Source label and reference: ____ . Closed-light successes out of five: ____ . Open-dark successes out of five: ____ .",
+    "graph": "Draw the two bars from the closed-light counts. Label Design 1 and Design 2. Start the scale at zero and end at five. Check the open-dark counts before choosing.",
+    "calculation": "worked out (CALCULATED): difference between the two bar heights: ____ . Show how you worked it out.",
+    "inference": "my conclusion (INFERRED): my choice or next change: ____ . Numerical reason using both designs and both criteria: ____ . Limitation or further test: ____ ."
+  }
+}

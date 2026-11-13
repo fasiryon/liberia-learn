@@ -1,7 +1,9 @@
+// route-policy: auth=session; scope=platform; authority=moe-platform-admin; rationale=demo only: refused in production, staging and any deployed Preview (checked after authority); creates activity for the seeded demo school only
 import { NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 import { isProduction, isStaging } from "@/lib/environment";
+import { previewAutomationDisabled } from "@/lib/previewSideEffects";
 
 export async function POST() {
   try {
@@ -13,6 +15,10 @@ export async function POST() {
     }
 
     await requireMoePlatformAdmin();
+    // A deployed Preview with DEMO_MODE classifies as demo; refuse after authority.
+    if (previewAutomationDisabled()) {
+      return NextResponse.json({ error: "Not available in this environment" }, { status: 403 });
+    }
 
     const now = new Date();
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));

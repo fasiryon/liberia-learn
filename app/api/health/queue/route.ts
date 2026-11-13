@@ -1,19 +1,8 @@
+// route-policy: auth=public; scope=none; authority=none; rationale=public liveness reports handler availability only and performs no queue or infrastructure operations
 import { NextResponse } from "next/server";
-import { getQueueReadiness } from "@/lib/queueReadiness";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const sqs = await getQueueReadiness();
-  const ok = sqs.configured && sqs.fifoDetected && sqs.sendPermissions && sqs.receiveDeletePermissions;
-
-  return NextResponse.json(
-    {
-      ok,
-      status: ok ? "healthy" : "unavailable",
-      code: ok ? "SQS_QUEUE_READY" : "SQS_QUEUE_UNAVAILABLE",
-      sqs,
-    },
-    { status: ok ? 200 : 503 }
-  );
+  return NextResponse.json({ status: "alive" }, { headers: { "Cache-Control": "no-store" } });
 }

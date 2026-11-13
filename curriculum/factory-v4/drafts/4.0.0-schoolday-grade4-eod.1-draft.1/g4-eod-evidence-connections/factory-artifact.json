@@ -1,0 +1,455 @@
+{
+  "id": "g4-eod-evidence-connections-lesson",
+  "version": "4.0.0",
+  "payload": {
+    "kind": "LESSON",
+    "candidate": {
+      "contractVersion": "candidate-lesson-v2/1.1.0",
+      "title": "Connect the day with evidence",
+      "instruction": {
+        "standard": "liberialearn-v4-instruction/1.1.0",
+        "retention": {
+          "delayDays": 7,
+          "prompts": [
+            "Without the worked example, explain: Connect two activities actually attempted using specific evidence.",
+            "Without the worked example, explain: Explain a justified revision or uncertainty without inventing completed work."
+          ]
+        }
+      },
+      "estimatedMinutes": 10,
+      "ageBand": "UPPER_PRIMARY",
+      "pedagogy": {
+        "primaryStrategy": "GUIDED_TO_INDEPENDENT",
+        "rationale": "Read an explicitly fictional reflection, distinguish evidence from confidence, then construct and revise a short reflection grounded in the accepted day."
+      },
+      "prerequisiteAssumptions": [
+        "Choose work you actually attempted.",
+        "A labelled sketch or pupil-directed oral/scribed response is acceptable."
+      ],
+      "misconceptions": [
+        {
+          "id": "confidence-is-evidence",
+          "objectiveId": "g4-eod-evidence-connections-o1",
+          "description": "Feeling sure is used instead of evidence for a claim.",
+          "response": "Name the actual calculation, observation or text detail and explain what it supports."
+        },
+        {
+          "id": "revision-means-failure",
+          "objectiveId": "g4-eod-evidence-connections-o2",
+          "description": "A conflicting result is hidden to avoid revising an idea.",
+          "response": "Keep the result and explain what it changes or leaves uncertain. A justified revision helps learning."
+        }
+      ],
+      "scenes": [
+        {
+          "id": "read-reflection",
+          "type": "EXPLANATION",
+          "title": "Read a reflection with a reason",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "g4-eod-evidence-connections-o1",
+            "g4-eod-evidence-connections-o2",
+            "g4-eod-evidence-connections-o3"
+          ],
+          "learnerAction": "Identify the evidence and the change in the fictional reflection.",
+          "content": {
+            "body": "This short reflection is fictional. It shows how a learner uses evidence, not just confidence. Your reflection should describe your own work."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "This short reflection is fictional. It shows how a learner uses evidence, not just confidence. Your reflection should describe your own work. An illustrative reflection. I first added when the score instruction said set. I checked my trace against the instruction. Set replaced the previous score, so I revised that step. It reminded me to match each site claim to the right observation in Social Studies. Tomorrow I want to test another event order.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "READ",
+            "blocks": [
+              {
+                "type": "READING_PASSAGE",
+                "id": "reflection-example",
+                "title": "An illustrative reflection",
+                "paragraphs": [
+                  "I first added when the score instruction said set. I checked my trace against the instruction. Set replaced the previous score, so I revised that step. It reminded me to match each site claim to the right observation in Social Studies. Tomorrow I want to test another event order."
+                ],
+                "glossary": [
+                  {
+                    "term": "reflection",
+                    "meaning": "An explanation of learning, evidence and a next question."
+                  }
+                ],
+                "origin": {
+                  "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                  "license": "Original fictional example; review-only.",
+                  "attribution": "LiberiaLearn"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "understand-evidence",
+          "type": "PRACTICE",
+          "title": "Evidence supports an explanation",
+          "purpose": "GUIDED_PRACTICE",
+          "objectiveIds": [
+            "g4-eod-evidence-connections-o1",
+            "g4-eod-evidence-connections-o2",
+            "g4-eod-evidence-connections-o3"
+          ],
+          "learnerAction": "Choose the evidence-based interpretation and explain it.",
+          "content": {
+            "body": "A useful reflection points to a real detail and explains its meaning. A changed idea is not a failure. Sometimes the evidence supports keeping an idea, or leaves a question open."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "understand-evidence-response-0",
+                "prompt": "Explain how one detail supports a change in thinking.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [
+            "Look for a specific instruction or detail.",
+            "Keep a result that challenges the first idea."
+          ],
+          "misconceptionIds": [
+            "confidence-is-evidence",
+            "revision-means-failure"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "A useful reflection points to a real detail and explains its meaning. A changed idea is not a failure. Sometimes the evidence supports keeping an idea, or leaves a question open. What supports the pupil's revision? Options: Greater confidence is enough to establish the answer without checking.; The set instruction and the trace show which step needed changing.; Feeling certain proves the original step was right.. What should a learner do with a valid result that challenges an idea? Options: Hide it so the original idea still appears correct.; Remove the conflicting result before sharing the reflection.; Keep it and explain what it changes or leaves uncertain.. Explain how one detail supports a change in thinking.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "PARTIAL"
+          },
+          "teaching": {
+            "phase": "UNDERSTAND",
+            "blocks": [
+              {
+                "type": "CHECK",
+                "id": "reflection-evidence",
+                "items": [
+                  {
+                    "id": "reflection-evidence-item",
+                    "prompt": "What supports the pupil's revision?",
+                    "options": [
+                      {
+                        "id": "opt-690d7ede3864",
+                        "text": "Greater confidence is enough to establish the answer without checking.",
+                        "feedback": "Confidence does not identify what the trace showed.",
+                        "misconceptionId": "confidence-is-evidence"
+                      },
+                      {
+                        "id": "opt-26a6d67c786b",
+                        "text": "The set instruction and the trace show which step needed changing.",
+                        "feedback": "This response explains the relevant evidence and what it supports."
+                      },
+                      {
+                        "id": "opt-8ab364e3ec83",
+                        "text": "Feeling certain proves the original step was right.",
+                        "feedback": "Feeling certain cannot replace checking the instruction.",
+                        "misconceptionId": "confidence-is-evidence"
+                      }
+                    ],
+                    "formativeKey": {
+                      "expectedOptionId": "opt-26a6d67c786b"
+                    },
+                    "misconceptionId": "confidence-is-evidence"
+                  }
+                ]
+              },
+              {
+                "type": "CHECK",
+                "id": "reflection-revision",
+                "items": [
+                  {
+                    "id": "reflection-revision-item",
+                    "prompt": "What should a learner do with a valid result that challenges an idea?",
+                    "options": [
+                      {
+                        "id": "opt-7923047fb431",
+                        "text": "Hide it so the original idea still appears correct.",
+                        "feedback": "Hiding evidence prevents an honest explanation of the revision.",
+                        "misconceptionId": "revision-means-failure"
+                      },
+                      {
+                        "id": "opt-2b8502706f04",
+                        "text": "Remove the conflicting result before sharing the reflection.",
+                        "feedback": "The conflicting result is useful evidence; explain it rather than removing it.",
+                        "misconceptionId": "revision-means-failure"
+                      },
+                      {
+                        "id": "opt-13f2713471fa",
+                        "text": "Keep it and explain what it changes or leaves uncertain.",
+                        "feedback": "This response explains the relevant evidence and what it supports."
+                      }
+                    ],
+                    "formativeKey": {
+                      "expectedOptionId": "opt-13f2713471fa"
+                    },
+                    "misconceptionId": "revision-means-failure"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "connect-day",
+          "type": "PRACTICE",
+          "title": "Reflect on work you actually attempted",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "g4-eod-evidence-connections-o1",
+            "g4-eod-evidence-connections-o2",
+            "g4-eod-evidence-connections-o3"
+          ],
+          "learnerAction": "Explain one connection across periods using specific evidence.",
+          "content": {
+            "body": "Choose two activities you actually tried today. Use a sentence, calculation, trace, sketch or recorded observation. Label counted observations, given information, worked-out calculations and your conclusion honestly. Unfinished work may be discussed as unfinished."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "connect-day-response-0",
+                "prompt": "Name the two tasks and a specific piece of evidence. Explain one similarity and one difference in the reasoning.",
+                "minLength": 20
+              },
+              {
+                "id": "connect-day-response-1",
+                "prompt": "Explain a revision, a supported original idea or an uncertainty. Distinguish given information from your own observation.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Choose two activities you actually tried today. Use a sentence, calculation, trace, sketch or recorded observation. Label counted observations, given information, worked-out calculations and your conclusion honestly. Unfinished work may be discussed as unfinished. Name the two tasks and a specific piece of evidence. Explain one similarity and one difference in the reasoning. Explain a revision, a supported original idea or an uncertainty. Distinguish given information from your own observation.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "CONSTRUCT",
+            "blocks": []
+          }
+        },
+        {
+          "id": "next-question",
+          "type": "PRACTICE",
+          "title": "Make the reflection useful for tomorrow",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "g4-eod-evidence-connections-o1",
+            "g4-eod-evidence-connections-o2",
+            "g4-eod-evidence-connections-o3"
+          ],
+          "learnerAction": "Improve one sentence and ask a useful next question.",
+          "content": {
+            "body": "Read your reflection or have it read aloud. Replace a vague statement with a specific reason. End with one question you could investigate. You do not need to claim that every task was completed or that every question is solved."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "next-question-response-0",
+                "prompt": "Show the sentence you improved and explain why it is clearer.",
+                "minLength": 20
+              },
+              {
+                "id": "next-question-response-1",
+                "prompt": "Ask one question for tomorrow and describe what evidence could help answer it.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Read your reflection or have it read aloud. Replace a vague statement with a specific reason. End with one question you could investigate. You do not need to claim that every task was completed or that every question is solved. Show the sentence you improved and explain why it is clearer. Ask one question for tomorrow and describe what evidence could help answer it.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "REVISE",
+            "blocks": []
+          }
+        },
+        {
+          "id": "independent-explanation",
+          "type": "MASTERY_CHECK",
+          "title": "Share your reflection",
+          "purpose": "ASSESS_MASTERY",
+          "objectiveIds": [
+            "g4-eod-evidence-connections-o1",
+            "g4-eod-evidence-connections-o2",
+            "g4-eod-evidence-connections-o3"
+          ],
+          "learnerAction": "Discuss your evidence, connection and next question with your teacher.",
+          "content": {
+            "body": "Keep your reflection and tomorrow's question. Explain one connection using work you actually attempted."
+          },
+          "interaction": {
+            "kind": "ASSESSMENT_HANDOFF",
+            "assessmentRequestId": "future-independent-explanation"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "MASTERY_RESPONSE",
+            "evidenceType": "QUIZ",
+            "responses": [
+              {
+                "responseKey": "future-0",
+                "objectiveId": "g4-eod-evidence-connections-o1",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              },
+              {
+                "responseKey": "future-1",
+                "objectiveId": "g4-eod-evidence-connections-o2",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              },
+              {
+                "responseKey": "future-2",
+                "objectiveId": "g4-eod-evidence-connections-o3",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "Keep your reflection and tomorrow's question. Explain one connection using work you actually attempted.",
+            "keyboardPath": "Use the independently supplied assessment controls when available.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Keep your reflection and tomorrow's question. Explain one connection using work you actually attempted."
+          },
+          "completion": "ALL_ANSWERED",
+          "teaching": {
+            "phase": "ASSESS",
+            "blocks": []
+          }
+        }
+      ],
+      "assessmentRequests": [
+        {
+          "id": "future-independent-explanation",
+          "objectiveIds": [
+            "g4-eod-evidence-connections-o1",
+            "g4-eod-evidence-connections-o2",
+            "g4-eod-evidence-connections-o3"
+          ],
+          "interaction": "FREE_RESPONSE",
+          "evidenceType": "QUIZ",
+          "difficulty": "CORE",
+          "misconceptionIds": [
+            "confidence-is-evidence",
+            "revision-means-failure"
+          ],
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "offline": "FULL_OFFLINE"
+        }
+      ],
+      "labProposals": []
+    }
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "g4-eod-evidence-connections-v4",
+    "version": "4.0.0",
+    "contentHash": "10b6a12db0900c159664cbd7d2cfd810277280c765f9dd5adc34a212c5ac32b0"
+  },
+  "dependencies": [],
+  "contentHash": "a125304ccd8b51a45043b449f1dc7b9f9d14cb250664048c085db5bbf3a9c1e6"
+}

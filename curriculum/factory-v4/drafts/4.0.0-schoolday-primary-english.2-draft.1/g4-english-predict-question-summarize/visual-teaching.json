@@ -1,0 +1,408 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "c28b735becfc291cdd5da0e91a1452ff5abc156bbb776ec7d937ebd6d631fdd0",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "g4-english-predict-question-summarize-o1",
+      "statement": "Make a plausible prediction from a story detail and revise it when new information appears.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-english-predict-question-summarize-o1",
+          "statement": "Make a plausible prediction from a story detail and revise it when new information appears.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-english-predict-question-summarize-o2",
+      "statement": "Ask a question that can guide further reading and distinguish an unanswered question from a known fact.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-english-predict-question-summarize-o2",
+          "statement": "Ask a question that can guide further reading and distinguish an unanswered question from a known fact.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-english-predict-question-summarize-o3",
+      "statement": "Write a short summary that connects the main problem, response and result without adding unsupported details.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-english-predict-question-summarize-o3",
+          "statement": "Write a short summary that connects the main problem, response and result without adding unsupported details.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "read-opening",
+      "slot": "blocks",
+      "index": 0,
+      "type": "READING_PASSAGE",
+      "blockSha256": "291b4c59de671a1cca8d01c0aa1f3d9dfa29e66c3cd61a63360d3e8720fe89eb",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Read the two paragraphs, then write or say a prediction using might and one supporting detail.",
+      "misconceptionIds": [
+        "prediction-is-fact",
+        "summary-is-detail-list"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Massa and the garden labels: opening. After rain, the names on the school garden labels were hard to read. Massa found the spare labels beside the seedlings. The class planned to share seedlings on Friday. If the names disappeared, visitors might not know which plants they were taking. Massa carried a clean tin under the veranda. She put spare labels inside, but left the lid nearby. 'Will this help us keep the names clear?' she asked. The next shower had not arrived.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Massa and the garden labels: opening. After rain, the names on the school garden labels were hard to read. Massa found the spare labels beside the seedlings. The class planned to share seedlings on Friday. If the names disappeared, visitors might not know which plants they were taking. Massa carried a clean tin under the veranda. She put spare labels inside, but left the lid nearby. 'Will this help us keep the names clear?' she asked. The next shower had not arrived.",
+        "responsePrompt": "Read the two paragraphs, then write or say a prediction using might and one supporting detail. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryEnglish2/lessonAuthor.ts",
+          "sha256": "b6f3ca54b669aa3d756030badd38dbf063b093a82219bcedf72c683dc6b04ab4",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "model-reading",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "9397aa9049153435b5c54e1de3106e54bdba324e72f8554d246874be5dc2f486",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Identify the stated detail, the tentative prediction and the question that could guide the next reading.",
+      "misconceptionIds": [
+        "prediction-is-fact",
+        "summary-is-detail-list"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "prediction-is-fact",
+          "responsePattern": "clue-or-result-item:OPTION:opt-3f469af34801",
+          "feedback": "This is an untested forecast, not a result in the opening."
+        },
+        {
+          "misconceptionId": "prediction-is-fact",
+          "responsePattern": "clue-or-result-item:OPTION:opt-0c1c2d1d38c8",
+          "feedback": "Sharing is planned for Friday; the opening does not say it has happened."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which statement is already known from the opening? Options: Massa carried a tin under the veranda.; Every label will stay clear all week.; The class has already shared the seedlings..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which statement is already known from the opening? Options: Massa carried a tin under the veranda.; Every label will stay clear all week.; The class has already shared the seedlings..",
+        "responsePrompt": "Identify the stated detail, the tentative prediction and the question that could guide the next reading. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryEnglish2/lessonAuthor.ts",
+          "sha256": "b6f3ca54b669aa3d756030badd38dbf063b093a82219bcedf72c683dc6b04ab4",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "guided-reading",
+      "slot": "blocks",
+      "index": 0,
+      "type": "SOURCE_EVIDENCE",
+      "blockSha256": "d36dac0b223aee8e7e827f52d06d59674a53a51f82bf64cd2cd16e80b4eb18b0",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "instructionalPurpose": "Select the sentences in a source that answer a question, with a reason for each. Learner action: Select both relevant details and choose a useful unanswered question, explaining how each connects to the problem.",
+      "misconceptionIds": [
+        "prediction-is-fact",
+        "summary-is-detail-list"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Massa and the garden labels: opening. After rain, the names on the school garden labels were hard to read. If the names disappeared, visitors might not know which plants they were taking. Massa carried a clean tin under the veranda. Which two details explain why the class needs readable labels?",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Massa and the garden labels: opening. After rain, the names on the school garden labels were hard to read. If the names disappeared, visitors might not know which plants they were taking. Massa carried a clean tin under the veranda. Which two details explain why the class needs readable labels?",
+        "responsePrompt": "Select both relevant details and choose a useful unanswered question, explaining how each connects to the problem. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryEnglish2/lessonAuthor.ts",
+          "sha256": "b6f3ca54b669aa3d756030badd38dbf063b093a82219bcedf72c683dc6b04ab4",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "guided-reading",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "d09e1e92358d4207da5e4f4a00d428b6032bcd6647b80e38eb56a4d8f8ab95bc",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Select both relevant details and choose a useful unanswered question, explaining how each connects to the problem.",
+      "misconceptionIds": [
+        "prediction-is-fact",
+        "summary-is-detail-list"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "prediction-is-fact",
+          "responsePattern": "reading-question-item:OPTION:opt-c16dc43b08e2",
+          "feedback": "The text already answers this directly; it does not guide the next investigation."
+        },
+        {
+          "misconceptionId": "prediction-is-fact",
+          "responsePattern": "reading-question-item:OPTION:opt-472a82a974da",
+          "feedback": "The opening gives no reason to connect this detail with the label problem."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which question is still open and useful? Options: Will the labels stay clear after another shower?; Did Massa carry a tin?; What is Massa's favourite song?.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which question is still open and useful? Options: Will the labels stay clear after another shower?; Did Massa carry a tin?; What is Massa's favourite song?.",
+        "responsePrompt": "Select both relevant details and choose a useful unanswered question, explaining how each connects to the problem. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryEnglish2/lessonAuthor.ts",
+          "sha256": "b6f3ca54b669aa3d756030badd38dbf063b093a82219bcedf72c683dc6b04ab4",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "read-ending",
+      "slot": "blocks",
+      "index": 0,
+      "type": "READING_PASSAGE",
+      "blockSha256": "832dba88aab10d2ce770cbe67267137799a53cc6ad57fc3c233e4c7199eed9e4",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Read both paragraphs and mark one detail that confirms, changes or limits your first prediction.",
+      "misconceptionIds": [
+        "prediction-is-fact",
+        "summary-is-detail-list"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Massa and the garden labels: ending. Massa's class put one spare label on an open bench and another inside the tin under the veranda. Both labels used the same paper and ink. After a shower, the bench label was hard to read. The sheltered label was still clear. The class repeated the comparison after another shower and saw the same pattern. They kept spare labels in the sheltered tin and checked them before sharing the seedlings. They had not tested every kind of rain. If later checks showed a problem, they would change the plan.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Massa and the garden labels: ending. Massa's class put one spare label on an open bench and another inside the tin under the veranda. Both labels used the same paper and ink. After a shower, the bench label was hard to read. The sheltered label was still clear. The class repeated the comparison after another shower and saw the same pattern. They kept spare labels in the sheltered tin and checked them before sharing the seedlings. They had not tested every kind of rain. If later checks showed a problem, they would change the plan.",
+        "responsePrompt": "Read both paragraphs and mark one detail that confirms, changes or limits your first prediction. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryEnglish2/lessonAuthor.ts",
+          "sha256": "b6f3ca54b669aa3d756030badd38dbf063b093a82219bcedf72c683dc6b04ab4",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "independent-interpretation",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "0480a65953acf3ff1936ae54745e47ed69e6f21ba759904b463b3c3d0a1ba9fe",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Choose the justified conclusion and strongest summary, then explain what each rejected claim adds or leaves out.",
+      "misconceptionIds": [
+        "prediction-is-fact",
+        "summary-is-detail-list"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "prediction-is-fact",
+          "responsePattern": "ending-claim-item:OPTION:opt-d17ef8beda2b",
+          "feedback": "The story explicitly says that not every kind of rain was tested."
+        },
+        {
+          "misconceptionId": "prediction-is-fact",
+          "responsePattern": "ending-claim-item:OPTION:opt-62aaa76a6e8f",
+          "feedback": "The ending reports that the bench label became hard to read; this reverses the evidence."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which conclusion is supported by the ending? Options: The tin will protect every label in every storm forever.; The open-bench label stayed clearer in both comparisons.; The sheltered label stayed clearer in the two comparisons described..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which conclusion is supported by the ending? Options: The tin will protect every label in every storm forever.; The open-bench label stayed clearer in both comparisons.; The sheltered label stayed clearer in the two comparisons described..",
+        "responsePrompt": "Choose the justified conclusion and strongest summary, then explain what each rejected claim adds or leaves out. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryEnglish2/lessonAuthor.ts",
+          "sha256": "b6f3ca54b669aa3d756030badd38dbf063b093a82219bcedf72c683dc6b04ab4",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "independent-interpretation",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "e94a4ed6689284e58dc990ffb8f513ab3904e40c9237233433eb36552dcc7d8b",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Choose the justified conclusion and strongest summary, then explain what each rejected claim adds or leaves out.",
+      "misconceptionIds": [
+        "prediction-is-fact",
+        "summary-is-detail-list"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "summary-is-detail-list",
+          "responsePattern": "summary-choice-item:OPTION:opt-8cc4de5bf48d",
+          "feedback": "The text reports neither sales nor a guarantee about every future label."
+        },
+        {
+          "misconceptionId": "summary-is-detail-list",
+          "responsePattern": "summary-choice-item:OPTION:opt-5559ae89bf49",
+          "feedback": "These details do not explain how the class responded or what the comparison showed."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which short account best connects the problem, response and result? Options: Massa sold all the plants after proving that no label could ever blur again.; Massa had a tin. There were seedlings. Friday was coming.; Rain blurred the garden labels. The class compared open and sheltered labels, then kept spare labels sheltered after two clearer results..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which short account best connects the problem, response and result? Options: Massa sold all the plants after proving that no label could ever blur again.; Massa had a tin. There were seedlings. Friday was coming.; Rain blurred the garden labels. The class compared open and sheltered labels, then kept spare labels sheltered after two clearer results..",
+        "responsePrompt": "Choose the justified conclusion and strongest summary, then explain what each rejected claim adds or leaves out. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryEnglish2/lessonAuthor.ts",
+          "sha256": "b6f3ca54b669aa3d756030badd38dbf063b093a82219bcedf72c683dc6b04ab4",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

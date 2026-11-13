@@ -204,7 +204,8 @@ export async function updateUserIdentity(
   data: { role?: any; schoolId?: string | null; isPlatformAdmin?: boolean },
 ): Promise<any> {
   return db.$transaction(async (tx) => {
-    const updated = await tx.user.update({ where: { id: userId }, data });
+    // Object literal (spread) so the Preview freeze scanner classifies this identity write; callers are frozen on Preview.
+    const updated = await tx.user.update({ where: { id: userId }, data: { ...data } });
     await advanceSecurityStamp(tx, userId);
     return updated;
   });

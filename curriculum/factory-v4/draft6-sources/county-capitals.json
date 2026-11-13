@@ -1,0 +1,107 @@
+[
+  {
+    "number": 1,
+    "name": "Bomi",
+    "capital": "Tubmanburg",
+    "alias": null,
+    "referencePages": 0
+  },
+  {
+    "number": 2,
+    "name": "Bong",
+    "capital": "Gbarnga",
+    "alias": null,
+    "referencePages": 0
+  },
+  {
+    "number": 3,
+    "name": "Gbarpolu",
+    "capital": "Bopolu",
+    "alias": null,
+    "referencePages": 1
+  },
+  {
+    "number": 4,
+    "name": "Grand Bassa",
+    "capital": "Buchanan",
+    "alias": null,
+    "referencePages": 1
+  },
+  {
+    "number": 5,
+    "name": "Grand Cape Mount",
+    "capital": "Robertsport",
+    "alias": null,
+    "referencePages": 1
+  },
+  {
+    "number": 6,
+    "name": "Grand Gedeh",
+    "capital": "Zwedru",
+    "alias": null,
+    "referencePages": 1
+  },
+  {
+    "number": 7,
+    "name": "Grand Kru",
+    "capital": "Barclayville",
+    "alias": null,
+    "referencePages": 2
+  },
+  {
+    "number": 8,
+    "name": "Lofa",
+    "capital": "Voinjama",
+    "alias": null,
+    "referencePages": 2
+  },
+  {
+    "number": 9,
+    "name": "Margibi",
+    "capital": "Kakata",
+    "alias": null,
+    "referencePages": 2
+  },
+  {
+    "number": 10,
+    "name": "Maryland",
+    "capital": "Harper",
+    "alias": null,
+    "referencePages": 2
+  },
+  {
+    "number": 11,
+    "name": "Montserrado",
+    "capital": "Bensonville",
+    "alias": "Bentol",
+    "referencePages": 3
+  },
+  {
+    "number": 12,
+    "name": "Nimba",
+    "capital": "Sanniquellie",
+    "alias": null,
+    "referencePages": 3
+  },
+  {
+    "number": 13,
+    "name": "River Cess",
+    "capital": "Cestos City",
+    "alias": null,
+    "referencePages": 3
+  },
+  {
+    "number": 14,
+    "name": "River Gee",
+    "capital": "Fish Town",
+    "alias": null,
+    "referencePages": 4
+  },
+  {
+    "number": 15,
+    "name": "Sinoe",
+    "capital": "Greenville",
+    "alias": null,
+    "referencePages": 4
+  }
+]

@@ -9,6 +9,12 @@ const mockUpdate = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   prisma: {
+    // AT-GRADE-01 batch 3 (ruling 9): alerts follow current class authority (lib/authz/classAuthority); the synthetic
+    // students are enrolled in class-1, which teacher-1 teaches in school-1.
+    enrollment: { findMany: async () => [{ classId: "class-1" }] },
+    class: { findUnique: async () => ({ id: "class-1", schoolId: "school-1", teacherId: "teacher-1" }) },
+    teacherAssignment: { findMany: async () => [] },
+    assignment: { findFirst: async () => ({ classId: "class-1" }) },
     teacherAlert: {
       findMany: (...args: any[]) => mockFindMany(...args),
       createMany: (...args: any[]) => mockCreateMany(...args),
@@ -103,7 +109,8 @@ describe("getAllTeacherAlerts", () => {
   });
 
   it("null studentId gives null studentHref", async () => {
-    mockFindMany.mockResolvedValueOnce([makeRow({ studentId: null })]);
+    // A summary alert (no individual student) stays visible to its owner; a student alert without a student is hidden.
+    mockFindMany.mockResolvedValueOnce([makeRow({ studentId: null, alertType: "WEAK_TOPIC_SEQUENCE_ADVISED" })]);
     const [item] = await getAllTeacherAlerts(TEACHER_ID, SCHOOL_ID, "all");
     expect(item.studentHref).toBeNull();
   });

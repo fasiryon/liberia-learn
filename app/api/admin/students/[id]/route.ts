@@ -1,7 +1,10 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=student detail read and class move; PATCH refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_RECORDS_FROZEN)
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { getAdminStudentDetail } from "@/lib/adminStudentDetail";
 import { moveStudentBetweenClasses } from "@/lib/school-operations";
+import { previewRecordsFrozen } from "@/lib/preview/recordsFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +54,8 @@ export async function PATCH(
       return NextResponse.json({ error: "School context required" }, { status: 400 });
     }
 
+    const frozen = previewRecordsFrozen();
+    if (frozen) return frozen;
     const body = await req.json().catch(() => null);
     if (body?.action !== "moveClass" || typeof body?.targetClassId !== "string") {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -66,6 +71,8 @@ export async function PATCH(
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json(
       { error: err?.message ?? "Internal error" },
       { status: err?.status ?? 500 }

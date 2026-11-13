@@ -1,4 +1,8 @@
 export const PRODUCTION_SUPABASE_PROJECT_REF = "bnphuinpvgpmebcsvmsp";
+// Supavisor routes <role>.<project-ref>. preview_app is the restricted Preview role
+// (scripts/preview/preview-target.mjs); any other role name is refused.
+const POOLER_ROLES = ["postgres", "preview_app"];
+const ACCEPTED_SSL_MODES = ["require", "verify-full"];
 
 export type SupabaseDatabaseMode =
   | "direct"
@@ -20,8 +24,8 @@ function parsePort(url: URL): number {
 
 function projectRefFromPoolerUsername(username: string): string | null {
   const decoded = decodeURIComponent(username);
-  const match = decoded.toLowerCase().match(/^postgres\.([a-z0-9]+)$/);
-  return match?.[1] ?? null;
+  const match = decoded.toLowerCase().match(/^([a-z_][a-z0-9_]*)\.([a-z0-9]+)$/);
+  return match && POOLER_ROLES.includes(match[1]) ? match[2] : null;
 }
 
 export function parseSupabaseDatabaseTarget(
@@ -61,7 +65,7 @@ export function parseSupabaseDatabaseTarget(
   if (isSharedPooler) {
     const projectRef = projectRefFromPoolerUsername(url.username);
     if (!projectRef) {
-      throw new Error(`${label} pooler username must route as postgres.<project-ref>`);
+      throw new Error(`${label} pooler username must route as postgres.<project-ref> or preview_app.<project-ref>`);
     }
     if (port !== 5432 && port !== 6543) {
       throw new Error(`${label} pooler endpoint must use port 5432 or 6543`);
@@ -101,7 +105,7 @@ export function assertSupabaseMigrationTransport(
     );
   }
   const parsed = new URL(rawUrl);
-  if (parsed.searchParams.get("sslmode") !== "require") {
+  if (!ACCEPTED_SSL_MODES.includes(parsed.searchParams.get("sslmode") ?? "")) {
     throw new Error(`${label} must include sslmode=require`);
   }
   if (target.mode === "session-pooler" && parsed.searchParams.get("pgbouncer") === "true") {
@@ -158,8 +162,12 @@ export function assertStagingDatabaseIsolation(
   if (new URL(runtimeUrl).searchParams.get("pgbouncer") !== "true") {
     throw new Error("[Startup] staging DATABASE_URL must include pgbouncer=true");
   }
-  if (new URL(runtimeUrl).searchParams.get("sslmode") !== "require") {
+  if (!ACCEPTED_SSL_MODES.includes(new URL(runtimeUrl).searchParams.get("sslmode") ?? "")) {
     throw new Error("[Startup] staging DATABASE_URL must include sslmode=require");
+  }
+
+  if (env.ENABLE_RDS_DUAL_WRITE?.trim() === "true") {
+    throw new Error("[Startup] staging must not dual-write to a second database");
   }
 
   if (migrationUrl) {

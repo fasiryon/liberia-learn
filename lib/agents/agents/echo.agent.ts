@@ -8,6 +8,7 @@ import type { AgentDefinition } from "@/lib/agents/types";
  */
 export const echoAgent: AgentDefinition = {
   name: "echo",
+  audience: "general",
   description: "Test-only echo agent for harness validation (admin-only).",
   systemPromptKey: "agent.echo.system",
   toolAllowlist: ["echo-tool"],

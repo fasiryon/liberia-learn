@@ -1,0 +1,211 @@
+{
+ "frozenModels": 46,
+ "directRouteWriters": 64,
+ "libWriters": 28,
+ "routes": {
+  "app/api/admin/classes/route.ts": [
+   "Class"
+  ],
+  "app/api/admin/credentials/bulk-generate/route.ts": [
+   "PortfolioCredential"
+  ],
+  "app/api/admin/exams/generate/route.ts": [
+   "Exam"
+  ],
+  "app/api/admin/exams/route.ts": [
+   "Exam"
+  ],
+  "app/api/admin/exams/[examId]/publish/route.ts": [
+   "Exam"
+  ],
+  "app/api/admin/exams/[examId]/results/route.ts": [
+   "Exam"
+  ],
+  "app/api/admin/exams/[examId]/route.ts": [
+   "Exam"
+  ],
+  "app/api/admin/import/confirm/route.ts": [
+   "StudentGuardian"
+  ],
+  "app/api/admin/onboarding/complete/route.ts": [
+   "School"
+  ],
+  "app/api/admin/onboarding/import-students/route.ts": [
+   "StudentGuardian"
+  ],
+  "app/api/admin/onboarding/route.ts": [
+   "School"
+  ],
+  "app/api/admin/onboarding/step/[n]/route.ts": [
+   "School"
+  ],
+  "app/api/admin/report-cards/publish-all/route.ts": [
+   "ReportCard"
+  ],
+  "app/api/admin/school/logo/route.ts": [
+   "School"
+  ],
+  "app/api/admin/school/route.ts": [
+   "School"
+  ],
+  "app/api/admin/school-branding/route.ts": [
+   "School"
+  ],
+  "app/api/admin/school-settings/route.ts": [
+   "School"
+  ],
+  "app/api/admin/schools/route.ts": [
+   "School"
+  ],
+  "app/api/admin/seed-demo/route.ts": [
+   "Class",
+   "Enrollment",
+   "HomeworkSubmission",
+   "Student"
+  ],
+  "app/api/admin/students/route.ts": [
+   "Enrollment",
+   "Student"
+  ],
+  "app/api/attendance/route.ts": [
+   "AttendanceRecord"
+  ],
+  "app/api/attendance/[meetingId]/route.ts": [
+   "AttendanceRecord"
+  ],
+  "app/api/certificates/generate/route.ts": [
+   "Certificate"
+  ],
+  "app/api/certifications/generate-assets/route.ts": [
+   "ExamCertification"
+  ],
+  "app/api/grading/ai-literacy/route.ts": [
+   "GradedSubmission"
+  ],
+  "app/api/grading/code/route.ts": [
+   "GradedSubmission"
+  ],
+  "app/api/grading/essay/route.ts": [
+   "GradedSubmission"
+  ],
+  "app/api/grading/[submissionId]/override/route.ts": [
+   "GradedSubmission"
+  ],
+  "app/api/guardian/link/route.ts": [
+   "StudentGuardian"
+  ],
+  "app/api/guardian/register/route.ts": [
+   "StudentGuardian"
+  ],
+  "app/api/homework/grade/route.ts": [
+   "Grade",
+   "HomeworkSubmission"
+  ],
+  "app/api/homework/review/route.ts": [
+   "HomeworkSubmission"
+  ],
+  "app/api/homework/submissions/route.ts": [
+   "HomeworkSubmission"
+  ],
+  "app/api/homework/submit/route.ts": [
+   "HomeworkSubmission"
+  ],
+  "app/api/homework/[id]/route.ts": [
+   "HomeworkSubmission"
+  ],
+  "app/api/onboard/accept/route.ts": [
+   "Student",
+   "StudentGuardian"
+  ],
+  "app/api/platform/demo/simulate-activity/route.ts": [
+   "StudentProgress"
+  ],
+  "app/api/platform/schools/route.ts": [
+   "School"
+  ],
+  "app/api/register/guardian/route.ts": [
+   "StudentGuardian"
+  ],
+  "app/api/register/student/route.ts": [
+   "Enrollment",
+   "Student"
+  ],
+  "app/api/report-cards/[id]/comment/route.ts": [
+   "ReportCard"
+  ],
+  "app/api/report-cards/[id]/publish/route.ts": [
+   "ReportCard"
+  ],
+  "app/api/student/assignments/[id]/submit/route.ts": [
+   "AssignmentSubmission"
+  ],
+  "app/api/student/exams/[examId]/start/route.ts": [
+   "ExamAttempt"
+  ],
+  "app/api/student/exams/[examId]/submit/route.ts": [
+   "ExamAttempt",
+   "ExamCertification"
+  ],
+  "app/api/student/homework/submit/route.ts": [
+   "HomeworkSubmission"
+  ],
+  "app/api/student/homework/[id]/submit/route.ts": [
+   "HomeworkSubmission"
+  ],
+  "app/api/student/interactive-labs/[labId]/events/route.ts": [
+   "LabSession"
+  ],
+  "app/api/student/labs/sessions/[sessionId]/route.ts": [
+   "LabSession"
+  ],
+  "app/api/student/labs/[labId]/session/route.ts": [
+   "LabSession"
+  ],
+  "app/api/student/lessons/[id]/quiz/submit/route.ts": [
+   "AssessmentAttempt",
+   "AssessmentAttemptDetail"
+  ],
+  "app/api/student/portfolio/generate/route.ts": [
+   "PortfolioCredential"
+  ],
+  "app/api/student/sync/route.ts": [
+   "AssignmentSubmission",
+   "AttendanceRecord",
+   "HomeworkSubmission",
+   "StudentProgress"
+  ],
+  "app/api/student/work/[scheduledWorkId]/route.ts": [
+   "StudentProgress"
+  ],
+  "app/api/teacher/assignments/bulk-approve/route.ts": [
+   "AssignmentSubmission"
+  ],
+  "app/api/teacher/assignments/submissions/[submissionId]/approve/route.ts": [
+   "AssignmentSubmission"
+  ],
+  "app/api/teacher/assignments/submissions/[submissionId]/grade/route.ts": [
+   "AssignmentSubmission"
+  ],
+  "app/api/teacher/assignments/[id]/grade/route.ts": [
+   "AssignmentSubmission"
+  ],
+  "app/api/teacher/interventions/route.ts": [
+   "InterventionRecommendation"
+  ],
+  "app/api/teacher/labs/sessions/[sessionId]/route.ts": [
+   "LabSession"
+  ],
+  "app/api/teacher/lessons/[contentId]/assign/route.ts": [
+   "TeacherLessonAssignment"
+  ],
+  "app/api/teacher/meetings/[meetingId]/end/route.ts": [
+   "AttendanceRecord"
+  ],
+  "app/api/teacher/schedule/[id]/lab/route.ts": [
+   "LabSession"
+  ],
+  "app/api/webhooks/sms-reply/route.ts": [
+   "AssignmentSubmission"
+  ]
+ }
+}

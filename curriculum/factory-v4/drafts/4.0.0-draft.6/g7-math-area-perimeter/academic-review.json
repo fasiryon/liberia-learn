@@ -1,0 +1,137 @@
+{
+  "version": "draft6-academic-review/1.0.0",
+  "candidateVersion": "4.0.0-draft.6",
+  "candidateSha256": "e7680a05c7804009443063cc602beb9af5c355df132380b2a405494a01506965",
+  "authorship": "AI_AUTHORED_DETERMINISTIC_RECIPE",
+  "humanSubjectExpertReview": "NOT_PERFORMED",
+  "academicApproval": "PENDING_EXACT_VERSION_REVIEW",
+  "policy": {
+    "version": "factory-academic-policy/1.0.0",
+    "rules": [
+      "Bind objectives to actual instruction and response tasks, not only scene tags. Export the coverage evidence.",
+      "Worked examples show a method; guided tasks use new values and require a learner response.",
+      "Use exact rational keys for fraction arithmetic. Equivalent unreduced fractions are accepted. Finite decimals must be exactly equal unless rounding is explicitly requested.",
+      "Misconception feedback identifies the operation or inference causing the error and explains a repair.",
+      "Teach and practise two-digit by two-digit multiplication with all four place-value partial products.",
+      "Validate diagram axes, phases, plateaus, coexistence assumptions and relative energy intervals independently of text facts.",
+      "A consequence can support a consequence claim. A direct-evidence question must ask explicitly for a stated action; no compulsory disputable inference.",
+      "A geographic objective requires licensed coordinate-derived geometry; a county register proves recall only. No route claims without roads.",
+      "Automated checks provide evidence, never academic approval, rights clearance or release authority."
+    ]
+  },
+  "checks": {
+    "policy": "factory-academic-policy/1.0.0",
+    "status": "AUTOMATED_REGRESSION_CHECKS_PASS",
+    "academicApproval": false
+  },
+  "objectives": [
+    {
+      "objectiveId": "ll-g7-math-ap-rectangles",
+      "statement": "Calculate the area and perimeter of rectangles with correct units, and decide which one a real-world problem needs.",
+      "taught": [
+        "garden-model",
+        "rectangle-worked"
+      ],
+      "practised": [
+        "guided-rectangle",
+        "independent-rectangle",
+        "floor-transfer"
+      ],
+      "runtimeStatus": "REVIEW_REQUIRED",
+      "masteryClaim": false
+    },
+    {
+      "objectiveId": "ll-g7-math-ap-triangles",
+      "statement": "Calculate the area of a triangle from its base and perpendicular height, and its perimeter from its three sides.",
+      "taught": [
+        "triangle-model",
+        "triangle-worked"
+      ],
+      "practised": [
+        "guided-triangle",
+        "independent-triangle"
+      ],
+      "runtimeStatus": "REVIEW_REQUIRED",
+      "masteryClaim": false
+    }
+  ],
+  "freeResponseAndWritingGuidance": [
+    {
+      "responseId": "generated-3-response-0",
+      "question": "Explain why the 9 m by 4 m plot uses square metres for area and metres for perimeter. Describe the square or length that each unit counts.",
+      "acceptableReasoning": "The 9 by 4 plot has area 36 square metres and perimeter 26 metres. A square metre is an interior patch; a metre measures length. The triangle has area 12 square metres and perimeter 18 metres.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "generated-6-response-0",
+      "question": "Explain why the doorway changes the skirting length but does not remove a rectangle from the floor covering.",
+      "acceptableReasoning": "The doorway removes 2 m of boundary skirting, not any of the 12 by 6 floor. Covering is 72 square metres; skirting is 36 - 2 = 34 metres. If a student subtracts 2 from 72, ask them to distinguish a length from an area.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    }
+  ],
+  "references": {
+    "checkedAt": "2026-10-22",
+    "method": "AI author inspected primary publisher pages and government naming table; not human subject-expert review or copyright clearance",
+    "sources": [
+      {
+        "id": "pcgn-liberia-2015",
+        "url": "https://assets.publishing.service.gov.uk/media/5a81506ee5274a2e87dbcf2e/Liberia_Administrative_Divisions.pdf",
+        "publisher": "UK Permanent Committee on Geographical Names",
+        "title": "Liberia: Administrative Divisions, March 2015",
+        "use": "All fifteen administrative county-centre pairs, pages 1-5; Bensonville/Bentol alias on page 4",
+        "rights": "Facts transcribed into original register; Crown Copyright source paper not redistributed. No claim of clearance for source PDF."
+      },
+      {
+        "id": "lisgis-county-offices",
+        "url": "https://www.lisgis.gov.lr/sdc/lisgissdc.pdf",
+        "publisher": "Liberia Institute of Statistics and Geo-Information Services",
+        "use": "Search-index corroboration of county administrative offices and Bentol name. Full document retrieval timed out; not relied on as the sole naming source.",
+        "rights": "Reference only, no source PDF redistributed"
+      },
+      {
+        "id": "geoboundaries-lbr-adm1",
+        "url": "https://www.geoboundaries.org/api/current/gbOpen/LBR/ADM1/",
+        "geometryUrl": "https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/9469f09/releaseData/gbOpen/LBR/ADM1/geoBoundaries-LBR-ADM1_simplified.geojson",
+        "sha256RawGeometry": "f6f4ed18e1e29532a77325f7af84a6dacc4489d94020f2fa2a8feb12a4da9b34",
+        "publisher": "William & Mary geoBoundaries, source UNMIL / OCHA ROWCA",
+        "representedYear": "2021",
+        "license": "CC BY 3.0 IGO",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
+        "changes": "Source simplified geographic polygons projected at reference latitude 6.5 degrees north; numbered area labels and key added. Capital points and roads not added.",
+        "rights": "Publisher license inspected, attribution retained. Independent rights release review remains pending; no endorsement claimed."
+      },
+      {
+        "id": "openstax-phase-change",
+        "url": "https://openstax.org/books/physics/pages/11-3-phase-change-and-latent-heat",
+        "publisher": "OpenStax, Rice University",
+        "use": "Physical explanation of latent heat, phase coexistence, vaporization and evaporation below boiling. Approximate water latent heats 334 and 2256 kJ/kg. Original teaching wording and diagram, not copied figure.",
+        "rights": "Reference only. Original calculated diagram; no third-party illustration reproduced."
+      },
+      {
+        "id": "openstax-heat-capacity",
+        "url": "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer",
+        "publisher": "OpenStax, Rice University",
+        "use": "Heat capacity table checked; model rounds ice 2.09 to 2.1, liquid 4.186 to 4.18 and vapor 2.02 to 2.0 kJ/kg/K. These declared approximations determine diagram intervals.",
+        "rights": "Reference only; no third-party figure copied."
+      }
+    ],
+    "scienceDiagramAssumptions": {
+      "massKg": 1,
+      "pressure": "fixed near one atmosphere",
+      "purity": "pure water",
+      "netHeat": "energy entering sample, ignoring heat loss",
+      "specificHeatKJPerKgK": {
+        "ice": 2.1,
+        "liquid": 4.18,
+        "vapor": 2
+      },
+      "latentHeatKJPerKg": {
+        "fusion": 334,
+        "vaporization": 2256
+      },
+      "limits": "Approximate constant heat capacities, equilibrium transitions. Does not predict heating time or a sweet drink's freezing point."
+    }
+  }
+}

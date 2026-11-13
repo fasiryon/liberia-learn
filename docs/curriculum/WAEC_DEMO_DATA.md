@@ -9,7 +9,7 @@
 | Field | Value |
 |---|---|
 | Email | `waec-demo-g11@cha.edu.lr` |
-| Password | `WaecDemo!2026` |
+| Password | `<set via env / password manager>` |
 | Display name | **WAEC Demo Student (Grade 11)** — the "Demo" label is intentional so anyone (principal, MOE) viewing a surface can tell this is seeded data |
 | Grade | 11 |
 | School | CHA High Academy |
@@ -67,3 +67,5 @@ Reset (removes the demo student + its mastery profiles entirely):
 ```
 npx dotenv -e .env.production -- npx tsx scripts/seed-waec-demo-mastery.ts --reset
 ```
+
+Set `WAEC_DEMO_PASSWORD` through the authorized secret store before running the seed. Missing or blank configuration refuses before any seed operation. Source cleanup does not authorize a Production seed.

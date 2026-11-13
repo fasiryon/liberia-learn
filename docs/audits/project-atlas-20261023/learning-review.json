@@ -1,0 +1,1937 @@
+﻿{
+    "reviewer":  "learning",
+    "source_commit":  "887f23ecc",
+    "method":  "Targeted runtime entry-point, import, flag and consumer inspection. Static evidence proves implementation; no production execution or learning effectiveness verified. No application tests or providers invoked.",
+    "unknowns":  [
+                     "Production flags, database agent records, usage telemetry, deployed content coverage, live student outcomes, real-device accessibility and offline reliability remain unverified."
+                 ],
+    "evidence":  [
+                     {
+                         "path":  "lib/learning-authority/publishedReleases.ts",
+                         "symbol":  "publishedReleases",
+                         "line_start":  1,
+                         "line_end":  25,
+                         "category":  "runtime_registry",
+                         "related":  "governed-learning",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "The executable published ontology registry contains only Grade 4 Math; other grades/subjects do not receive a governed release by inference.",
+                         "fingerprint":  "6f80b96468999e03d2faa574aaf731c5b781d466eb9cef9123e3a7b71c9376ba",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "app/api/student/learning-authority/next-action/route.ts",
+                         "symbol":  "POST",
+                         "line_start":  1,
+                         "line_end":  161,
+                         "category":  "runtime_entry",
+                         "related":  "governed-learning",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Authenticated server entry resolves published release, persists decisions, seals diagnostic sessions and server scores answers.",
+                         "fingerprint":  "5c90cf64fed59533e706d4e05c118a8c1c5e110bcb446bbe11e6550ffcb16dd7",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/learning-state/masteryWriter.ts",
+                         "symbol":  "readCanonicalStudentConceptState/createGovernedMasteryEvidence",
+                         "line_start":  54,
+                         "line_end":  120,
+                         "category":  "academic_authority",
+                         "related":  "student-learning-model",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Canonical state reads require learner membership; writes validate governed evidence identity and released bindings rather than trusting client mastery.",
+                         "fingerprint":  "4f418f991a6dbe444d1ae88adc86a2c7ab50d634e4490c3db77a8edc481e702f",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/learning-state/studentLearningModel.ts",
+                         "symbol":  "replayStudentConceptState",
+                         "line_start":  1,
+                         "line_end":  24,
+                         "category":  "domain_model",
+                         "related":  "student-learning-model",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Versioned mastery reducer models confidence, retention and misconception state; this is an implemented state model, not proof of educational validity.",
+                         "fingerprint":  "5cbf28e13a217a357ec99e7f3288f1eb0bd3fb87527c075a7acd6908bd697555",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/learning-authority/learningOrchestrator.ts",
+                         "symbol":  "deterministicDecisionModel",
+                         "line_start":  135,
+                         "line_end":  154,
+                         "category":  "decision_policy",
+                         "related":  "learning-orchestrator",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Default ranking is deterministic and considers evidence sufficiency/conflicts/retention. It is not an LLM agent.",
+                         "fingerprint":  "e3bcaea45263091f814078109229f925ed7c8dc5ecaa91f78116180f9905444c",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/learning-calibration/earlyLearningPolicy.ts",
+                         "symbol":  "EARLY_LEARNING_POLICY_V1",
+                         "line_start":  8,
+                         "line_end":  53,
+                         "category":  "educational_validation",
+                         "related":  "learning-orchestrator",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Early personalization mixes are explicitly a STARTING_HYPOTHESIS_REQUIRES_EDUCATIONAL_REVIEW, not validated outcomes.",
+                         "fingerprint":  "7845b2726532803bfc720f202d10fc5b7eb373f315b14d2e93582373f28dd096",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "app/api/student/tutor/route.ts",
+                         "symbol":  "POST",
+                         "line_start":  33,
+                         "line_end":  73,
+                         "category":  "activation_guard",
+                         "related":  "student-ai-tutor",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "AI_TUTOR_ENABLED and Edge Config both gate tutor; STUDENT role, rate limit and server-resolved context precede generation.",
+                         "fingerprint":  "d6bf3c239cb37618baf2bee182740fdf69b4c95217ea6a577df4ec89d09ebf55",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/ai/tutor/studentTutor.ts",
+                         "symbol":  "getStudentTutorResponse",
+                         "line_start":  1,
+                         "line_end":  29,
+                         "category":  "consolidation",
+                         "related":  "student-ai-tutor",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Student tutor is a compatibility adapter to the shared groundedAnswerService, so counting it as an independent orchestration engine would double count.",
+                         "fingerprint":  "fc6c6aa959b9eb27c9fe10ff6cdecaa13def7c379e80c5a8388f2dbbf32d13e0",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/ai/rag/groundedAnswerService.ts",
+                         "symbol":  "answerGroundedQuestion",
+                         "line_start":  457,
+                         "line_end":  632,
+                         "category":  "llm_runtime",
+                         "related":  "student-ai-tutor",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Grounded answer generation moderates input/output, uses a bounded regeneration, validates citations, handles weak grounding and budget block, and tells the model sources are untrusted.",
+                         "fingerprint":  "85772b4eea4d372b2b1a2b2d97377def4c3e467a14b77eaeabe129fd15ba17a7",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/ai/tutor/tutorContext.ts",
+                         "symbol":  "isUsableLesson",
+                         "line_start":  56,
+                         "line_end":  72,
+                         "category":  "answer_protection",
+                         "related":  "student-ai-tutor",
+                         "confidence":  "medium",
+                         "verification":  "source-confirmed-sampled",
+                         "claim":  "Tutor context rejects assessment content and recognizable protected answer/teacher fields. Regex checks alone are not a general prompt-injection proof.",
+                         "fingerprint":  "115484d972437adae602ccfeaf83753eaadc01e8f62e0c3b9231446c4390aba3",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/content-factory/v2/manager.ts",
+                         "symbol":  "runFactory/ROLE_DEPENDENCIES",
+                         "line_start":  6,
+                         "line_end":  124,
+                         "category":  "orchestration",
+                         "related":  "content-factory-v2",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Eight role stages run injected executors in fixed dependencies, bounded attempts 1-5, hash-linked events and self-review checks. The workflow lacks approval/official writers and ends awaiting human review.",
+                         "fingerprint":  "b453f69bf52ccef927b968ece4fca321c341e8e041ecd93f214a3c3081ddffea",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/content-factory/v2/runtimeBindings.ts",
+                         "symbol":  "resolveAuthoredRuntime",
+                         "line_start":  35,
+                         "line_end":  64,
+                         "category":  "activation_guard",
+                         "related":  "content-factory-v2",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Exact source hash and DRAFT/PENDING runtime binding preserve first-three authoring provenance; returned bindings remain studentEligible:false, approved:false, released:false.",
+                         "fingerprint":  "df9f05e15114dd524b3780dd9176a63aabe119da2c6e1206ffcb0ede9a752d01",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/curriculum/review/aiReview.ts",
+                         "symbol":  "AGENT_DEFINITIONS/ensureAgent",
+                         "line_start":  27,
+                         "line_end":  56,
+                         "category":  "agent_registry",
+                         "related":  "curriculum-review",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Four persisted AI review identities use router/configured-provider and prompt fingerprints, minimum confidence 70, provisioned enabled:false unless explicitly enabled.",
+                         "fingerprint":  "ea3293986eba46db80395b285405d024d61945c29185a5b6399ddcb0ae3109cb",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "app/api/admin/review-operations/ai/run/route.ts",
+                         "symbol":  "POST",
+                         "line_start":  9,
+                         "line_end":  17,
+                         "category":  "activation_guard",
+                         "related":  "curriculum-review",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Flag-gated platform-admin route requires idempotency key then provisions review agents with enable:true. Changing gate can activate records on invocation; not purely a read flag.",
+                         "fingerprint":  "4357a56e0e63f1f05233a708f8ff4ca6fe05f778ab1dec0129f9364e7e145adb",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/curriculum/review/aiReview.ts",
+                         "symbol":  "runAIReviewTask/finalizeAIReviewTask",
+                         "line_start":  100,
+                         "line_end":  183,
+                         "category":  "academic_authority",
+                         "related":  "curriculum-review",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Subject/pedagogy reviewers run, optional WAEC and disagreement adjudicator follow. CRITICAL tasks blocked, stale revisions rejected, final result advisory only with required audit.",
+                         "fingerprint":  "ea3293986eba46db80395b285405d024d61945c29185a5b6399ddcb0ae3109cb",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/assessment/v2/consumers.ts",
+                         "symbol":  "ASSESSMENT_V2_DOWNSTREAM_WRITES_ENABLED",
+                         "line_start":  1,
+                         "line_end":  26,
+                         "category":  "activation_guard",
+                         "related":  "assessment-v2",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "V2 consumers are pure readers and downstream writes are hardcoded false. This architecture is deliberately not an activated official record pipeline.",
+                         "fingerprint":  "3e59e8cbf0d6c7c50cfc7ac8397e2709b698aaa2ba1d43fb809289c9949b530c",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/assessment/v2/projection.ts",
+                         "symbol":  "projectItemForLearner/hintAccessFor",
+                         "line_start":  1,
+                         "line_end":  105,
+                         "category":  "answer_protection",
+                         "related":  "assessment-v2",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Learner allow-list projection keeps protected scoring fields out; independent delivery cannot be downgraded and hint access is blocked.",
+                         "fingerprint":  "d10a1f1e35a33e18d986e0e218452ebe13e74df7bf33a2949f9e8677c74a0270",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "docs/architecture/assessment/ASSESSMENT_ARCHITECTURE_V2.md",
+                         "symbol":  "Not implemented",
+                         "line_start":  232,
+                         "line_end":  270,
+                         "category":  "documented_limit",
+                         "related":  "assessment-v2",
+                         "confidence":  "medium",
+                         "verification":  "docs-corroborated-by-import-search",
+                         "claim":  "Documented V2 omissions include persistence, API routes, player UI and moderation queue. Existing runtime adopts selected safe adapters and candidate review, not full production V2 lifecycle.",
+                         "fingerprint":  "eaad6ae1c488298f691122cb820e5ec2614ba25debd8fc06caceafb09f491db8",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/assessment/v2/retention.ts",
+                         "symbol":  "LL_RETENTION_PILOT_POLICY",
+                         "line_start":  36,
+                         "line_end":  60,
+                         "category":  "educational_validation",
+                         "related":  "retention-practice",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "7/21-day retention policy and opportunity planner exist; policy comments explicitly say scheduler, delivery and evidence writes are not wired.",
+                         "fingerprint":  "b1542fb30c78389a8576c836fdd92fc7b6a59cfbc8b5219e492d52e46e45a41f",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/academic-records/v2/assessmentEvidence.ts",
+                         "symbol":  "toGradeEntry",
+                         "line_start":  45,
+                         "line_end":  84,
+                         "category":  "academic_authority",
+                         "related":  "academic-records-v2",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Official grades reject raw/provisional/unofficial/revoked/unauthorized scores; assisted or unknown independence requires moderation rather than automatic official points.",
+                         "fingerprint":  "5c66f3373c1706da5179ff57b2aefcf7369392cd49ae83c142c1db6164dee197",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/academic-records/v2/gradeCalculation.ts",
+                         "symbol":  "legacyAssignmentScoreAuthority",
+                         "line_start":  240,
+                         "line_end":  250,
+                         "category":  "reader_provenance",
+                         "related":  "academic-records-v2",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Legacy classifier distinguishes teacher approval/regrading from AI auto-release/unmoderated suggestions.",
+                         "fingerprint":  "f21e650790f7a3029cd166d9a787675466f3d5428d01eb73f0a46447c7fa970d",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "app/api/teacher/gradebook/route.ts",
+                         "symbol":  "GET",
+                         "line_start":  78,
+                         "line_end":  106,
+                         "category":  "reader_provenance",
+                         "related":  "academic-records-v2",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Teacher gradebook reader exposes official score/feedback only for classifier result TEACHER.",
+                         "fingerprint":  "a86dd7d2e0ca01fa496760daff958e0d21b9666fd00e74d2a58059e1e292661e",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "app/api/student/assignments/route.ts",
+                         "symbol":  "GET",
+                         "line_start":  94,
+                         "line_end":  104,
+                         "category":  "reader_provenance",
+                         "related":  "academic-records-v2",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Student assignment reader suppresses score unless classifier result TEACHER.",
+                         "fingerprint":  "90079e5d5a85b0cb849ee7f7070fd0a33a821be55abccd2944d5e2935b0fd41e",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/reportCards/generateReportCard.ts",
+                         "symbol":  "generateReportCard",
+                         "line_start":  70,
+                         "line_end":  80,
+                         "category":  "reader_provenance",
+                         "related":  "academic-records-v2",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Report card generation skips submissions without TEACHER score authority.",
+                         "fingerprint":  "d361b0579d375569d4aa4b84232bcb36540c3c5f60b5a2149e2b677a01b885b4",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/curriculum/excellence/outcomeClaims.ts",
+                         "symbol":  "classifyLessonOutcome",
+                         "line_start":  57,
+                         "line_end":  102,
+                         "category":  "educational_validation",
+                         "related":  "learning-outcomes",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Learning success requires unassisted matched learners, retained/transfer gain and independent comparable evidence; delivery/completion alone never demonstrates learning success.",
+                         "fingerprint":  "0bc7c16d83ff5c2a4fdf121e7b8bcf4e308c737a85f42345a347498b69227ac5",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/placementAuthority/items.ts",
+                         "symbol":  "generatePlacementItem",
+                         "line_start":  148,
+                         "line_end":  185,
+                         "category":  "diagnostic_scope",
+                         "related":  "placement",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Current AI placement issuance is hardcoded mathematics with server fallback bank. No multi-subject calibrated diagnostic coverage or psychometric reliability evidence established.",
+                         "fingerprint":  "292459dc851439e46ef353e1a62519c188a3675386ad91b48b81326e20a105cd",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/records/systemOfRecord.ts",
+                         "symbol":  "createAcademicEnrollmentSchema",
+                         "line_start":  36,
+                         "line_end":  44,
+                         "category":  "coverage_gap",
+                         "related":  "kindergarten",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Academic enrollment input accepts grades 1-12, which does not provide a Kindergarten grade path.",
+                         "fingerprint":  "900d0dce440ae3f73916674af2bb8c913a6cba2f476f52ae9d3c7b38dd1fae8d",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "i18n.ts",
+                         "symbol":  "SUPPORTED",
+                         "line_start":  1,
+                         "line_end":  14,
+                         "category":  "localization",
+                         "related":  "koloqua",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Supported request locales are en, kpe and bss; Koloqua is absent from this executable locale registry.",
+                         "fingerprint":  "3049114ecabc7ef18ca01316903748fdbad0c912d9272a5c235815fc309a8db9",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "components/LanguageSelector.tsx",
+                         "symbol":  "LANGUAGES",
+                         "line_start":  5,
+                         "line_end":  9,
+                         "category":  "localization",
+                         "related":  "koloqua",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Visible language options are English, Kpelle, Bassa; absence of Koloqua corroborates locale registry gap.",
+                         "fingerprint":  "138e7a8d8a0ed499a60f9c009efbbd019722246563bf22595e01c39ef48017ac",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "app/api/student/labs/[labId]/session/route.ts",
+                         "symbol":  "POST",
+                         "line_start":  89,
+                         "line_end":  141,
+                         "category":  "academic_telemetry_risk",
+                         "related":  "virtual-lab-analyzer",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "AI suggestedScore is stored as LabSession.score and sent to StudentPerformanceEvent with aiAssistUsed:false. This establishes scoring provenance ambiguity, not a proven official-grade write.",
+                         "fingerprint":  "2ba635671f02ee18674b83fee18b663eadc79475be6bf2f02485602b9938aaac",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/ai/lab/labAnalyzer.ts",
+                         "symbol":  "safeFallbackAnalysis",
+                         "line_start":  28,
+                         "line_end":  34,
+                         "category":  "academic_telemetry_risk",
+                         "related":  "virtual-lab-analyzer",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Moderation fallback has suggestedScore zero, so fallback can look like actual low performance to the completion writer.",
+                         "fingerprint":  "9a71ed6cb60968da8ab895c180e9e75d1d13ac3b102ef7a6766ab77e15f9e21f",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/intelligence/recordPerformanceEvent.ts",
+                         "symbol":  "recordPerformanceEvent",
+                         "line_start":  48,
+                         "line_end":  77,
+                         "category":  "dependency",
+                         "related":  "virtual-lab-analyzer",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Performance event persistence feeds confusion detection by queue or direct scheduler, making advisory scoring provenance operationally consequential.",
+                         "fingerprint":  "9bd34782d069a1a95a6f4b62bfc3e037020846667b8857f34bc6d67a79dd7bc9",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/interactive-labs/v2/governance.ts",
+                         "symbol":  "adaptLabEvidence",
+                         "line_start":  45,
+                         "line_end":  54,
+                         "category":  "academic_authority",
+                         "related":  "interactive-labs-v2",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Without an explicit governed mapping, lab events remain RAW_OBSERVATION or PROVISIONAL; only approved published mapped evidence can become canonical.",
+                         "fingerprint":  "482d22e9677b7a9ecd06846019cf3aeb8d44eef8e28a66e5ad7a076b99d02081",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "app/api/labs/[labId]/plan/route.ts",
+                         "symbol":  "POST",
+                         "line_start":  19,
+                         "line_end":  71,
+                         "category":  "runtime_entry",
+                         "related":  "ai-lab-action-planner",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "AI lab planner is default-off flag-gated, STUDENT-authenticated and rate-limited; returned proposed actions run deterministic validateLabAction.",
+                         "fingerprint":  "e9d74bb2a9cd19e0a27189dec26465978b67eb41e1c724c3dfa9636eaa6f74a0",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "app/api/labs/[labId]/explain/route.ts",
+                         "symbol":  "POST",
+                         "line_start":  14,
+                         "line_end":  44,
+                         "category":  "runtime_entry",
+                         "related":  "ai-lab-explainer",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "AI lab explainer is flag/role-gated but unlike planner route lacks route-level checkAiRateLimit. Central provider budget is not a per-user throttle.",
+                         "fingerprint":  "4f5e15e71519d4c566623a6875929aedaea0a3f5e1ac385d56ff7208ae282180",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "app/api/teacher/lesson-plan/route.ts",
+                         "symbol":  "POST",
+                         "line_start":  64,
+                         "line_end":  99,
+                         "category":  "duplicate_responsibility",
+                         "related":  "teacher-lesson-planners",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "One endpoint has a weekly-class planning branch using lib/teacher/lessonPlanner while its other branch uses lib/ai/teacher/lessonPlanner; overlapping planning families should share contracts.",
+                         "fingerprint":  "a49d12dd3b2bddb8dee08cbc3b27b9395fcd0cbdea5cf237595e2cdd4a45997e",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/ai/homeworkGrader.ts",
+                         "symbol":  "gradeHomework",
+                         "line_start":  28,
+                         "line_end":  52,
+                         "category":  "academic_telemetry_risk",
+                         "related":  "assignment-ai-grader",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Moderation-blocked grading returns synthetic grade 50 with teacher-review message, so callers must never treat all returned numeric grades as achieved performance.",
+                         "fingerprint":  "f6dc5f24a79a89af37880cde2736b2b2c3cf44308c2759d1456feeba1b1ee452",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/serverFlags.ts",
+                         "symbol":  "isAiTutorEnabled/isVirtualLabsEnabled/isAiGradingAssistEnabled",
+                         "line_start":  132,
+                         "line_end":  142,
+                         "category":  "activation_guard",
+                         "related":  "ai-features",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Tutor and teacher assist default off. Additional reviewed flag sections show adaptive/intervention/planning/grading defaults on, virtual labs/AI labs default off. Production values unknown.",
+                         "fingerprint":  "2ce114fa731a20ea8cf221a38e78d002e68d5f3068d91ee84cb8d903af40f174",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/waec/practice.ts",
+                         "symbol":  "gradePracticeSession",
+                         "line_start":  126,
+                         "line_end":  168,
+                         "category":  "academic_integrity",
+                         "related":  "waec-practice",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Submitted IDs are fetched globally without issued-session, subject or grade binding. Replays and duplicate IDs are not rejected before updateMasteryProfile records unassisted legacy mastery. This is not evidence of canonical SLM mutation.",
+                         "fingerprint":  "5b72bb5e710b21ee899187680ca7478027bf1f80bd2d939c833e451873b067f8",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "app/api/student/waec/[subject]/practice/route.ts",
+                         "symbol":  "GET/POST",
+                         "line_start":  23,
+                         "line_end":  56,
+                         "category":  "runtime_entry",
+                         "related":  "waec-practice",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "GET may generate missing practice bank content; POST has no issued attempt/idempotency and chooses first enrollment school. No route AI request throttling is present.",
+                         "fingerprint":  "aba345b125682a49779ec23c2e314487910e6bc7b5dcb48467f3709c3145c25b",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/waec/practice.ts",
+                         "symbol":  "ensureBank/generateForTopic",
+                         "line_start":  41,
+                         "line_end":  82,
+                         "category":  "content_governance",
+                         "related":  "waec-practice",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "LLM-generated questions pass moderation and shape checks then enter practice bank directly, outside Content Factory/independent academic review. Each underfilled topic can trigger a provider call.",
+                         "fingerprint":  "5b72bb5e710b21ee899187680ca7478027bf1f80bd2d939c833e451873b067f8",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/curriculum/eliteUpgrade.ts",
+                         "symbol":  "createEliteUpgradeDraft",
+                         "line_start":  1047,
+                         "line_end":  1072,
+                         "category":  "runtime_generation",
+                         "related":  "elite-upgrade",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Existing curriculum upgrade loads persisted source lesson and drafts enriched content. Separate generator has bounded generation/repair call paths with 10000-14000 output token limits earlier in module.",
+                         "fingerprint":  "18e2f0ddda1dd80afcab5f9c265ad49f7175fbc4e55e03cf71a43cf2482b4eb1",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/curriculum/benchmarking/aiWaecAlignment.ts",
+                         "symbol":  "assessWaecBaselineAlignment",
+                         "line_start":  139,
+                         "line_end":  179,
+                         "category":  "llm_runtime",
+                         "related":  "waec-alignment-assessor",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Standalone AI alignment assessor uses versioned prompt and authoritative source evidence; separate persisted review WAEC SME validates through this module but is a distinct caller.",
+                         "fingerprint":  "6140bb0f7f1bbdc7e7ac85b4f1a994e89d01ccdaeab2151bd59e225f78c0e5fa",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/curriculum/benchmarking/aiWaecAlignment.ts",
+                         "symbol":  "AiWaecAlignmentSchema/hasTopicLevelWaecEvidence",
+                         "line_start":  21,
+                         "line_end":  83,
+                         "category":  "authority_boundary",
+                         "related":  "waec-alignment-assessor",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Output must label AI_ASSESSED_ALIGNMENT with externalApprovalClaimed:false, and definite depth/direct alignment needs topic-level WAEC evidence.",
+                         "fingerprint":  "6140bb0f7f1bbdc7e7ac85b4f1a994e89d01ccdaeab2151bd59e225f78c0e5fa",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/ai/lessonQuiz.ts",
+                         "symbol":  "generateLessonQuiz/generateLessonGapAnalysis",
+                         "line_start":  163,
+                         "line_end":  174,
+                         "category":  "llm_runtime",
+                         "related":  "lesson-quiz-generator",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Quiz generation and gap analysis are separate functions in one lesson assessment service, invoked from learner quiz routes. This is an on-demand service, not a scheduled autonomous agent.",
+                         "fingerprint":  "eab8de80f600e3aee56f4590a28febc6e3867ceb03a268b6d61421212990be16",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "docs/curriculum/modernization/LIBRARY_QUALITY_BASELINE_V1.md",
+                         "symbol":  "Review outcomes",
+                         "line_start":  3,
+                         "line_end":  22,
+                         "category":  "frozen_quality_baseline",
+                         "related":  "curriculum-excellence",
+                         "confidence":  "high",
+                         "verification":  "repository-artifact-not-live",
+                         "claim":  "Frozen 2026-10-16 automated extract covers 1105 catalog revisions: 0 mechanical pass, 701 revise, 51 rebuild, 353 blocked source/authority; all 1105 await qualified independent review and no catalog lesson has outcome evidence in this artifact. This does not establish current live DB counts.",
+                         "fingerprint":  "ec67903cb7ddb8007252ffa199ea6998612498761e4d17723460105dcb357721",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "path":  "lib/curriculum/eliteUpgrade.ts",
+                         "symbol":  "createEliteUpgradeDraft",
+                         "line_start":  1180,
+                         "line_end":  1228,
+                         "category":  "academic_authority",
+                         "related":  "elite-upgrade",
+                         "confidence":  "high",
+                         "verification":  "source-confirmed",
+                         "claim":  "Upgrade persists through createCurriculumContent with pending_approval, AI_UPGRADE provenance, prompt/model/correlation metadata and submitted governance event. It drafts rather than directly approves.",
+                         "fingerprint":  "18e2f0ddda1dd80afcab5f9c265ad49f7175fbc4e55e03cf71a43cf2482b4eb1",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "line_start":  88,
+                         "symbol":  "POST",
+                         "path":  "app/api/student/lessons/[id]/quiz/route.ts",
+                         "category":  "answer_protection",
+                         "related":  "lesson-quiz-generator",
+                         "verification":  "source-confirmed",
+                         "confidence":  "high",
+                         "claim":  "Existing lesson quiz sends only learner-safe projected questions and seals full server scoring session in HttpOnly cookie, reusable foundation for WAEC attempt binding.",
+                         "line_end":  102,
+                         "fingerprint":  "1d6a162ac508b6be1b22599e17d4a96593ecc2b9166655c67adaf8ce43520a73",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "line_start":  88,
+                         "symbol":  "normalizeSubmission/POST",
+                         "path":  "app/api/student/lessons/[id]/quiz/submit/route.ts",
+                         "category":  "server_scoring",
+                         "related":  "lesson-quiz-generator",
+                         "verification":  "source-confirmed",
+                         "confidence":  "high",
+                         "claim":  "Requires exactly five responses, binds sealed session to user/lesson/quiz and exact question set, and supports clientAttemptId idempotent replay.",
+                         "line_end":  149,
+                         "fingerprint":  "d21e2202825f8612d5d3db551775e6ecef3f26a5629112c5b531049a21a47d0f",
+                         "fingerprint_kind":  "sha256-content"
+                     },
+                     {
+                         "line_start":  216,
+                         "symbol":  "generateLessonQuiz",
+                         "path":  "lib/ai/lessonQuiz.ts",
+                         "category":  "correctness_guard",
+                         "related":  "lesson-quiz-generator",
+                         "verification":  "source-confirmed",
+                         "confidence":  "high",
+                         "claim":  "Explicitly rejects placeholder question/Option A-D fallback content; no fabricated quiz accepted on this path was established.",
+                         "line_end":  222,
+                         "fingerprint":  "eab8de80f600e3aee56f4590a28febc6e3867ceb03a268b6d61421212990be16",
+                         "fingerprint_kind":  "sha256-content"
+                     }
+                 ],
+    "capabilities":  [
+                         {
+                             "area":  "student",
+                             "capability":  "Daily dashboard and school schedule",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "app/api/student/today/route.ts",
+                                              "app/api/student/schedule/route.ts",
+                                              "lib/student/scheduleReadModel.ts"
+                                          ],
+                             "limit":  "Runtime routes exist; complete real school-day content, live deployment and school scheduling accuracy unverified."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "Lessons and interactive activities",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "app/api/student/lessons/[id]/experience/route.ts",
+                                              "lib/content-factory/v2/runtimeBindings.ts"
+                                          ],
+                             "limit":  "Governed authoring candidates must not be confused with released student curriculum."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "AI tutor",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "app/api/student/tutor/route.ts",
+                                              "lib/ai/tutor/studentTutor.ts"
+                                          ],
+                             "limit":  "Default off, execution unknown; current adapter always returns guidanceLevel light."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "Diagnostic placement",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "lib/placementAuthority/items.ts",
+                                              "lib/placementAuthority/scoring.ts"
+                                          ],
+                             "limit":  "Mathematics issuance/server scoring exist; psychometric validation and broad subjects unverified."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "Persistent canonical learning profiles",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "lib/learning-state/masteryWriter.ts",
+                                              "lib/learning-authority/publishedReleases.ts"
+                                          ],
+                             "limit":  "Strong governed foundation, released scope only Grade 4 Math in registry."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "Targeted practice and remediation",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "app/api/student/adaptive/practice/route.ts",
+                                              "app/api/student/adaptive/submit/route.ts",
+                                              "lib/learning-authority/learningOrchestrator.ts"
+                                          ],
+                             "limit":  "Legacy adaptive and canonical governed paths coexist; AI-generated practice is not independent proof of mastery."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "Retention and spaced practice",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "lib/assessment/v2/retention.ts",
+                                              "lib/learning-state/studentLearningModel.ts"
+                                          ],
+                             "limit":  "Policies and state exist; V2 delayed-check scheduler/delivery unwired."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "Virtual and AI labs",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "app/api/student/labs/[labId]/session/route.ts",
+                                              "app/api/labs/[labId]/plan/route.ts",
+                                              "lib/interactive-labs/v2/governance.ts"
+                                          ],
+                             "limit":  "Different runtime families; AI/virtual flags off by default and score provenance issue requires repair before activation."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "Coding/computing/engineering",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "lib/exercises/generateCodeExercise.ts",
+                                              "lib/exercises/generateAILiteracy.ts",
+                                              "lib/interactive-labs/v2/definitions/circuit.ts"
+                                          ],
+                             "limit":  "Generators and practical simulations exist; K-12 coherent pathway and validated skill transfer unverified."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "Offline learning and sync",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "lib/offline/syncProtocol.ts",
+                                              "app/api/student/sync/route.ts",
+                                              "lib/offline/submitWithQueue.ts"
+                                          ],
+                             "limit":  "Source foundations; real low-connectivity durability, conflicts and device acceptance are external validation work."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "Accessibility adaptation",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "lib/accessibilityMode.ts",
+                                              "components/student/StudentAccessibilityControl.tsx",
+                                              "lib/interactive-labs/v2/registry.ts"
+                                          ],
+                             "limit":  "Toggle/keyboard/runtime foundations; screen-reader and cognitive adaptation effectiveness unverified."
+                         },
+                         {
+                             "area":  "student",
+                             "capability":  "Assignments/grades/feedback",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "app/api/student/assignments/route.ts",
+                                              "app/api/student/assignments/[id]/submit/route.ts"
+                                          ],
+                             "limit":  "Legacy official score readers filter unverified AI; full V2 assessment lifecycle unwired."
+                         },
+                         {
+                             "area":  "teacher",
+                             "capability":  "Classes and attendance",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "app/api/teacher/classes/[classId]/differentiation/route.ts",
+                                              "app/api/teacher/attendance/route.ts"
+                                          ],
+                             "limit":  "Route inventory evidence, complete classroom flow not runtime tested."
+                         },
+                         {
+                             "area":  "teacher",
+                             "capability":  "AI lesson planning",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "app/api/teacher/lesson-plan/route.ts",
+                                              "lib/teacher/lessonPlanner.ts",
+                                              "lib/ai/teacher/lessonPlanner.ts"
+                                          ],
+                             "limit":  "Multiple purpose-specific planners share endpoint; consolidate schemas and policy rather than rewrite."
+                         },
+                         {
+                             "area":  "teacher",
+                             "capability":  "Instructional oversight/review",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "app/api/teacher/lessons/[contentId]/assign/route.ts",
+                                              "lib/curriculum/review/aiReview.ts"
+                                          ],
+                             "limit":  "Teacher assignment and governed review foundations, executed review coverage unknown."
+                         },
+                         {
+                             "area":  "teacher",
+                             "capability":  "Student intervention",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "app/api/teacher/interventions/route.ts",
+                                              "lib/ai/interventions/outcomeTracker.ts"
+                                          ],
+                             "limit":  "Guarded intervention workflow exists; intervention effect validation and accurate performance provenance remain required."
+                         },
+                         {
+                             "area":  "teacher",
+                             "capability":  "Gradebook/assessment review",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "app/api/teacher/gradebook/route.ts",
+                                              "lib/assessment/v2/consumers.ts"
+                                          ],
+                             "limit":  "Existing gradebook filters unverified scores; new assessment moderation/persistence must be integrated."
+                         },
+                         {
+                             "area":  "teacher",
+                             "capability":  "Communication",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "app/api/teacher/messages/reply/route.ts",
+                                              "app/api/guardian/messages/route.ts"
+                                          ],
+                             "limit":  "Inventory evidence, delivery/guardian consent not live verified."
+                         },
+                         {
+                             "area":  "teacher",
+                             "capability":  "AI assistance and analytics",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "app/api/teacher/assist/route.ts",
+                                              "app/api/teacher/class-insights/route.ts"
+                                          ],
+                             "limit":  "Main teacher assistant default off; analytics heuristics do not demonstrate instructional impact."
+                         },
+                         {
+                             "area":  "school",
+                             "capability":  "Academic enrollment and class assignment",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "lib/records/systemOfRecord.ts",
+                                              "lib/records/schoolOperations.ts"
+                                          ],
+                             "limit":  "Enrollment grade validator is 1-12; Kindergarten end-to-end absent from this contract."
+                         },
+                         {
+                             "area":  "school",
+                             "capability":  "Curriculum assignment and schedules",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "app/api/admin/curriculum/schedule/route.ts",
+                                              "app/api/teacher/schedule/route.ts"
+                                          ],
+                             "limit":  "Content breadth and actual timetables not deployment verified."
+                         },
+                         {
+                             "area":  "school",
+                             "capability":  "Academic Records V2",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "lib/academic-records/v2/gradeCalculation.ts",
+                                              "lib/academic-records/v2/assessmentEvidence.ts",
+                                              "docs/architecture/records/ACADEMIC_RECORDS_PROMOTION_V2.md"
+                                          ],
+                             "limit":  "Safe legacy classifier readers adopted; finalized V2 records/promotion lifecycle is not fully route-wired."
+                         },
+                         {
+                             "area":  "school",
+                             "capability":  "Guardian oversight",
+                             "status":  "implemented",
+                             "evidence":  [
+                                              "app/api/guardian/dashboard/route.ts",
+                                              "app/api/guardian/report-cards/route.ts"
+                                          ],
+                             "limit":  "Linked-child dashboard exists; source includes several legacy learning metrics and measured benefit is unknown."
+                         },
+                         {
+                             "area":  "platform",
+                             "capability":  "English and Liberian languages",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "i18n.ts",
+                                              "components/LanguageSelector.tsx"
+                                          ],
+                             "limit":  "English/Kpelle/Bassa locale registration; Koloqua absent."
+                         },
+                         {
+                             "area":  "strategy",
+                             "capability":  "K-12 excellent curriculum coverage",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "lib/curriculum/excellence/standard.ts",
+                                              "lib/content-factory/v2/manager.ts",
+                                              "lib/learning-authority/publishedReleases.ts"
+                                          ],
+                             "limit":  "Strong standards/factory foundation, not proof all grades/subjects have governed releases or measured outcomes."
+                         },
+                         {
+                             "area":  "strategy",
+                             "capability":  "Measuring real educational outcomes",
+                             "status":  "partially implemented",
+                             "evidence":  [
+                                              "lib/curriculum/excellence/outcomeClaims.ts",
+                                              "lib/aiQuality/learningCorrelation.ts"
+                                          ],
+                             "limit":  "Outcome claim rules exist; no actual linked, unassisted, retained/transfer/comparison cohort evidence was established."
+                         }
+                     ],
+    "recommendations":  [
+                            {
+                                "id":  "L-P1-01",
+                                "priority":  "P1",
+                                "action":  "Keep virtual lab activation gated until AI score provenance and refusal handling are repaired",
+                                "benefit":  "Avoid treating safety refusal or suggested AI marks as learner failure",
+                                "owner":  "Interactive learning + academic integrity",
+                                "complexity":  "M",
+                                "dependencies":  [
+                                                     "score authority contract",
+                                                     "teacher review"
+                                                 ],
+                                "acceptance":  "Moderation fallback creates pending review without numeric attainment; AI score stored as provisional; performance detector receives explicit scorer/provenance and excludes unverified marks; regression tests cover unsafe input and repeat submission.",
+                                "evidence":  [
+                                                 "app/api/student/labs/[labId]/session/route.ts:89",
+                                                 "lib/ai/lab/labAnalyzer.ts:28",
+                                                 "lib/intelligence/recordPerformanceEvent.ts:48"
+                                             ]
+                            },
+                            {
+                                "id":  "L-P1-02",
+                                "priority":  "P1",
+                                "action":  "Deliver one approved assessment V2 persistence-to-moderation-to-official-reader vertical slice before expanding official writes",
+                                "benefit":  "Defensible grades and independent assessment evidence",
+                                "owner":  "Academic records/assessment team",
+                                "complexity":  "L",
+                                "dependencies":  [
+                                                     "policy approvals",
+                                                     "released item/form",
+                                                     "tenant-scoped persistence",
+                                                     "moderation queue"
+                                                 ],
+                                "acceptance":  "One class can attempt a released form; protected fields stay server-side; retries idempotent; assistance disqualifies independence; second marking and revocation propagate; teacher publishes final records; downstream write constant remains unchanged until explicit authorization.",
+                                "evidence":  [
+                                                 "lib/assessment/v2/consumers.ts:26",
+                                                 "lib/academic-records/v2/assessmentEvidence.ts:54"
+                                             ]
+                            },
+                            {
+                                "id":  "L-P1-03",
+                                "priority":  "P1",
+                                "action":  "Publish one complete coherent schoolday pilot with explicit curriculum coverage and governance ledger",
+                                "benefit":  "Students and teachers can complete a real school day using approved materials",
+                                "owner":  "Chief of Staff + Content Factory + interactive learning",
+                                "complexity":  "L",
+                                "dependencies":  [
+                                                     "curriculum review",
+                                                     "runtime eligibility",
+                                                     "school schedule",
+                                                     "asset/accessibility acceptance"
+                                                 ],
+                                "acceptance":  "Every scheduled period has approved released lesson/activity/assessment, teacher materials and offline fallback; dry-run shows no draft or unsupported launch; coverage gaps visible rather than substituted silently.",
+                                "evidence":  [
+                                                 "lib/content-factory/v2/runtimeBindings.ts:35",
+                                                 "app/api/student/today/route.ts"
+                                             ]
+                            },
+                            {
+                                "id":  "L-P2-01",
+                                "priority":  "P2",
+                                "action":  "Expand governed releases one subject/grade unit at a time using existing learning state/orchestrator",
+                                "benefit":  "Persistent learning profiles and trustworthy remediation beyond Grade 4 Math",
+                                "owner":  "Curriculum Excellence + learning authority",
+                                "complexity":  "L",
+                                "dependencies":  [
+                                                     "MOE mappings",
+                                                     "prerequisite/item evidence review",
+                                                     "release approval"
+                                                 ],
+                                "acceptance":  "Next scope has reviewed prerequisite graph, independent diagnostic items, scored bindings and misconception policies; unsupported scope returns explicit gaps; replay/tenant/idempotency tests pass.",
+                                "evidence":  [
+                                                 "lib/learning-authority/publishedReleases.ts:6",
+                                                 "lib/learning-state/masteryWriter.ts:54"
+                                             ]
+                            },
+                            {
+                                "id":  "L-P2-02",
+                                "priority":  "P2",
+                                "action":  "Run measured pilot before claiming instructional effectiveness",
+                                "benefit":  "Decisions based on retained understanding and transfer rather than engagement",
+                                "owner":  "Academic research + Chief of Staff",
+                                "complexity":  "L",
+                                "dependencies":  [
+                                                     "consent/privacy",
+                                                     "independent assessment",
+                                                     "teacher moderation",
+                                                     "cohort data"
+                                                 ],
+                                "acceptance":  "Pre-register baseline/post/delayed/transfer measures, retain revision/learner linkage and comparison assumptions; report uncertainty and exclusions with classifyLessonOutcome; no claim of demonstrated success from completion counts.",
+                                "evidence":  [
+                                                 "lib/curriculum/excellence/outcomeClaims.ts:57",
+                                                 "lib/learning-calibration/earlyLearningPolicy.ts:8"
+                                             ]
+                            },
+                            {
+                                "id":  "L-P2-03",
+                                "priority":  "P2",
+                                "action":  "Wire a controlled 7/21-day retention workflow for an approved unit",
+                                "benefit":  "Detect forgetting and assign verified retrieval practice",
+                                "owner":  "Learning authority + teacher interventions",
+                                "complexity":  "M",
+                                "dependencies":  [
+                                                     "assessment vertical slice",
+                                                     "approved retention policy",
+                                                     "school calendar"
+                                                 ],
+                                "acceptance":  "One learner receives due opportunities exactly once, with independent/no-tutor status, missed-day handling, offline capture and teacher visibility; due state does not itself imply lost mastery.",
+                                "evidence":  [
+                                                 "lib/assessment/v2/retention.ts:45"
+                                             ]
+                            },
+                            {
+                                "id":  "L-P2-04",
+                                "priority":  "P2",
+                                "action":  "Define Kindergarten and Koloqua pilot contracts",
+                                "benefit":  "Close explicit founder vision exclusions without pretending Kpelle/Bassa provide Koloqua",
+                                "owner":  "Curriculum/localization + school records",
+                                "complexity":  "L",
+                                "dependencies":  [
+                                                     "early childhood academic review",
+                                                     "speaker review",
+                                                     "enrollment policy"
+                                                 ],
+                                "acceptance":  "Kindergarten enrollment/curriculum/reporting flows have explicit grade-band policy; Koloqua reviewed sample module, language preference and English equivalent preserve meaning and assessment validity.",
+                                "evidence":  [
+                                                 "lib/records/systemOfRecord.ts:36",
+                                                 "i18n.ts:4"
+                                             ]
+                            },
+                            {
+                                "id":  "L-P3-01",
+                                "priority":  "P3",
+                                "action":  "Consolidate teacher planner/grading contracts while preserving useful task modes",
+                                "benefit":  "Fewer divergent prompt, moderation and provenance policies",
+                                "owner":  "AI platform + teacher experience",
+                                "complexity":  "M",
+                                "dependencies":  [
+                                                     "caller inventory",
+                                                     "prompt/eval parity"
+                                                 ],
+                                "acceptance":  "All current callers use one versioned planner contract and one advisory grading contract with task mode; same limits/provenance, no endpoint removed until callers migrate and parity verified.",
+                                "evidence":  [
+                                                 "app/api/teacher/lesson-plan/route.ts:64",
+                                                 "app/api/teacher/grading-assist/route.ts",
+                                                 "app/api/teacher/grading/assist/route.ts"
+                                             ]
+                            },
+                            {
+                                "id":  "L-P1-04",
+                                "priority":  "P1",
+                                "action":  "Bind WAEC practice marking to a server-issued immutable attempt before admitting mastery",
+                                "benefit":  "Prevent replay, duplicate answers and arbitrary-item evidence from inflating legacy learner profiles",
+                                "owner":  "Assessment integrity + adaptive learning",
+                                "complexity":  "M",
+                                "dependencies":  [
+                                                     "server attempt storage",
+                                                     "tenant membership authority",
+                                                     "mastery provenance"
+                                                 ],
+                                "acceptance":  "Server-issued attempt pins student, school, subject, grade and question IDs; scoring exactly once rejects duplicates/unissued/cross-subject IDs and replay; assistance provenance retained; question generation requires rate/budget bounds and reviewed provisional content status.",
+                                "evidence":  [
+                                                 "lib/waec/practice.ts:126",
+                                                 "app/api/student/waec/[subject]/practice/route.ts:36"
+                                             ]
+                            }
+                        ],
+    "agent_defaults":  {
+                           "status":  "implemented but unverified",
+                           "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                           "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                           "orchestration":  "plain TypeScript service",
+                           "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                           "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                           "type":  "LLM",
+                           "level":  "B"
+                       },
+    "agents":  [
+                   {
+                       "id":  "student-ai-tutor",
+                       "name":  "Student AI Tutor",
+                       "aliases":  [
+                                       "Learning Assistant",
+                                       "studentTutor"
+                                   ],
+                       "purpose":  "Grounded lesson explanations and practice for students",
+                       "location":  "lib/ai/tutor/studentTutor.ts",
+                       "entry":  "app/api/student/tutor/route.ts",
+                       "trigger":  "Student POST with question and lesson identity",
+                       "inputs":  "Question plus server-resolved published lesson context",
+                       "outputs":  "Grounded explanation, citations, fallback/trust status",
+                       "tools":  "Read learner-safe approved retrieval context; no educational writes",
+                       "tables":  "Student/lesson/curriculum retrieval through context resolver; route audit and AI usage",
+                       "services":  "LLM provider, retrieval/embedding stack, Edge Config",
+                       "dependencies":  [
+                                            "groundedAnswerService",
+                                            "tutorContext",
+                                            "moderation",
+                                            "routedCompletion"
+                                        ],
+                       "flags":  "AI_TUTOR_ENABLED default OFF plus Edge Config aiTutor",
+                       "decision":  "IMPROVE",
+                       "risk":  "Grounding and moderation are useful defenses; low-latency/citation correctness and real learning benefit unverified",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM"
+                   },
+                   {
+                       "id":  "teacher-ai-assist",
+                       "name":  "Teacher AI Assistant",
+                       "purpose":  "Draft teaching support for teachers",
+                       "location":  "lib/ai/teacher/teacherAssist.ts",
+                       "entry":  "app/api/teacher/assist/route.ts",
+                       "trigger":  "Teacher request",
+                       "inputs":  "Validated teaching context",
+                       "outputs":  "Instructional suggestions",
+                       "tools":  "Text generation only in service",
+                       "tables":  "Caller-owned context and audit/usage records",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion"
+                                        ],
+                       "flags":  "AI_TEACHER_ASSIST_ENABLED default OFF",
+                       "decision":  "VERIFY THEN ENABLE",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM",
+                       "level":  "B",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "teacher-lesson-planners",
+                       "name":  "Teacher Lesson Planning",
+                       "aliases":  [
+                                       "weekly lesson planner",
+                                       "lesson planner response"
+                                   ],
+                       "purpose":  "Draft weekly or lesson-level instructional plans",
+                       "location":  "lib/teacher/lessonPlanner.ts; lib/ai/teacher/lessonPlanner.ts",
+                       "entry":  "app/api/teacher/lesson-plan/route.ts; lib/intelligence/teacherActionExecution.ts",
+                       "trigger":  "Teacher selected class/week or lesson",
+                       "inputs":  "Owned class, curriculum and lesson context",
+                       "outputs":  "Plan draft; explicit teacher save/bind in caller",
+                       "tools":  "Weekly planner reads owned class and curriculum; caller handles saves",
+                       "tables":  "Class, CurriculumContent, lesson-plan records via caller",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion",
+                                            "promptRegistry"
+                                        ],
+                       "flags":  "ENABLE_TEACHER_AI_PLANNING default ON",
+                       "decision":  "CONSOLIDATE",
+                       "risk":  "Overlapping planners use separate result contracts, task modes should share governance",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM",
+                       "level":  "B"
+                   },
+                   {
+                       "id":  "teacher-class-insights",
+                       "name":  "Teacher Class Insights",
+                       "purpose":  "Summarize class performance for teachers",
+                       "location":  "lib/ai/teacher/classInsights.ts",
+                       "entry":  "app/api/teacher/class-insights/route.ts",
+                       "trigger":  "Teacher request",
+                       "inputs":  "Server supplied class performance",
+                       "outputs":  "Teaching insight summary",
+                       "tools":  "Generation, no direct canonical writes",
+                       "tables":  "Class/student analytics read by caller; usage/audit",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion"
+                                        ],
+                       "flags":  "Inspect caller guard before activation; production UNKNOWN",
+                       "decision":  "IMPROVE",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM",
+                       "level":  "B",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "assignment-tutor",
+                       "name":  "Assignment Tutor Guidance",
+                       "purpose":  "Provide assignment guidance through teacher workflow",
+                       "location":  "lib/workflows/ai/assignmentTutor.ts",
+                       "entry":  "app/api/teacher/assignment/tutor/route.ts",
+                       "trigger":  "Teacher request",
+                       "inputs":  "Assignment context",
+                       "outputs":  "Instructional guidance",
+                       "tools":  "Drafting only",
+                       "tables":  "Caller assignment context, usage/audit",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion"
+                                        ],
+                       "flags":  "ENABLE_ASSIGNMENT_TUTOR default OFF",
+                       "decision":  "INTEGRATE",
+                       "risk":  "Clarify relationship to canonical grounded student tutor; avoid independent-assessment assistance",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM",
+                       "level":  "B",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "teacher-grading-assists",
+                       "name":  "Teacher Grading Assistance",
+                       "aliases":  [
+                                       "grading-assist",
+                                       "grading/assist"
+                                   ],
+                       "purpose":  "Suggest feedback/marks for teacher review",
+                       "location":  "lib/teacher/gradingAssist.ts; lib/workflows/ai/gradingAssist.ts",
+                       "entry":  "app/api/teacher/grading-assist/route.ts; app/api/teacher/grading/assist/route.ts",
+                       "trigger":  "Teacher request",
+                       "inputs":  "Submission/rubric or assignment context",
+                       "outputs":  "Advisory grade/feedback",
+                       "tools":  "Read caller-owned submission context; no official score authority established in helper",
+                       "tables":  "AssignmentSubmission and related assignment via caller; usage/audit",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion"
+                                        ],
+                       "flags":  "ENABLE_AI_GRADING_ASSIST actual default ON despite stale route comment saying OFF",
+                       "decision":  "CONSOLIDATE",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM"
+                   },
+                   {
+                       "id":  "assignment-ai-grader",
+                       "name":  "Assignment AI Grader",
+                       "purpose":  "Draft assignment grading on student submission",
+                       "location":  "lib/ai/homeworkGrader.ts",
+                       "entry":  "app/api/student/assignments/[id]/submit/route.ts",
+                       "trigger":  "Submission handling",
+                       "inputs":  "Student content plus assignment instructions",
+                       "outputs":  "AI grade/feedback/rationale",
+                       "tools":  "Moderation/escalation, text generation; caller persistence",
+                       "tables":  "AssignmentSubmission AI fields through caller; escalation records",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion",
+                                            "moderateText",
+                                            "enqueueEscalation"
+                                        ],
+                       "flags":  "Submission caller guard, runtime UNKNOWN",
+                       "decision":  "CONSOLIDATE",
+                       "risk":  "Moderation blocked result contains synthetic 50 score; preserve provisional status and exclude from official reads",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "homework-grader-legacy",
+                       "name":  "HomeworkGrader",
+                       "aliases":  [
+                                       "homework-grader",
+                                       "gradeHomeworkSubmission"
+                                   ],
+                       "purpose":  "AI review of homework using older DB agent/task telemetry",
+                       "location":  "lib/ai/homework-grader.ts; lib/ai/rubric-generator.ts",
+                       "entry":  "app/api/homework/review/route.ts",
+                       "trigger":  "Homework review request",
+                       "inputs":  "HomeworkSubmission and rubric",
+                       "outputs":  "aiScore/aiFeedback and task metrics",
+                       "tools":  "Prisma reads/writes, moderation, escalation, provider",
+                       "tables":  "Agent, AgentTask, AgentMetric, HomeworkSubmission, SystemEvent",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion",
+                                            "moderation"
+                                        ],
+                       "flags":  "Caller authorization required; not same as modern agent-platform registry",
+                       "decision":  "CONSOLIDATE",
+                       "risk":  "Separate telemetry/identity family; preserve teacher review and historical task evidence",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM"
+                   },
+                   {
+                       "id":  "adaptive-practice-generator",
+                       "name":  "Adaptive Practice Generator",
+                       "purpose":  "Generate targeted strand practice",
+                       "location":  "lib/adaptive/practiceGenerator.ts",
+                       "entry":  "app/api/student/adaptive/practice/route.ts",
+                       "trigger":  "Student practice request",
+                       "inputs":  "Server resolved gap/difficulty",
+                       "outputs":  "Practice item sealed in server session",
+                       "tools":  "Generation; caller session issuance and scoring",
+                       "tables":  "StrandCatalog, StudentMasteryProfile and practice sessions via caller",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion",
+                                            "practiceSession"
+                                        ],
+                       "flags":  "ENABLE_ADAPTIVE_ENGINE default ON",
+                       "decision":  "INTEGRATE",
+                       "risk":  "Generated practice item correctness and parallel legacy/canonical mastery must stay differentiated",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM",
+                       "level":  "B",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "placement-item-generator",
+                       "name":  "Placement Item Generator",
+                       "purpose":  "Issue mathematics placement questions",
+                       "location":  "lib/placementAuthority/items.ts",
+                       "entry":  "app/api/student/placement/sessions/[sessionId]/items/route.ts",
+                       "trigger":  "Authenticated placement session item request",
+                       "inputs":  "Server difficulty/history",
+                       "outputs":  "Learner-safe question plus protected server scoring data",
+                       "tools":  "Provider or deterministic fallback bank",
+                       "tables":  "Placement session/items via sessionService",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion",
+                                            "itemBank",
+                                            "scoring"
+                                        ],
+                       "flags":  "Caller/session activation, production UNKNOWN",
+                       "decision":  "IMPROVE",
+                       "risk":  "No established multi-subject or psychometric validity; fallback is mathematics",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "ai-lab-action-planner",
+                       "name":  "AI Lab Action Planner",
+                       "purpose":  "Translate student request into validated simulation action",
+                       "location":  "lib/labs/ai/planLabAction.ts",
+                       "entry":  "app/api/labs/[labId]/plan/route.ts",
+                       "trigger":  "Student request with client simulation state",
+                       "inputs":  "Lab ID, state, request",
+                       "outputs":  "Proposed validated action or rejection",
+                       "tools":  "Allowed simulation actions only; deterministic validator",
+                       "tables":  "Learning event/AI usage records via service/caller",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion",
+                                            "validateLabAction"
+                                        ],
+                       "flags":  "ENABLE_AI_LABS default OFF",
+                       "decision":  "VERIFY THEN ENABLE",
+                       "risk":  "Client state is educational observation, never canonical mastery",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "ai-lab-explainer",
+                       "name":  "AI Lab State Explainer",
+                       "purpose":  "Explain observed simulation transitions",
+                       "location":  "lib/labs/ai/explainLabState.ts",
+                       "entry":  "app/api/labs/[labId]/explain/route.ts",
+                       "trigger":  "Student simulation request",
+                       "inputs":  "Previous/next client state",
+                       "outputs":  "Explanation",
+                       "tools":  "Text generation",
+                       "tables":  "Usage/learning event logging in helper",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion"
+                                        ],
+                       "flags":  "ENABLE_AI_LABS default OFF",
+                       "decision":  "IMPROVE",
+                       "risk":  "No route-level per-user AI rate limit unlike paired planner; verify service budget and add bounds before activation",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM",
+                       "level":  "B",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "virtual-lab-analyzer",
+                       "name":  "Virtual Lab Session Analyzer",
+                       "purpose":  "Draft feedback and suggested score from practical observations",
+                       "location":  "lib/ai/lab/labAnalyzer.ts",
+                       "entry":  "app/api/student/labs/[labId]/session/route.ts",
+                       "trigger":  "Submission to authorized practical lab session",
+                       "inputs":  "Lab definition, observations/conclusions",
+                       "outputs":  "Suggested score/analysis",
+                       "tools":  "Moderation/escalation; caller writes session/performance event",
+                       "tables":  "VirtualLab, LabSession, StudentPerformanceEvent; escalation/audit",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion",
+                                            "moderation",
+                                            "recordPerformanceEvent"
+                                        ],
+                       "flags":  "ENABLE_VIRTUAL_LABS default OFF",
+                       "decision":  "IMPROVE",
+                       "risk":  "AI score persisted without scorer authority; safety fallback zero becomes apparent performance",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "content-factory-v2",
+                       "name":  "Content Factory V2",
+                       "aliases":  [
+                                       "eight-role factory",
+                                       "runFactory"
+                                   ],
+                       "purpose":  "Produce versioned instructional package candidates through eight dependency-ordered roles",
+                       "location":  "lib/content-factory/v2/manager.ts",
+                       "entry":  "Injected caller executors; local scripts rather than a confirmed production agent daemon",
+                       "trigger":  "Blueprint authoring invocation",
+                       "inputs":  "Blueprint, role executors, actor identities",
+                       "outputs":  "Artifacts and hash-linked audit events; AWAITING_HUMAN_REVIEW",
+                       "tools":  "Injected role executors; appendAudit/persistArtifact callbacks; no official publish tools",
+                       "tables":  "No direct DB calls in manager; caller persistence must be reviewed separately",
+                       "services":  "None intrinsic; executor may use provider",
+                       "dependencies":  [
+                                            "quality validation",
+                                            "instructionalReviewer",
+                                            "eight ROLE_DEPENDENCIES stages"
+                                        ],
+                       "flags":  "No activation flag in manager; exact runtime bindings remain DRAFT/noneligible",
+                       "decision":  "KEEP",
+                       "type":  "deterministic workflow",
+                       "level":  "A",
+                       "risk":  "Do not count eight role names as eight autonomous production LLM agents without executor evidence",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up"
+                   },
+                   {
+                       "id":  "curriculum-review-subject-sme",
+                       "name":  "Platform AI Subject SME",
+                       "aliases":  [
+                                       "platform.ai.subject-sme.v1"
+                                   ],
+                       "purpose":  "Advisory factual/subject curriculum review",
+                       "location":  "lib/curriculum/review/aiReview.ts:28",
+                       "entry":  "app/api/admin/review-operations/ai/run/route.ts",
+                       "trigger":  "Platform-admin review request",
+                       "inputs":  "Exact revision, provenance and evidence",
+                       "outputs":  "Persisted rubric review recommendation",
+                       "tools":  "Provider and review assessment persistence; advisory only",
+                       "tables":  "AIReviewAgent, CurriculumReviewTask, CurriculumAIReviewAssessment, audit",
+                       "services":  "Configured provider via shared router",
+                       "dependencies":  [
+                                            "runAIReviewTask",
+                                            "deterministic AI evidence validator"
+                                        ],
+                       "flags":  "P2B_AI_REVIEW_ENABLED default OFF; DB agent provisioned disabled; guarded run enables records",
+                       "decision":  "VERIFY THEN ENABLE",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM"
+                   },
+                   {
+                       "id":  "curriculum-review-pedagogy-sme",
+                       "name":  "Platform AI Curriculum SME",
+                       "aliases":  [
+                                       "platform.ai.curriculum-sme.v1"
+                                   ],
+                       "purpose":  "Advisory pedagogy/accessibility curriculum review",
+                       "location":  "lib/curriculum/review/aiReview.ts:29",
+                       "entry":  "app/api/admin/review-operations/ai/run/route.ts",
+                       "trigger":  "Same run as subject SME",
+                       "inputs":  "Exact revision and evidence",
+                       "outputs":  "Persisted rubric recommendation",
+                       "tools":  "Review persistence/provider only",
+                       "tables":  "AIReviewAgent, CurriculumReviewTask, CurriculumAIReviewAssessment, audit",
+                       "services":  "Configured provider",
+                       "dependencies":  [
+                                            "runAIReviewTask",
+                                            "deterministic validator"
+                                        ],
+                       "flags":  "P2B_AI_REVIEW_ENABLED default OFF plus DB enabled",
+                       "decision":  "VERIFY THEN ENABLE",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM"
+                   },
+                   {
+                       "id":  "curriculum-review-adjudicator",
+                       "name":  "Platform AI Review Adjudicator",
+                       "aliases":  [
+                                       "platform.ai.adjudicator.v1"
+                                   ],
+                       "purpose":  "Resolve disagreement in advisory review assessments",
+                       "location":  "lib/curriculum/review/aiReview.ts:30",
+                       "entry":  "runAIReviewTask",
+                       "trigger":  "Reviewer signatures disagree",
+                       "inputs":  "Immutable earlier review assessments/evidence",
+                       "outputs":  "Advisory deciding recommendation, not approval",
+                       "tools":  "Review persistence/provider only",
+                       "tables":  "AIReviewAgent, CurriculumReviewTask, CurriculumAIReviewAssessment, audit",
+                       "services":  "Configured provider",
+                       "dependencies":  [
+                                            "subject SME",
+                                            "pedagogy SME",
+                                            "optional WAEC SME"
+                                        ],
+                       "flags":  "P2B_AI_REVIEW_ENABLED default OFF plus DB enabled",
+                       "decision":  "KEEP",
+                       "risk":  "Same provider family is not truly independent human review",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM"
+                   },
+                   {
+                       "id":  "curriculum-review-waec-sme",
+                       "name":  "Platform AI WAEC Baseline Alignment SME",
+                       "aliases":  [
+                                       "platform.ai.waec-alignment-sme.v1"
+                                   ],
+                       "purpose":  "Assess WAEC baseline without claiming approval or imposing curriculum ceiling",
+                       "location":  "lib/curriculum/review/aiReview.ts:31",
+                       "entry":  "runAIReviewTask",
+                       "trigger":  "Task policy waecBaselineAlignment",
+                       "inputs":  "Exact revision plus authoritative alignment evidence",
+                       "outputs":  "Evidence-validated alignment recommendation",
+                       "tools":  "Provider and review persistence",
+                       "tables":  "AIReviewAgent, CurriculumReviewTask, CurriculumAIReviewAssessment, audit",
+                       "services":  "Configured provider",
+                       "dependencies":  [
+                                            "specialistRequirements",
+                                            "AI evidence validator"
+                                        ],
+                       "flags":  "P2B_AI_REVIEW_ENABLED default OFF plus task policy plus DB enabled",
+                       "decision":  "VERIFY THEN ENABLE",
+                       "risk":  "Authoritative topic evidence missing means escalate; no inferred MOE/WAEC approval",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "type":  "LLM"
+                   },
+                   {
+                       "id":  "learning-orchestrator",
+                       "name":  "Governed Learning Orchestrator",
+                       "purpose":  "Select next permissible diagnostic/practice/learning action",
+                       "location":  "lib/learning-authority/learningOrchestrator.ts; lib/learning-authority/learningDecisionStore.ts",
+                       "entry":  "app/api/student/learning-authority/next-action/route.ts; app/api/student/today/route.ts",
+                       "trigger":  "Learner next-action/dashboard read",
+                       "inputs":  "Canonical learner state and released candidate actions",
+                       "outputs":  "Persisted decision/action with versioned policy",
+                       "tools":  "Deterministic ranking and policy fallback; caller state/session persistence",
+                       "tables":  "Learning decisions and canonical mastery event storage via writers",
+                       "services":  "No LLM required by default",
+                       "dependencies":  [
+                                            "publishedReleases",
+                                            "studentLearningModel",
+                                            "earlyLearningPolicy"
+                                        ],
+                       "flags":  "Release scope and server membership; Grade 4 Math registered",
+                       "decision":  "KEEP",
+                       "type":  "deterministic workflow",
+                       "level":  "A",
+                       "risk":  "Policy mixture is starting hypothesis; no validated learning effectiveness established",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "waec-practice",
+                       "name":  "WAEC Practice Generator and Marker",
+                       "purpose":  "Generate topic practice bank and mark learner answers",
+                       "location":  "lib/waec/practice.ts",
+                       "entry":  "app/api/student/waec/[subject]/practice/route.ts",
+                       "trigger":  "Student GET/POST practice",
+                       "inputs":  "Student subject/grade and supplied item answers",
+                       "outputs":  "Practice questions, feedback review and legacy mastery changes",
+                       "type":  "LLM",
+                       "tools":  "LLM generation, DB bank creation, deterministic scoring, updateMasteryProfile",
+                       "tables":  "WaecPracticeItem, StudentMasteryProfile and learner/enrollment reads",
+                       "services":  "Configured LLM via routedCompletion",
+                       "dependencies":  [
+                                            "waec syllabus",
+                                            "moderation",
+                                            "updateMasteryProfile"
+                                        ],
+                       "flags":  "No route feature flag observed; authenticated grade eligibility gate; deployed execution UNKNOWN",
+                       "decision":  "IMPROVE",
+                       "risk":  "Unbound/replayable marking and unreviewed generated bank; no canonical SLM mutation established",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "lesson-quiz-generator",
+                       "name":  "Lesson Quiz and Gap Analysis",
+                       "purpose":  "Generate lesson formative questions and analyze learner gaps",
+                       "location":  "lib/ai/lessonQuiz.ts",
+                       "entry":  "app/api/student/lessons/[id]/quiz/route.ts; app/api/student/lessons/[id]/quiz/submit/route.ts",
+                       "trigger":  "Learner lesson quiz request or submission",
+                       "inputs":  "Lesson content and server scoring context",
+                       "outputs":  "Quiz plus gap analysis",
+                       "type":  "LLM",
+                       "tools":  "Bounded provider generation with fallback content",
+                       "tables":  "Lesson/quiz submission records via callers; usage",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "routedCompletion"
+                                        ],
+                       "flags":  "Caller authorization; deployment UNKNOWN",
+                       "decision":  "INTEGRATE",
+                       "risk":  "Generated formative checks must not be mistaken for independently validated assessment forms",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "elite-upgrade",
+                       "name":  "Elite Curriculum Upgrade Drafter",
+                       "purpose":  "Draft academically deeper replacement lesson from existing persisted source",
+                       "location":  "lib/curriculum/eliteUpgrade.ts",
+                       "entry":  "app/api/admin/curriculum/upgrade/route.ts",
+                       "trigger":  "Admin curriculum upgrade request",
+                       "inputs":  "Source content ID and upgrade context",
+                       "outputs":  "Draft enriched candidate with generator provenance",
+                       "type":  "LLM",
+                       "tools":  "Curriculum reads and draft persistence through governed writers; no proof independent publication authority",
+                       "tables":  "CurriculumContent and revision/provenance through mutation layer",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "promptRegistry",
+                                            "routedCompletion",
+                                            "governed mutation writers"
+                                        ],
+                       "flags":  "Admin route authority; activation UNKNOWN",
+                       "decision":  "INTEGRATE",
+                       "risk":  "Large output token budgets plus repair calls; reuse Content Factory package contracts and avoid parallel standards",
+                       "level":  "A",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "aliases":  [
+
+                                   ]
+                   },
+                   {
+                       "id":  "waec-alignment-assessor",
+                       "name":  "Standalone WAEC Baseline AI Assessor",
+                       "purpose":  "Produce evidence-qualified alignment assessment for curriculum benchmarking",
+                       "location":  "lib/curriculum/benchmarking/aiWaecAlignment.ts",
+                       "entry":  "assessWaecBaselineAlignment exported API; no direct application call established in import search",
+                       "trigger":  "Explicit benchmarking/script caller",
+                       "inputs":  "Objective and authoritative evidence versions",
+                       "outputs":  "AI_ASSESSED_ALIGNMENT with model/prompt/provenance",
+                       "type":  "LLM",
+                       "tools":  "Provider only; deterministic evidence verification",
+                       "tables":  "None intrinsic; caller persistence",
+                       "services":  "Configured LLM",
+                       "dependencies":  [
+                                            "promptRegistry",
+                                            "authoritative evidence validator"
+                                        ],
+                       "flags":  "P2C benchmarking context; standalone callable deployment UNKNOWN",
+                       "decision":  "INTEGRATE",
+                       "risk":  "Same purpose as registered WAEC SME but validator is useful shared foundation; do not claim direct production invocation",
+                       "level":  "B",
+                       "status":  "implemented but unverified",
+                       "last_observed_execution":  "UNKNOWN: no live invocation or dated execution record inspected",
+                       "provider":  "shared routedCompletion, configured provider/model; production provider unknown",
+                       "orchestration":  "plain TypeScript service",
+                       "permissions":  "Only server caller authority; no autonomous approval/publish authority established",
+                       "monitoring":  "Shared provider usage infrastructure where aiUsage supplied; exact per-capability completeness requires follow-up",
+                       "aliases":  [
+
+                                   ]
+                   }
+               ],
+    "duplicate_groups":  [
+                             {
+                                 "responsibility":  "Teacher planning",
+                                 "members":  [
+                                                 "lib/teacher/lessonPlanner.ts",
+                                                 "lib/ai/teacher/lessonPlanner.ts"
+                                             ],
+                                 "finding":  "Both invoked by same route for different task shapes; consolidate governance/types while keeping weekly vs single-lesson task modes."
+                             },
+                             {
+                                 "responsibility":  "Advisory grading",
+                                 "members":  [
+                                                 "lib/teacher/gradingAssist.ts",
+                                                 "lib/workflows/ai/gradingAssist.ts",
+                                                 "lib/ai/homeworkGrader.ts",
+                                                 "lib/ai/homework-grader.ts",
+                                                 "lib/ai/rubric-generator.ts"
+                                             ],
+                                 "finding":  "Separate use cases and persistent schemas, overlapping prompt/moderation/score authority; migrate caller contracts before retiring any implementation."
+                             },
+                             {
+                                 "responsibility":  "Tutor",
+                                 "members":  [
+                                                 "lib/ai/tutor/studentTutor.ts",
+                                                 "lib/ai/rag/groundedAnswerService.ts"
+                                             ],
+                                 "finding":  "Already adapter + shared implementation; retain adapter or migrate carefully, do not report as duplicate engine."
+                             },
+                             {
+                                 "responsibility":  "Mastery/read models",
+                                 "members":  [
+                                                 "lib/learning-state/studentLearningModel.ts",
+                                                 "lib/adaptive/updateMastery.ts",
+                                                 "lib/student/learningIntelligence.ts"
+                                             ],
+                                 "finding":  "Canonical event-replayed state, legacy strand EMA, heuristic reporting coexist; make provenance explicit and prevent dashboard percentages becoming canonical authority."
+                             }
+                         ],
+    "sampled_areas":  [
+                          "Representative student answer-safe and official score readers, not every field in every learner API.",
+                          "Accessibility and offline implementation foundations, not real device/browser acceptance.",
+                          "School/teacher/guardian broad capabilities indexed by routes; critical learner governance paths inspected in detail.",
+                          "No provider calls, databases, hosted feature flags, psychometric dataset or production outcome cohort accessed."
+                      ],
+    "inspected_files":  [
+                            "app/api/admin/review-operations/ai/run/route.ts",
+                            "app/api/labs/[labId]/explain/route.ts",
+                            "app/api/labs/[labId]/plan/route.ts",
+                            "app/api/student/assignments/route.ts",
+                            "app/api/student/labs/[labId]/session/route.ts",
+                            "app/api/student/learning-authority/next-action/route.ts",
+                            "app/api/student/lessons/[id]/quiz/route.ts",
+                            "app/api/student/lessons/[id]/quiz/submit/route.ts",
+                            "app/api/student/progress/route.ts",
+                            "app/api/student/tutor/route.ts",
+                            "app/api/student/waec/[subject]/practice/route.ts",
+                            "app/api/teacher/gradebook/route.ts",
+                            "app/api/teacher/lesson-plan/route.ts",
+                            "components/LanguageSelector.tsx",
+                            "docs/architecture/assessment/ASSESSMENT_ARCHITECTURE_V2.md",
+                            "docs/curriculum/modernization/LIBRARY_QUALITY_BASELINE_V1.md",
+                            "i18n.ts",
+                            "lib/academic-records/v2/assessmentEvidence.ts",
+                            "lib/academic-records/v2/gradeCalculation.ts",
+                            "lib/accessibilityMode.ts",
+                            "lib/adaptive/practiceGenerator.ts",
+                            "lib/adaptive/updateMastery.ts",
+                            "lib/ai/homeworkGrader.ts",
+                            "lib/ai/homework-grader.ts",
+                            "lib/ai/lab/labAnalyzer.ts",
+                            "lib/ai/lessonQuiz.ts",
+                            "lib/ai/rag/assistantAccess.ts",
+                            "lib/ai/rag/groundedAnswerService.ts",
+                            "lib/ai/teacher/classInsights.ts",
+                            "lib/ai/teacher/lessonPlanner.ts",
+                            "lib/ai/teacher/teacherAssist.ts",
+                            "lib/ai/tutor/studentTutor.ts",
+                            "lib/ai/tutor/tutorContext.ts",
+                            "lib/assessment/v2/consumers.ts",
+                            "lib/assessment/v2/projection.ts",
+                            "lib/assessment/v2/retention.ts",
+                            "lib/content-factory/v2/manager.ts",
+                            "lib/content-factory/v2/runtimeBindings.ts",
+                            "lib/curriculum/benchmarking/aiWaecAlignment.ts",
+                            "lib/curriculum/eliteUpgrade.ts",
+                            "lib/curriculum/excellence/outcomeClaims.ts",
+                            "lib/curriculum/review/aiReview.ts",
+                            "lib/grading/lessonQuizSession.ts",
+                            "lib/intelligence/recordPerformanceEvent.ts",
+                            "lib/interactive-labs/v2/governance.ts",
+                            "lib/interactive-labs/v2/masteryAdapter.ts",
+                            "lib/labs/ai/explainLabState.ts",
+                            "lib/labs/ai/planLabAction.ts",
+                            "lib/learning-authority/learningOrchestrator.ts",
+                            "lib/learning-authority/publishedReleases.ts",
+                            "lib/learning-calibration/earlyLearningPolicy.ts",
+                            "lib/learning-state/masteryWriter.ts",
+                            "lib/learning-state/studentLearningModel.ts",
+                            "lib/placementAuthority/itemBank.ts",
+                            "lib/placementAuthority/items.ts",
+                            "lib/placementAuthority/scoring.ts",
+                            "lib/records/systemOfRecord.ts",
+                            "lib/reportCards/generateReportCard.ts",
+                            "lib/serverFlags.ts",
+                            "lib/student/learningIntelligence.ts",
+                            "lib/teacher/gradingAssist.ts",
+                            "lib/teacher/lessonPlanner.ts",
+                            "lib/waec/practice.ts",
+                            "lib/workflows/ai/assignmentTutor.ts",
+                            "lib/workflows/ai/gradingAssist.ts"
+                        ]
+}

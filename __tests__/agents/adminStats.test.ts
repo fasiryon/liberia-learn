@@ -19,7 +19,7 @@ function routeGroupBy(arg: { by: string[] }) {
   return invGroupBy(arg);
 }
 vi.mock("@/lib/agents/control", () => ({ getAllControls: (...a: unknown[]) => getAllControls(...a) }));
-vi.mock("@/lib/agents/flags", () => ({ isAgentEnabled: (...a: unknown[]) => isAgentEnabled(...a) }));
+vi.mock("@/lib/agents/flags", async () => ({ ...await vi.importActual<typeof import("@/lib/agents/flags")>("@/lib/agents/flags"), isAgentEnabled: (...a: unknown[]) => isAgentEnabled(...a) }));
 
 import { registerAgent } from "@/lib/agents/registry";
 import { listAgentsWithStats, costDashboard, triggerMonitor } from "@/lib/agents/admin/stats";

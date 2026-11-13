@@ -1,0 +1,43 @@
+{
+  "proposedMinutes": 45,
+  "timingEvidence": "NOT_MEASURED",
+  "proposedScreenMinutes": 25,
+  "proposedPaperMovementMinutes": 20,
+  "segments": [
+    {
+      "minutes": 5,
+      "activity": "Record an initial route and prediction on paper"
+    },
+    {
+      "minutes": 8,
+      "activity": "Arrange the route digitally or with cards and sort support organs"
+    },
+    {
+      "minutes": 7,
+      "activity": "Model a counted boundary crossing and read the illustrative graph"
+    },
+    {
+      "minutes": 8,
+      "activity": "Operate the fourteen-token model with a partner; count both regions"
+    },
+    {
+      "minutes": 6,
+      "activity": "Interpret the fresh sixteen-token model independently"
+    },
+    {
+      "minutes": 6,
+      "activity": "Explain the represented process and its limits"
+    },
+    {
+      "minutes": 5,
+      "activity": "Revise the community poster and compare the initial route"
+    }
+  ],
+  "safety": "Use large paper marks or cards. Keep every object away from mouths. No food handling, tasting, heating, liquids, body samples or medical self-reporting. A pupil may direct a partner or use drawn marks instead of manipulating counters.",
+  "support": "Read organ labels aloud, provide two large labelled regions, and let pupils point or dictate. Keep a visible inside/body count record in guided work. Do not reveal the independent counts before an attempt.",
+  "extension": "Add separate symbols for whole food, smaller digested particles and particles crossing the wall. Ask a partner what each symbol means, revise one ambiguous symbol and identify biological features still omitted.",
+  "offline": "Print organ cards, route/sort choices, graph and questions. Pupils reorder cards and mark both regions on paper. The model uses no external audio or network asset. A teacher can read every prompt aloud.",
+  "block90Proposal": "After the 45-minute core, compare two physical model designs for 20 minutes, exchange and test their interpretations for 15 minutes, then revise and defend the poster for 10 minutes. Timing is proposed, not observed.",
+  "assessment": "No governed assessment, scoring event or official academic record is supplied. The closing handoff is explicitly unavailable.",
+  "retention": "Request a new route-and-function explanation after at least seven days. No delayed event is scheduled or claimed."
+}

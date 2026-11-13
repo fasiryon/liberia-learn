@@ -16,17 +16,13 @@ function getThisWeekDates(): Date[] {
   return Array.from({ length: 5 }, (_, i) => new Date(monday.getTime() + i * 86400000));
 }
 
-const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
 const CHA_ADMIN_EMAIL = process.env.E2E_DEMO_ADMIN_EMAIL ?? ["admin", "cha.edu.lr"].join("@");
 const CHA_TEACHER_EMAIL = process.env.E2E_DEMO_TEACHER_EMAIL ?? ["teacher1", "cha.edu.lr"].join("@");
 
 function getDemoSeedPassword(): string {
   const password = process.env.DEMO_SEED_PASSWORD?.trim();
-  if (password) return password;
-  if (process.env.NODE_ENV === "production" || process.env.DEMO_MODE === "true") {
-    throw new Error("DEMO_SEED_PASSWORD is required for production/demo seed runs.");
-  }
-  return LOCAL_DEMO_SEED_PASSWORD;
+  if (!password) throw new Error("DEMO_SEED_PASSWORD is required for demo seeding.");
+  return password;
 }
 
 const FEMALE_NAMES = [

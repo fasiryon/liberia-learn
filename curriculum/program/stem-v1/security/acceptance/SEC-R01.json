@@ -1,0 +1,47 @@
+{
+  "finding": "SEC-R01",
+  "decision": "PASS",
+  "implementer": "Codex: Project Atlas task",
+  "branch": "audit/project-atlas-security-triage",
+  "testCommit": "34f93bf48a7c7b8f024209ca4aaff28862ebdb9a",
+  "fixCommit": "8349fae37e9869c27338ced210fe7af35d154364",
+  "fixRange": "f02ed2ec0 (restrict to platform admins) + 8349fae37 (declare platform route policy)",
+  "failingBeforeFix": {
+    "commit": "34f93bf48a7c7b8f024209ca4aaff28862ebdb9a",
+    "command": "python docs/audits/project-atlas-20261023/post-audit/run_verification.py --finding SEC-R01 --phase RED",
+    "result": "FAIL",
+    "detail": "CoS re-run in a disposable detached worktree: 2 P0 tests failed (school admin reads global logs; forged foreign-user filter), 2 controls passed, exit 1",
+    "log": "curriculum/program/stem-v1/security/acceptance/evidence/cos-SEC-R01-RED.json",
+    "logSha256": "5082c85dc8ca7ae89adc4c180261d206059db84b6540e3f62b4104af778d05dc"
+  },
+  "passingAfterFix": {
+    "commit": "8349fae37e9869c27338ced210fe7af35d154364",
+    "command": "python docs/audits/project-atlas-20261023/post-audit/run_verification.py --finding SEC-R01 --phase GREEN",
+    "result": "PASS",
+    "detail": "CoS re-run: 4/4 passed, exit 0",
+    "log": "curriculum/program/stem-v1/security/acceptance/evidence/cos-SEC-R01-GREEN.json",
+    "logSha256": "06cb086ca9c4a93e1fa0e6487c3202e04f120cd4eab810e2986438a34af83a7b"
+  },
+  "testIntegrity": "Atlas post-audit tests unchanged between test and fix commits. Repository test __tests__/agents/adminRoutes.test.ts was adapted: the success case now uses a platform admin (the intended narrowing) and a denial test was added; no assertion was weakened. CoS ran it at the fix commit: 5/5 passed.",
+  "typecheck": {
+    "commit": "8349fae37e9869c27338ced210fe7af35d154364",
+    "result": "PASS",
+    "basis": "Atlas evidence SEC-R01-types.json: tsc --noEmit --incremental exit 0, head 8349fae37. Not re-run by the CoS (host memory; T1 holds the heavy-job window)."
+  },
+  "adjacentChecks": [
+    "Every route using AGENT_PLATFORM_VIEW checked at 8349fae37: district-update, moe-narrative-report and morning-brief run routes already require platform admin; echo run is a school-scoped test run (schoolId from the session), not a global read; invocations now platform-admin only",
+    "AGENT_PLATFORM_VIEW stays granted to school ADMIN for tenant-scoped escalation workflows; the escalation queue scoping gap is tracked separately as AT-ADJ-01"
+  ],
+  "safeFailure": "Non-platform users receive 403 before any count or read; the forged userId filter cannot reach the store.",
+  "learningWorkflowPreserved": "No learner path touched; platform-admin diagnostics unchanged.",
+  "independentReview": {
+    "reviewer": "Claude Chief of Staff (independent of the implementer)",
+    "result": "PASS",
+    "notes": "Reviewed app/api/admin/agents/invocations/route.ts and the test changes across 34f93bf48..8349fae37. Minimal repair. Raw platform diagnostics still need a separate minimization/retention review (SEC-R09)."
+  },
+  "residual": [
+    "Deployment assurance unverified.",
+    "Raw invocation retention/minimization: SEC-R09 (P2, unassigned in the register)."
+  ],
+  "reviewedAt": "2026-10-24T05:42:12.183Z"
+}

@@ -11,6 +11,12 @@ const mockAssessmentFindMany = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   prisma: {
+    // AT-GRADE-01 batch 3 (ruling 9): alerts follow current class authority (lib/authz/classAuthority); the synthetic
+    // students are enrolled in class-1, which teacher-1 teaches in school-1.
+    enrollment: { findMany: async () => [{ classId: "class-1" }] },
+    class: { findUnique: async () => ({ id: "class-1", schoolId: "school-1", teacherId: "teacher-1" }) },
+    teacherAssignment: { findMany: async () => [] },
+    assignment: { findFirst: async () => ({ classId: "class-1" }) },
     interventionRecommendation: {
       updateMany: (...args: any[]) => mockUpdateMany(...args),
       findMany: (...args: any[]) => mockFindMany(...args),
@@ -144,7 +150,8 @@ describe("teacher alert action payloads and boundaries", () => {
       alertType: "LOW_MASTERY",
       severity: "medium",
       reason: "Unsupported legacy alert.",
-      studentId: null,
+      // A student alert is shown only for a student the teacher currently teaches (ruling 9).
+      studentId: STUDENT_ID,
       weakConcept: null,
       weakLesson: null,
       recommendedAction: null,

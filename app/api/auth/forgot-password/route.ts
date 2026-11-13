@@ -1,3 +1,4 @@
+// route-policy: auth=public; scope=none; authority=email-possession; rationale=requests a password reset token; refused on any deployed Preview/staging before authority or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendPasswordReset } from "@/lib/email";
@@ -11,6 +12,7 @@ import {
 import { generateTokenPair } from "@/lib/tokens";
 import { logAudit } from "@/lib/audit";
 import crypto from "crypto";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 
 function getClientIp(req: Request): string {
   const forwarded = req.headers.get("x-forwarded-for");
@@ -19,6 +21,8 @@ function getClientIp(req: Request): string {
 }
 
 export async function POST(req: Request) {
+  const frozen = previewIdentityFrozen();
+  if (frozen) return frozen;
   const traceId = crypto.randomUUID();
   try {
     if (!isAccountRecoveryEnabled()) {

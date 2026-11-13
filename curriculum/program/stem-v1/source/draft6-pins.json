@@ -1,0 +1,70 @@
+{
+  "source": "curriculum/factory-v4/drafts/4.0.0-draft.6/generation-receipt.json on Codex branch fix/v4-pilot-security-release (sealed at 36d2ca665; read-only from C:/liberia-learn/.worktrees/content-factory-draft6). Not on main.",
+  "version": "4.0.0-draft.6",
+  "officialStatus": "NOT_APPROVED",
+  "academicDecision": "REVISE (CoS academic review 2026-10-22); human subject-expert review NOT_PERFORMED",
+  "packages": [
+    {
+      "key": "g7-math-area-perimeter",
+      "grade": 7,
+      "subject": "MATH",
+      "course": "MATH",
+      "unit": 3,
+      "packageHash": "86066251a231c08dc7a500cd02b72b32eeb5396fefed00c6c83cb459cf2fb254",
+      "candidateSha256": "e7680a05c7804009443063cc602beb9af5c355df132380b2a405494a01506965"
+    },
+    {
+      "key": "g7-math-fractions",
+      "grade": 7,
+      "subject": "MATH",
+      "course": "MATH",
+      "unit": 2,
+      "packageHash": "ffaafcbb124def71114178a07736acf7c3609aa1debf36e413b4bdf1a5aae69a",
+      "candidateSha256": "78cfaf819d4f3c3d767299571d4a5238af57abc3a2b88a496044b0fc6799cd22"
+    },
+    {
+      "key": "math-multiplication-models",
+      "grade": 5,
+      "subject": "MATH",
+      "course": "MATH",
+      "unit": 1,
+      "packageHash": "7a469baccfb5d7d1e932942baf013e1848579c4efa9077a949dcebb7542d75ce",
+      "candidateSha256": "ed0a518f060509276607c67910fdc00513a9793f6cf7dedadcd2dbbe5dadbe9a"
+    },
+    {
+      "key": "g7-science-states-of-matter",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "course": "SCIENCE",
+      "unit": 2,
+      "packageHash": "7863152eba2e51b818a1b304fa0b240f7b0ac0d2656406947488fbc93ae912f9",
+      "candidateSha256": "5e67edd36ec5b3e0ef29be65dee3ab2e08e1f7cccf17209e4e689492eaae2126"
+    },
+    {
+      "key": "g7-civics-counties-capitals",
+      "grade": 7,
+      "subject": "CIVICS",
+      "course": "CIVICS",
+      "unit": 1,
+      "packageHash": "2a388b30e577b0b11518f7b71772739a03c913fe2840fcd4b7a392eec9b8c5eb",
+      "candidateSha256": "ea3ff95feafe3aee979e0a906581dbfdbab5044abf5c2bb742fd97fccda9215b"
+    },
+    {
+      "key": "g7-english-reading-evidence",
+      "grade": 7,
+      "subject": "ENGLISH",
+      "course": "ENGLISH",
+      "unit": 1,
+      "packageHash": "fa54d6f4d508a81020bcf18c906a948a8c1c0e74ec1f384aa9c088acb289be19",
+      "candidateSha256": "500ab78193c6ffee7a6afdf6af7ced250d9d362abba2bcd71c14f26fdd0cb9b5"
+    }
+  ],
+  "state": "SEALED",
+  "commit": "36d2ca665",
+  "factoryValidation": {
+    "status": "PASS",
+    "record": "artifacts/v4-coordination/T2-DRAFT6-PILOT-DONE.md: 8,444 unit tests, 161 focused factory tests, renderer gate; sealed receipt",
+    "commit": "36d2ca665"
+  },
+  "hold": null
+}

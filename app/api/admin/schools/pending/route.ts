@@ -1,8 +1,11 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin; rationale=approving a school creates its administrator; GET read unchanged; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { approveSchoolEnrollment, rejectSchoolEnrollment } from "@/lib/school-operations";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +51,8 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const user = await requirePlatformAdmin();
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const parsed = ActionSchema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) {
       return NextResponse.json({ error: "Validation failed", issues: parsed.error.flatten() }, { status: 400 });
@@ -61,6 +66,8 @@ export async function POST(req: Request) {
     await rejectSchoolEnrollment(user.id, parsed.data.schoolId, parsed.data.reason);
     return NextResponse.json({ ok: true });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json({ error: err?.message ?? "Failed" }, { status: err?.status ?? 500 });
   }
 }

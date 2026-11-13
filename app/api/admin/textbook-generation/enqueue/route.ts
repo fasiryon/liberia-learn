@@ -1,12 +1,13 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin; rationale=global content and cost operations require a canonical platform ADMIN before domain work
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requirePlatformContentAdmin } from "@/lib/auth/platformContentAuthority";
 import { enqueueTextbook } from "@/lib/textbooks/textbookGenerationQueue";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    const user = await requireRole("ADMIN");
+    const user = await requirePlatformContentAdmin();
     const body = await req.json().catch(() => ({}));
     const { grade, subject, format, force } = body ?? {};
 

@@ -1,7 +1,8 @@
 // lib/db.ts  —  canonical PrismaClient singleton
 import { PrismaClient } from "@prisma/client";
-import { isAuditImmutabilityEnabled } from "@/lib/serverFlags";
 import { logger } from "@/lib/logger";
+import { assertStagingDatabaseIsolation } from "@/lib/database-target";
+import { AUDIT_MUTATION_OPERATIONS, assertDbOperationAllowed, dbGuardExtension } from "@/lib/db-guards";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -26,68 +27,39 @@ function createPrismaClient(databaseUrl?: string) {
   });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+// Next 14 does not run instrumentation register(), so deployed Preview/staging
+// refuses a non-isolated database here, before any client exists. A no-op for
+// Production and for runs without a Vercel identity.
+assertStagingDatabaseIsolation();
 
-type AuditMutationAction = "delete" | "deleteMany" | "update" | "updateMany";
-
-function assertAuditLogMutationAllowed(action: AuditMutationAction) {
-  if (isAuditImmutabilityEnabled()) {
-    logger.warn("[AUDIT] blocked AuditLog mutation", { action });
-    throw new Error("AuditLog mutations are forbidden");
+/**
+ * Applies the client-level guards (lib/db-guards.ts: audit immutability, Preview official-records freeze) with the
+ * supported query extension, which also covers interactive and batch transactions. Prisma 6.14+ removed the middleware
+ * API; the former audit middleware and its 8s timeout race never registered and are removed (a timeout race could not
+ * cancel database work anyway: bounded queries need a server-side statement timeout, see the T1 handoff). Query extensions do not change the client's method signatures, so the extended client keeps the
+ * PrismaClient type. A client without $extends (unit-test doubles) gets an equivalent root-delegate wrapper.
+ */
+function withDbGuards(client: PrismaClient): PrismaClient {
+  if (typeof (client as any).$extends === "function") {
+    return (client as any).$extends(dbGuardExtension) as PrismaClient;
   }
-}
-
-const auditModel = (prisma as any).auditLog;
-if (auditModel && !auditModel.__immutabilityWrapped) {
-  for (const action of ["delete", "deleteMany", "update", "updateMany"] as const) {
-    const original = auditModel[action];
-    if (typeof original === "function") {
-      auditModel[action] = (...args: unknown[]) => {
-        assertAuditLogMutationAllowed(action);
-        return original.apply(auditModel, args);
+  for (const [key, model] of [["auditLog", "AuditLog"]] as const) {
+    const delegate = (client as any)[key];
+    if (!delegate || delegate.__guardsWrapped) continue;
+    for (const operation of AUDIT_MUTATION_OPERATIONS) {
+      const original = delegate[operation];
+      if (typeof original !== "function") continue;
+      delegate[operation] = (...args: unknown[]) => {
+        assertDbOperationAllowed(model, operation);
+        return original.apply(delegate, args);
       };
     }
+    delegate.__guardsWrapped = true;
   }
-  auditModel.__immutabilityWrapped = true;
+  return client;
 }
 
-const prismaWithUse = prisma as PrismaClient & {
-  __auditMiddlewareRegistered?: boolean;
-  $use?: (fn: (params: any, next: (params: any) => Promise<any>) => Promise<any>) => void;
-};
-
-if (!prismaWithUse.__auditMiddlewareRegistered && typeof prismaWithUse.$use === "function") {
-  prismaWithUse.$use(async (params, next) => {
-    if (
-      params.model === "AuditLog" &&
-      (params.action === "delete" ||
-        params.action === "deleteMany" ||
-        params.action === "update" ||
-        params.action === "updateMany")
-    ) {
-      assertAuditLogMutationAllowed(params.action as AuditMutationAction);
-    }
-    return next(params);
-  });
-  prismaWithUse.__auditMiddlewareRegistered = true;
-}
-
-const prismaWithTimeout = prisma as PrismaClient & {
-  __timeoutMiddlewareRegistered?: boolean;
-  $use?: (fn: (params: any, next: (params: any) => Promise<any>) => Promise<any>) => void;
-};
-
-const DB_QUERY_TIMEOUT_MS = 8_000;
-
-if (!prismaWithTimeout.__timeoutMiddlewareRegistered && typeof prismaWithTimeout.$use === "function") {
-  prismaWithTimeout.$use(async (params, next) => {
-    const timeout = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error(`DB query timeout after ${DB_QUERY_TIMEOUT_MS}ms`)), DB_QUERY_TIMEOUT_MS)
-    );
-    return Promise.race([next(params), timeout]);
-  });
-  prismaWithTimeout.__timeoutMiddlewareRegistered = true;
-}
+export const prisma: PrismaClient = globalForPrisma.prisma ?? withDbGuards(createPrismaClient());
 
 const shouldEnableRdsDualWrite =
   process.env.ENABLE_RDS_DUAL_WRITE?.trim() === "true" &&
@@ -95,7 +67,7 @@ const shouldEnableRdsDualWrite =
   process.env.RDS_DATABASE_URL.trim().length > 0;
 
 export const rdsPrisma = shouldEnableRdsDualWrite
-  ? globalForPrisma.rdsPrisma ?? createPrismaClient(process.env.RDS_DATABASE_URL)
+  ? globalForPrisma.rdsPrisma ?? withDbGuards(createPrismaClient(process.env.RDS_DATABASE_URL))
   : null;
 
 export function isRdsDualWriteEnabled() {

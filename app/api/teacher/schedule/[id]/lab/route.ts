@@ -1,5 +1,7 @@
+// route-policy: auth=session; scope=record; authority=class-teacher-subject-coteacher-or-school-admin; rationale=linking a lab to scheduled work creates a LabSession per enrolled learner, so it needs class.lesson.support from lib/authz/classAuthority for the scheduled work's class: the class teacher, an ADMIN of the class's school, or a co-teacher assigned exactly the lab's Subject (free-text lab subjects grant co-teachers nothing); any other viewer, a missing or mismatched school, is refused before the roster is read or anything is written (AT-GRADE-01 batch 2b)
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
+import { authorizeClassAccess, isClassAccessDenied, isExactSubjectValue } from "@/lib/authz/classAuthority";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
@@ -22,13 +24,21 @@ export async function POST(
   try {
     const user = await requireRole("TEACHER", "ADMIN");
     const { id } = params;
+    if (!user.schoolId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     const sw = await prisma.scheduledWork.findUnique({
       where: { id },
       include: { class: { select: { schoolId: true } } },
     });
 
-    if (!sw || sw.class.schoolId !== user.schoolId) {
+    if (!sw || !sw.class.schoolId || sw.class.schoolId !== user.schoolId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    // Whole-class authority, or a co-teacher of this class (subject_required) decided by the lab's subject below.
+    const classAccess = await authorizeClassAccess(user, { classId: sw.classId, fn: "class.lesson.support" });
+    if (isClassAccessDenied(classAccess) && classAccess.reason !== "subject_required") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -47,6 +57,10 @@ export async function POST(
     }
     if (lab.status !== "published") {
       return NextResponse.json({ error: "Lab is not published" }, { status: 400 });
+    }
+    if (!classAccess.allowed && !(isExactSubjectValue(lab.subject) &&
+        (await authorizeClassAccess(user, { classId: sw.classId, subject: lab.subject, fn: "class.lesson.support" })).allowed)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Get all enrolled students for this class

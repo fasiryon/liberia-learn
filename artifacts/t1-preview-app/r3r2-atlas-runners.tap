@@ -1,0 +1,250 @@
+TAP version 13
+# Subtest: conditional early return in an authority helper cannot establish authentication
+ok 1 - conditional early return in an authority helper cannot establish authentication
+  ---
+  duration_ms: 12.7002
+  type: 'test'
+  ...
+# Subtest: authority helper catch with an early return cannot qualify as rethrow-only
+ok 2 - authority helper catch with an early return cannot qualify as rethrow-only
+  ---
+  duration_ms: 3.0908
+  type: 'test'
+  ...
+# Subtest: later alias reassignment cannot erase an earlier identity write
+ok 3 - later alias reassignment cannot erase an earlier identity write
+  ---
+  duration_ms: 1.156
+  type: 'test'
+  ...
+# Subtest: destructured delegate is classified as provisioning
+ok 4 - destructured delegate is classified as provisioning
+  ---
+  duration_ms: 1.0503
+  type: 'test'
+  ...
+# Subtest: delegate passed as a value requires explicit REVIEW
+ok 5 - delegate passed as a value requires explicit REVIEW
+  ---
+  duration_ms: 0.7606
+  type: 'test'
+  ...
+# Subtest: unresolved handler export requires explicit REVIEW
+ok 6 - unresolved handler export requires explicit REVIEW
+  ---
+  duration_ms: 1.069
+  type: 'test'
+  ...
+# Subtest: completed helper authentication with a throwing catch is a supported control
+ok 7 - completed helper authentication with a throwing catch is a supported control
+  ---
+  duration_ms: 7.4429
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/credentials/send/route.ts
+ok 8 - safe catch and unchanged Production implementation: app/api/admin/credentials/send/route.ts
+  ---
+  duration_ms: 7.4268
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/guardian-link/route.ts
+ok 9 - safe catch and unchanged Production implementation: app/api/admin/guardian-link/route.ts
+  ---
+  duration_ms: 12.8781
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/import/batches/[id]/credentials/route.ts
+ok 10 - safe catch and unchanged Production implementation: app/api/admin/import/batches/[id]/credentials/route.ts
+  ---
+  duration_ms: 3.687
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/import/route.ts
+ok 11 - safe catch and unchanged Production implementation: app/api/admin/import/route.ts
+  ---
+  duration_ms: 5.4642
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/invites/route.ts
+ok 12 - safe catch and unchanged Production implementation: app/api/admin/invites/route.ts
+  ---
+  duration_ms: 8.8163
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/onboarding/import-students/route.ts
+ok 13 - safe catch and unchanged Production implementation: app/api/admin/onboarding/import-students/route.ts
+  ---
+  duration_ms: 10.3872
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/onboarding/import-teachers/route.ts
+ok 14 - safe catch and unchanged Production implementation: app/api/admin/onboarding/import-teachers/route.ts
+  ---
+  duration_ms: 23.4666
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/schools/pending/route.ts
+ok 15 - safe catch and unchanged Production implementation: app/api/admin/schools/pending/route.ts
+  ---
+  duration_ms: 6.4743
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/security/mfa/recovery/reset/route.ts
+ok 16 - safe catch and unchanged Production implementation: app/api/admin/security/mfa/recovery/reset/route.ts
+  ---
+  duration_ms: 9.9394
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/students/[id]/route.ts
+ok 17 - safe catch and unchanged Production implementation: app/api/admin/students/[id]/route.ts
+  ---
+  duration_ms: 6.7647
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/students/route.ts
+ok 18 - safe catch and unchanged Production implementation: app/api/admin/students/route.ts
+  ---
+  duration_ms: 11.7222
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/admin/teachers/route.ts
+ok 19 - safe catch and unchanged Production implementation: app/api/admin/teachers/route.ts
+  ---
+  duration_ms: 10.8136
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/guardian/link/route.ts
+ok 20 - safe catch and unchanged Production implementation: app/api/guardian/link/route.ts
+  ---
+  duration_ms: 4.7062
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/onboard/invite/route.ts
+ok 21 - safe catch and unchanged Production implementation: app/api/onboard/invite/route.ts
+  ---
+  duration_ms: 9.228
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/platform/security/accept/route.ts
+ok 22 - safe catch and unchanged Production implementation: app/api/platform/security/accept/route.ts
+  ---
+  duration_ms: 4.6211
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/platform/security/demote/route.ts
+ok 23 - safe catch and unchanged Production implementation: app/api/platform/security/demote/route.ts
+  ---
+  duration_ms: 3.7694
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/platform/security/transfer/route.ts
+ok 24 - safe catch and unchanged Production implementation: app/api/platform/security/transfer/route.ts
+  ---
+  duration_ms: 6.584
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/rollout/invite/student/bulk/route.ts
+ok 25 - safe catch and unchanged Production implementation: app/api/rollout/invite/student/bulk/route.ts
+  ---
+  duration_ms: 5.5555
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/rollout/invite/student/route.ts
+ok 26 - safe catch and unchanged Production implementation: app/api/rollout/invite/student/route.ts
+  ---
+  duration_ms: 5.0421
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/rollout/invite/teacher/route.ts
+ok 27 - safe catch and unchanged Production implementation: app/api/rollout/invite/teacher/route.ts
+  ---
+  duration_ms: 10.9816
+  type: 'test'
+  ...
+# Subtest: safe catch and unchanged Production implementation: app/api/teacher/change-password/route.ts
+ok 28 - safe catch and unchanged Production implementation: app/api/teacher/change-password/route.ts
+  ---
+  duration_ms: 5.0234
+  type: 'test'
+  ...
+# Subtest: exactly 22 protected handler catch blocks covered, including the original two
+ok 29 - exactly 22 protected handler catch blocks covered, including the original two
+  ---
+  duration_ms: 0.4323
+  type: 'test'
+  ...
+# Subtest: real sanitizer fixes status/body/cache policy on preview
+ok 30 - real sanitizer fixes status/body/cache policy on preview
+  ---
+  duration_ms: 1.645
+  type: 'test'
+  ...
+# Subtest: real sanitizer fixes status/body/cache policy on staging
+ok 31 - real sanitizer fixes status/body/cache policy on staging
+  ---
+  duration_ms: 1.046
+  type: 'test'
+  ...
+# Subtest: real sanitizer preserves existing error path on "production"
+ok 32 - real sanitizer preserves existing error path on "production"
+  ---
+  duration_ms: 0.5648
+  type: 'test'
+  ...
+# Subtest: real sanitizer preserves existing error path on ""
+ok 33 - real sanitizer preserves existing error path on ""
+  ---
+  duration_ms: 0.4694
+  type: 'test'
+  ...
+# Subtest: control: ordinary unguarded identity writer is refused
+ok 34 - control: ordinary unguarded identity writer is refused
+  ---
+  duration_ms: 10.4256
+  type: 'test'
+  ...
+# Subtest: control: direct awaited authority and dominating guard are accepted
+ok 35 - control: direct awaited authority and dominating guard are accepted
+  ---
+  duration_ms: 7.3315
+  type: 'test'
+  ...
+# Subtest: delegate alias must not silently escape provisioning inventory
+ok 36 - delegate alias must not silently escape provisioning inventory
+  ---
+  duration_ms: 2.587
+  type: 'test'
+  ...
+# Subtest: merely referring to requireRole must not establish prior authentication
+ok 37 - merely referring to requireRole must not establish prior authentication
+  ---
+  duration_ms: 6.8999
+  type: 'test'
+  ...
+# Subtest: guard in try with swallowed earlier failure must not dominate later write
+ok 38 - guard in try with swallowed earlier failure must not dominate later write
+  ---
+  duration_ms: 3.0339
+  type: 'test'
+  ...
+# Subtest: Preview auth failure must be sanitized: app/api/platform/security/transfer/route.ts
+ok 39 - Preview auth failure must be sanitized: app/api/platform/security/transfer/route.ts
+  ---
+  duration_ms: 67.4362
+  type: 'test'
+  ...
+# Subtest: Preview auth failure must be sanitized: app/api/teacher/change-password/route.ts
+ok 40 - Preview auth failure must be sanitized: app/api/teacher/change-password/route.ts
+  ---
+  duration_ms: 295.0536
+  type: 'test'
+  ...
+1..40
+# tests 40
+# suites 0
+# pass 40
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2968.9552

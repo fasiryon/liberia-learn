@@ -1,0 +1,123 @@
+Recall, reconnect and try again
+
+Recall P1
+
+Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Find 312 times 3. Show the value of each digit and explain how the partial products combine.
+
+Find 312 times 3. Show the value of each digit and explain how the partial products combine.
+Response: __________________________
+
+Recall P2
+
+Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Sketch the food route and main absorption site. Distinguish liver and pancreas from that route. In a paper model, start with 16 tokens and transfer 6. Distinguish total, transferred and remaining.
+
+Sketch the food route and main absorption site. Distinguish liver and pancreas from that route. In a paper model, start with 16 tokens and transfer 6. Distinguish total, transferred and remaining.
+Response: __________________________
+
+Recall P3
+
+Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Use today's text. Explain its main problem, response and result. Cite a later detail that supported or changed your prediction. Name one unanswered question.
+
+Use today's text. Explain its main problem, response and result. Cite a later detail that supported or changed your prediction. Name one unanswered question.
+Response: __________________________
+
+Recall P4
+
+Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Use today's club records. Give a conditional site recommendation with separate room and route evidence. Name missing information. Explain why physical-region and county labels answer different questions.
+
+Use today's club records. Give a conditional site recommendation with separate room and route evidence. Name missing information. Explain why physical-region and county labels answer different questions.
+Response: __________________________
+
+Recall P5
+
+Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Start score at 3. A hit adds 2. Reset sets score to 1. Trace hit, reset, hit, including the initial value. Explain each change.
+
+Start score at 3. A hit adds 2. Reset sets score to 1. Trace hit, reset, hit, including the initial value. Explain each change.
+Response: __________________________
+
+Recall P6
+
+Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Explain what opening a switch changes. Compare available design records. Label counted (MEASURED) or given-to-us (SUPPLIED) values, worked-out (CALCULATED) differences and your conclusion (INFERRED). Without data, sketch a fair test; never invent counts.
+
+Explain what opening a switch changes. Compare available design records. Label counted (MEASURED) or given-to-us (SUPPLIED) values, worked-out (CALCULATED) differences and your conclusion (INFERRED). Without data, sketch a fair test; never invent counts.
+Response: __________________________
+
+Choose the card that helps your reasoning
+
+With your teacher, choose a card for an explanation you want to improve. You do not need every card. Use its model or evidence, then explain the correction in your own words. Keep your first attempt. Tokens are a model, not measurements of nutrients in a person. P1: choose a relevant card with your teacher. Card 1. A mistake to check: The digits of a factor are multiplied as single units and their products are added. Better idea: Name the full place values before multiplying: 2 hundreds is 200, not 2. Reconnect: Represent 312 as 300, 10 and 2. Multiply each full value by 3 before combining. Card 2. A mistake to check: Tens or hundreds formed by a partial product are discarded when writing the final digits. Better idea: Keep the value of every partial product and regroup it into the correct place rather than deleting it. Reconnect: Trade ten ones for one ten without throwing away value. Show how 4 times 4 ones becomes one ten and six ones. P2: choose a relevant card with your teacher. Card 1. A mistake to check: The swallowed food route is drawn through the liver or pancreas instead of distinguishing the juices they supply. Better idea: Keep the continuous food route separate from the liver and pancreas, which supply digestive juices. Reconnect: Use one arrow for swallowed food and different arrows for digestive juices. Place liver and pancreas beside the food route. Card 2. A mistake to check: The stomach is treated as the place where all nutrients enter the body. Better idea: Most digested nutrients are absorbed through the small-intestine wall. Reconnect: Compare the stomach with the small intestine. Locate where most digested nutrients enter the body. Card 3. A mistake to check: Nutrients that cross the wall are treated as disappearing from the model total. Better idea: Keep transferred tokens visible in the body region. Count both regions to conserve the total. Reconnect: Move paper nutrient tokens into a body region while keeping every token visible. Transferred tokens still exist. Card 4. A mistake to check: The starting count is reported as still inside after tokens have crossed the wall. Better idea: The starting count describes both regions together. Subtract transferred tokens to find what remains inside. Reconnect: Label the starting total before moving tokens. Label the tokens still in the first region separately. Card 5. A mistake to check: The
+
+Choose the card that matches an actual first attempt.
+
+Name the step, observation or text detail that changes or supports your explanation.
+
+Name the card you chose and explain your correction.
+Response: __________________________
+
+Try a fresh question without the guidance
+
+Choose the fresh question that matches your selected card. Put the worked guidance away. Explain your own answer. A scribe may write what you say. Keep missing observations missing; use a proposed test when no Engineering data are available. Choose the fresh question for your card. P1. Card 1: Find 214 times 4. Explain the value of each digit. Card 2: Find 214 times 4 and explain where the regrouped ten goes. P2. Card 1: Trace food to the small intestine and explain one supporting organ. Card 2: Explain why the food route continues beyond the stomach. Card 3: Start with 16 tokens. Transfer 6. Explain where all 16 are now. Card 4: Start with 16 and transfer 6. Find and distinguish the starting and remaining counts. Card 5: Start with 16 and transfer 6. Find the transferred and remaining counts and explain the difference. P3. Card 1: Name an unanswered question from the text without inventing an ending. Card 2: Summarize the text and justify one detail you kept. P4. Card 1: Explain what further observation would support a claim about one site. Card 2: Give a conditional recommendation and state one limit of the records. Card 3: Identify a missing observation before deciding whether a site meets a need. Card 4: Explain why a coastal label is not by itself the name of a county. Card 5: Explain how a dry room could still be reached by a difficult route. P5. Card 1: Start score at 2 and add 3. Explain what changes and what stays fixed. Card 2: Start at 1. Add 3, set to 2, then add 3. Explain every state. Card 3: Start at 0 and add 2 for each of three hits. Explain why resetting before every hit loses the total. Card 4: Start at 7, set to 2, then add 3. Record all three states. Card 5: One game ends at 9. A new game starts at 0. Explain the new score before its first hit. P6. Card 1: Explain why closing a switch does not create energy. Card 2: Explain what five trials support and what they do not guarantee. Card 3: Propose a further test and explain which conditions you will keep fixed. Card 4: Use available records to justify a choice. Without data, explain a plan only. State the fresh question you chose, your answer and the reasoning. Explain how you checked the answer. What is clearer, or still uncertain?
+
+State the fresh question you chose, your answer and the reasoning.
+Response: __________________________
+
+Explain how you checked the answer. What is clearer, or still uncertain?
+Response: __________________________
+
+Extend an idea when ready
+
+With your teacher, choose a further challenge when ready. Compare a rule or claim from two periods. Find a case that would challenge an overconfident claim. If more practice would help first, explain which card you will revisit and why. Give your counterexample and explain what it shows, or justify the next practice you need.
+
+Give your counterexample and explain what it shows, or justify the next practice you need.
+Response: __________________________
+
+Explain your fresh attempt
+
+Keep your first response and fresh attempt. Explain what you can now justify and what still needs practice.
+
+Guided reteach cards: choose a card with your teacher. Cover these cards during independent work.
+
+P1 / Card 1. A mistake to check: The digits of a factor are multiplied as single units and their products are added. Better idea: Name the full place values before multiplying: 2 hundreds is 200, not 2. Reconnect: Represent 312 as 300, 10 and 2. Multiply each full value by 3 before combining.
+
+P1 / Card 2. A mistake to check: Tens or hundreds formed by a partial product are discarded when writing the final digits. Better idea: Keep the value of every partial product and regroup it into the correct place rather than deleting it. Reconnect: Trade ten ones for one ten without throwing away value. Show how 4 times 4 ones becomes one ten and six ones.
+
+P2 / Card 1. A mistake to check: The swallowed food route is drawn through the liver or pancreas instead of distinguishing the juices they supply. Better idea: Keep the continuous food route separate from the liver and pancreas, which supply digestive juices. Reconnect: Use one arrow for swallowed food and different arrows for digestive juices. Place liver and pancreas beside the food route.
+
+P2 / Card 2. A mistake to check: The stomach is treated as the place where all nutrients enter the body. Better idea: Most digested nutrients are absorbed through the small-intestine wall. Reconnect: Compare the stomach with the small intestine. Locate where most digested nutrients enter the body.
+
+P2 / Card 3. A mistake to check: Nutrients that cross the wall are treated as disappearing from the model total. Better idea: Keep transferred tokens visible in the body region. Count both regions to conserve the total. Reconnect: Move paper nutrient tokens into a body region while keeping every token visible. Transferred tokens still exist.
+
+P2 / Card 4. A mistake to check: The starting count is reported as still inside after tokens have crossed the wall. Better idea: The starting count describes both regions together. Subtract transferred tokens to find what remains inside. Reconnect: Label the starting total before moving tokens. Label the tokens still in the first region separately.
+
+P2 / Card 5. A mistake to check: The number transferred during a round is confused with the number remaining inside. Better idea: Transferred and remaining name different groups. Track the inside count after every transfer. Reconnect: Keep transferred and remaining tokens in two labelled groups. Point to the group named by each question.
+
+P3 / Card 1. A mistake to check: A plausible prediction is reported as something the story has already established. Better idea: Name the detail that makes the idea plausible, use might or may, and change the prediction if later evidence conflicts. Reconnect: Mark an early clue, your prediction and a later detail in the accepted reading text. Treat the prediction as a possibility.
+
+P3 / Card 2. A mistake to check: A summary lists incidental details or invents an outcome instead of connecting the central problem, response and result. Better idea: Keep the problem, the action taken and the result supported by the story; remove details that do not explain that connection. Reconnect: Choose details that explain the main problem, response and result. Put minor details aside.
+
+P4 / Card 1. A mistake to check: Every inland location is assumed to be high or mountainous. Better idea: Inland means away from the coast. A broad terrain description does not determine every local elevation. Reconnect: Separate coastal or inland labels from evidence about elevation or a particular route. Use the accepted records.
+
+P4 / Card 2. A mistake to check: One observation or place description is treated as evidence about all communities. Better idea: Name the place and observation, limit the conclusion to that evidence and seek additional observations. Reconnect: Compare what the two club records actually describe. One record does not describe every place.
+
+P4 / Card 3. A mistake to check: Coastal or inland is treated as enough evidence to select a safe site. Better idea: Compare the actual site, path and local observations. A region label alone does not establish safety. Reconnect: Match each room or route claim to its actual observation. A place name does not establish safety.
+
+P4 / Card 4. A mistake to check: General coast-to-inland landform descriptions are treated as exact county boundaries. Better idea: Use an administrative map for county boundaries. A physical sketch does not establish those lines. Reconnect: Use separate labels for a physical region and an administrative county. They answer different kinds of questions.
+
+P4 / Card 5. A mistake to check: Evidence about a dry room or a clear path is treated as proving the other requirement too. Better idea: Check each requirement separately. Room and route observations answer different questions. Reconnect: Make separate columns for room conditions and route access. Check each need with relevant evidence.
+
+P5 / Card 1. A mistake to check: The variable's name is changed whenever its number changes. Better idea: Keep the name score fixed and replace the number stored beneath it. Reconnect: Keep the score name card fixed and replace only the number card when its value changes.
+
+P5 / Card 2. A mistake to check: Set score to a number is treated as adding that number. Better idea: Set replaces the current value. Add uses the current value to calculate the next one. Reconnect: Compare set to 2 with add 2 from the same starting score of 4. Set replaces; add uses the previous value.
+
+P5 / Card 3. A mistake to check: Initialization is repeated before every event, discarding the accumulated score. Better idea: Initialize at new-game start and retain the updated value between events. Reconnect: Initialize at the start of a new game. Keep the updated value between hits unless a reset event occurs.
+
+P5 / Card 4. A mistake to check: A set instruction is ignored and the previous value is retained. Better idea: Follow every instruction in order. Set replaces the old value even if no points were earned. Reconnect: Follow every instruction in order, including set. Replace the number even when no points were earned.
+
+P5 / Card 5. A mistake to check: A new game starts without initialization and inherits an earlier game's score. Better idea: Give each new game its stated starting value before processing events. Reconnect: Show the end of one game and the starting value of a new game on separate cards. Initialize the new game.
+
+P6 / Card 1. A mistake to check: The switch creates the energy that lights the lamp. Better idea: The battery supplies energy. Closing the switch completes a conducting path; the switch does not create energy. Reconnect: Sketch the battery, lamp and conducting return path. Open and close the switch on the sketch.
+
+P6 / Card 2. A mistake to check: One successful test proves the switch always works. Better idea: Record every trial, including failures. Five trials support a limited comparison, not a guarantee. Reconnect: Read every actual or explicitly supplied trial from the accepted Engineering activity. Include failures and identify the source.
+
+P6 / Card 3. A mistake to check: Changing several components establishes which single change caused an outcome. Better idea: Change one contact feature while keeping battery, bulb, wires and procedure fixed. Reconnect: Name one contact feature to change. Keep battery, lamp, wires and procedure fixed.
+
+P6 / Card 4. A mistake to check: The taller closed-switch bar proves the best design without checking open-switch control. Better idea: Use both closed-light and open-dark observations, and acknowledge the limits of the tests. Reconnect: Read both closed-light bars, then inspect both open-dark counts. Both criteria matter.

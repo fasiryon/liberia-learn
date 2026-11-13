@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin-or-teacher; rationale=rollout bulk student invites; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import crypto from "crypto";
@@ -7,6 +8,8 @@ import { logAudit } from "@/lib/audit";
 import { generateTokenPair } from "@/lib/tokens";
 import { sendStudentInvite } from "@/lib/email";
 import { isEnrollmentInvitesEnabled } from "@/lib/serverFlags";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 const EntrySchema = z.object({
   email: z.string().email(),
@@ -31,6 +34,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No school" }, { status: 400 });
     }
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json();
     const parsed = Array.isArray(body)
       ? { students: body }
@@ -113,6 +118,8 @@ export async function POST(req: Request) {
       results,
     });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     const status = err?.status ?? 500;
     return NextResponse.json(
       { error: err?.message ?? "Internal error" },

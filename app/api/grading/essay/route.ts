@@ -11,10 +11,11 @@
  */
 
 import { NextResponse } from "next/server";
-// route-policy: auth=session; scope=record; authority=student-identity; rationale=essay submission is bound to the authenticated Student record and remains advisory
+// route-policy: auth=session; scope=record; authority=student-identity; rationale=essay submission is bound to the authenticated Student record and remains advisory; the exact lesson must reach the learner through scheduled work or an active assignment to an own-school enrolled class (AT-SUBMIT-02; self-directed paths not authorized; non-disclosing 404); an idempotency key replays only the same learner's exact request, otherwise 409; all before grading or writes (AT-GRADE-01 2e)
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { gradeEssay, isEssayGradeResult } from "@/lib/grading/gradeEssay";
+import { availableLessonForLearner, guardErrorStatus, idempotentReplay, lessonNotFound } from "@/lib/grading/studentSubmissionGuards";
 
 export async function POST(req: Request) {
   try {
@@ -48,24 +49,15 @@ export async function POST(req: Request) {
       );
     }
 
-    // Idempotency — NR-14A pattern
-    if (clientSubmissionId) {
-      const existing = await prisma.gradedSubmission
-        .findFirst({ where: { clientSubmissionId, studentId: student.id } })
-        .catch(() => null);
-      if (existing) {
-        return NextResponse.json({ ok: true, submission: existing }, { status: 200 });
-      }
-    }
+    // The lesson must be available to this learner now (unknown and unavailable answer the same 404).
+    const lesson = await availableLessonForLearner(user, lessonId);
+    if (!lesson) return lessonNotFound();
 
-    // Look up lesson for grade/subject context
-    const lesson = await prisma.curriculumContent.findUnique({
-      where: { id: lessonId },
-      select: { grade: true, subject: true, title: true, unitId: true, contentId: true },
+    // Idempotency (NR-14A): only the same learner's exact request replays; anything else is 409.
+    const replay = await idempotentReplay(clientSubmissionId, {
+      studentId: student.id, lessonId, promptId: promptId ?? null, exerciseType: "essay", submissionText: essayText,
     });
-    if (!lesson) {
-      return NextResponse.json({ error: "lesson_not_found" }, { status: 404 });
-    }
+    if (replay) return replay;
 
     // Create pending submission
     const submission = await prisma.gradedSubmission.create({
@@ -130,8 +122,7 @@ export async function POST(req: Request) {
       masteryUpdated: false,
     });
   } catch (err: unknown) {
-    const status =
-      err instanceof Error && err.message.includes("Unauthorized") ? 401 : 500;
+    const status = guardErrorStatus(err) ?? 500;
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "internal_error" },
       { status }

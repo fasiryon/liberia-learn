@@ -1,3 +1,4 @@
+import { requiredSecret } from "./security/required-secret.cjs";
 /**
  * scripts/seed-waec-demo-mastery.ts — PHASE 5A Surface demo data
  *
@@ -24,7 +25,7 @@ import { contentSubjectToWaec, getTopic } from "@/lib/waec/syllabus";
 
 const DEMO_EMAIL = "waec-demo-g11@cha.edu.lr";
 const DEMO_NAME = "WAEC Demo Student (Grade 11)";
-const DEMO_PASSWORD = "WaecDemo!2026"; // documented in docs/curriculum/WAEC_DEMO_DATA.md
+const DEMO_PASSWORD = requiredSecret("WAEC_DEMO_PASSWORD");
 const APPROVED = ["accepted", "published", "APPROVED"];
 const hasFlag = (n: string) => process.argv.includes(`--${n}`);
 

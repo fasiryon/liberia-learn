@@ -1,0 +1,68 @@
+Keep score: name, change, trace and debug
+
+Predict before playing
+
+Our class invents a paper target game. Each hit earns two points. A scorekeeper must remember the total between turns. Start at zero. Predict the score after two hits before moving counters. This game is an invented teaching example. Predict the score after two hits. Explain what the scorekeeper must remember between turns.
+
+Predict the score after two hits. Explain what the scorekeeper must remember between turns.
+Response: __________________________
+
+A name stays; its value changes
+
+Write score above a space on paper. Put a number card beneath it. The name identifies the store. Its current value is the number there now. An instruction tells the scorekeeper what to do. After a hit, change the number card; keep the name. Sort the name, the number and the instruction. Groups: Variable name, Current value, Instruction. Cards: score, 4, Add 2 to score, Set score to 1.
+
+Trace one instruction at a time
+
+A trace records each instruction and its result. Set score to 0 gives 0. Add 2 gives 2; add 2 again gives 4. Set score to 1 replaces 4 with 1. Add 2 now gives 3. Setting and adding do different jobs. Order matters because each instruction uses the current state. How does each instruction change score? Step 1: New game: set score to 0. There is no earlier game value to reuse. Step 2: Add 2: 0 becomes 2. Add 2 again: 2 becomes 4. Step 3: Set score to 1: 4 becomes 1, rather than 5. Step 4: Add 2: 1 becomes 3. The variable is still named score.
+
+Keep score as the label in every row.
+
+For set, replace the old number. For add, start with the current number.
+
+Build a trace with help
+
+Use a new game that starts with one point. A hit adds three points. Follow two hits, then a card saying set score to 2. Record every new value. Point to the current number before following each instruction. Explain whether the last instruction adds or replaces. The value changes from 1 to 4. What happens to the variable name? Options: It stays score.; It becomes four.; It needs both score and four as names.. After the two hits, set score to 2. What is its new value? Options: 7; 2; 9.
+
+After each hit, add three to the number currently under score.
+
+The final card says set to 2. It replaces the old number with 2.
+
+Decide when to initialize
+
+Initialization gives a variable its starting value. Place a new-game card before the event cards. Keep the score between turns. A new game needs a fresh start, even when the previous game ended with a score. Ask a partner to follow your cards literally. Where should set score to 0 go? Options: Never, even when another game starts.; Once at the start of each new game.; Before every hit..
+
+Ask whether another turn is a new game.
+
+Reset once when a new game begins; use the retained score for later turns.
+
+Build and trace a fresh game
+
+Work independently. A new game starts at two points. A hit adds three points. A reset event sets score to one. Follow hit, hit, reset, hit. Write the starting value and a row for each event. Explain what one row tells another scorekeeper. Record the initial value and every later value for hit, hit, reset, hit. Explain the reset row and keep the variable name visible.
+
+Record the initial value and every later value for hit, hit, reset, hit. Explain the reset row and keep the variable name visible.
+Response: __________________________
+
+Choose tests that could expose a mistake
+
+Test your procedure with no events, one hit and a hit after a reset. Predict each result before your partner follows the cards. Start each separate test as a new game. Compare predictions with the trace. A match is evidence for that case, not proof that every possible case works. For each test, show the event sequence, predicted value and observed trace. Add a different test and explain what mistake it could reveal.
+
+For each test, show the event sequence, predicted value and observed trace. Add a different test and explain what mistake it could reveal.
+Response: __________________________
+
+Repair the procedure, then retest
+
+A fictional scorekeeper resets the score before every hit. Two hits still produce only two points. A bug is a mistake in instructions or their order. Identify the instruction that loses information. Repair the procedure, then test it with three hits and with a separate new game. A new game starts at zero; each hit should add two points. A fictional scorekeeper wrote: Before each hit: set score to 0. After each hit: add 2 to score. After two hits, report 2. Which repair preserves earlier points? Options: Move set score to 0 to the new-game start, before all turns.; Rename score to total after every hit.; Keep resetting but add 4 after each hit.. Show the repaired cards and traces for three hits and a separate new game. Explain why changing the points per hit would not fix the reset bug.
+
+Show the repaired cards and traces for three hits and a separate new game. Explain why changing the points per hit would not fix the reset bug.
+Response: __________________________
+
+Make a game someone else can follow
+
+Invent a target game for classmates using paper tokens. Choose a starting score, an increase and an event that replaces the score. Write precise instructions. Ask a partner to follow them without extra explanations. Use their trace to find an unclear instruction or justify why a test matched. Present your game cards and two traces with a changed event order. Explain one revision or a test-based reason for keeping an instruction. What stayed the same when the variable's value changed?
+
+Present your game cards and two traces with a changed event order. Explain one revision or a test-based reason for keeping an instruction. What stayed the same when the variable's value changed?
+Response: __________________________
+
+Explain your scoring procedure
+
+Keep your trace and explain one change you made after testing.

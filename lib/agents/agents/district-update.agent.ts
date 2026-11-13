@@ -18,6 +18,7 @@ import type { AgentDefinition } from "@/lib/agents/types";
  */
 export const districtUpdateAgent: AgentDefinition = {
   name: "district-update",
+  audience: "general",
   description:
     "Generates DRAFT district-standings narratives and school milestone celebration drafts grounded in existing league/engagement data. Never posts or sends anything.",
   systemPromptKey: "agent.district-update.system",

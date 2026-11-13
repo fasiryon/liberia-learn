@@ -1,0 +1,36 @@
+{
+  "sha": "02dae02e749576e187cca81f646e7be7d4355a30",
+  "branch": "integration/g4-e2e-t2",
+  "base": "364f33280d2e45d16d2096dad4ac325a9aa6b9df",
+  "suite": "e2e-school-day",
+  "argv": [
+    "node",
+    "--import",
+    "tsx",
+    "scripts/e2e/run-school-day.ts"
+  ],
+  "env": {
+    "CI": "true",
+    "E2E_SYNTHETIC": "1",
+    "V4_LEARNING_PREVIEW_ENABLED": "1",
+    "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/e2e",
+    "DIRECT_URL": "postgresql://postgres:postgres@localhost:5432/e2e",
+    "PLAYWRIGHT_BASE_URL": "http://127.0.0.1:3100"
+  },
+  "prerequisites": [
+    "Disposable pgvector PostgreSQL schema push by CoS",
+    "Build by existing private workflow",
+    "No pre-started server on 3100: Playwright starts the guarded standalone server",
+    "Do not run seed separately: the entrypoint generates credentials, runs seed twice, then invokes Playwright",
+    "Archive artifacts/g4-e2e and Playwright JSON report; no traces/video/credential environment dump"
+  ],
+  "expect": {
+    "playwrightTests": 5,
+    "protectedAcademicRecordsUnchanged": true,
+    "externalRequestAttempts": 0,
+    "exactAcceptedPackages": 8,
+    "noPublication": true
+  },
+  "localEvidence": "artifacts/t2-g4-e2e-20261029/LOCAL_VALIDATION.json",
+  "scope": "G4 synthetic E2E; Preview candidate and deployment remain separate gates"
+}

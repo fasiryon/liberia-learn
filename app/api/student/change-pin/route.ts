@@ -1,4 +1,4 @@
-// route-policy: auth=session; scope=record; authority=self; rationale=a signed-in student changes only their own PIN (account id from the session, never the request); revokes their earlier sessions
+// route-policy: auth=session; scope=record; authority=self; rationale=a signed-in student changes only their own PIN (account id from the session, never the request); revokes their earlier sessions; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
@@ -7,6 +7,7 @@ import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { advanceSecurityStamp } from "@/lib/auth/sessionRevocation";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 
 const ChangePinSchema = z.object({
   pin: z.string().regex(/^\d{4,6}$/),
@@ -16,6 +17,8 @@ const ChangePinSchema = z.object({
 export async function POST(req: Request) {
   try {
     const user = await requireRole("STUDENT");
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json().catch(() => null);
     const parsed = ChangePinSchema.safeParse(body);
 

@@ -74,9 +74,7 @@
                     "src/**",
                     "lib/factory",
                     "app/api/governance",
-                    "app/api/governance/**",
-                    "app/api/grading",
-                    "app/api/grading/**"
+                    "app/api/governance/**"
                 ]
 }
 

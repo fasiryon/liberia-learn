@@ -1,0 +1,453 @@
+{
+  "status": "REVISION_REQUIRED",
+  "events": [
+    {
+      "role": "CURRICULUM_ARCHITECT",
+      "attempt": 1,
+      "status": "STARTED",
+      "inputHash": "3679cd7e21f0d6a16eae36a7576335ef0d904660aad10214016a2a1c4ab00d23",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 1,
+      "previousHash": null,
+      "eventHash": "a123f81949f3b8de77a0e5c87bdd6305274ad5470d31a652adcdd260b8b58ab8"
+    },
+    {
+      "role": "CURRICULUM_ARCHITECT",
+      "attempt": 1,
+      "status": "SUCCEEDED",
+      "inputHash": "3679cd7e21f0d6a16eae36a7576335ef0d904660aad10214016a2a1c4ab00d23",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 2,
+      "previousHash": "a123f81949f3b8de77a0e5c87bdd6305274ad5470d31a652adcdd260b8b58ab8",
+      "eventHash": "6e3cc3d534712622f1c79c7bb872cbed2903bed57dcdb68f58ca4ea82899ba68"
+    },
+    {
+      "role": "LEARNING_SCIENCE_DESIGNER",
+      "attempt": 1,
+      "status": "STARTED",
+      "inputHash": "449fbc146577d0e6c412435ef03da8d14ce681d3ce117f985b4e5c852cc885f7",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 3,
+      "previousHash": "6e3cc3d534712622f1c79c7bb872cbed2903bed57dcdb68f58ca4ea82899ba68",
+      "eventHash": "0eed80953ac0e221c79fd7957da5b2f47a3c585deb6ee49b7c7205f721feb436"
+    },
+    {
+      "role": "LEARNING_SCIENCE_DESIGNER",
+      "attempt": 1,
+      "status": "SUCCEEDED",
+      "inputHash": "449fbc146577d0e6c412435ef03da8d14ce681d3ce117f985b4e5c852cc885f7",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 4,
+      "previousHash": "0eed80953ac0e221c79fd7957da5b2f47a3c585deb6ee49b7c7205f721feb436",
+      "eventHash": "b24b09201bfe129e93a81d23bcc5618c6dffafe4063ddd0746995b2307a9ddbb"
+    },
+    {
+      "role": "LESSON_AUTHOR",
+      "attempt": 1,
+      "status": "STARTED",
+      "inputHash": "5cfe70f8d79d7b7ff4e423a6cfe800c928f3a81b6b4dd9ccdef8330f6bbee50e",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 5,
+      "previousHash": "b24b09201bfe129e93a81d23bcc5618c6dffafe4063ddd0746995b2307a9ddbb",
+      "eventHash": "6e814086f97ee59808213131e640d539c5c370702d03545f46353e4e1c922619"
+    },
+    {
+      "role": "LESSON_AUTHOR",
+      "attempt": 1,
+      "status": "SUCCEEDED",
+      "inputHash": "5cfe70f8d79d7b7ff4e423a6cfe800c928f3a81b6b4dd9ccdef8330f6bbee50e",
+      "outputHashes": [
+        "816b3bb51f3c5a0f2e17a3b78b4444af4571921a41b3c5ef73752f4c9e561b85"
+      ],
+      "error": null,
+      "sequence": 6,
+      "previousHash": "6e814086f97ee59808213131e640d539c5c370702d03545f46353e4e1c922619",
+      "eventHash": "1558bd600c43c5c1a4b0dc9ee83abe667b1dd4f1f9e63a3373f8b410f41d59a9"
+    },
+    {
+      "role": "ASSESSMENT_DESIGNER",
+      "attempt": 1,
+      "status": "STARTED",
+      "inputHash": "e032e02f47fbcf182b468f216f1be968a3ba33ceec54e84aa275352877d15c7f",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 7,
+      "previousHash": "1558bd600c43c5c1a4b0dc9ee83abe667b1dd4f1f9e63a3373f8b410f41d59a9",
+      "eventHash": "118aa746b3b21809d6dced565a468d3daa21e49dde4bd19e157d8562c62da59e"
+    },
+    {
+      "role": "ASSESSMENT_DESIGNER",
+      "attempt": 1,
+      "status": "SUCCEEDED",
+      "inputHash": "e032e02f47fbcf182b468f216f1be968a3ba33ceec54e84aa275352877d15c7f",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 8,
+      "previousHash": "118aa746b3b21809d6dced565a468d3daa21e49dde4bd19e157d8562c62da59e",
+      "eventHash": "fef80db1cea6100e368b045c9e43abcbfe8ce4bc353a10ae9e825048321c7b9e"
+    },
+    {
+      "role": "PROJECT_PRACTICAL_DESIGNER",
+      "attempt": 1,
+      "status": "STARTED",
+      "inputHash": "124a6c3c69367fae145ecaa29a00280868606ee98a4b10e0390d4c311f52880d",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 9,
+      "previousHash": "fef80db1cea6100e368b045c9e43abcbfe8ce4bc353a10ae9e825048321c7b9e",
+      "eventHash": "4fcc4abd77288ae20b7168dadaf3035c984858ec6bd34954d5a18717559cc5a2"
+    },
+    {
+      "role": "PROJECT_PRACTICAL_DESIGNER",
+      "attempt": 1,
+      "status": "SUCCEEDED",
+      "inputHash": "124a6c3c69367fae145ecaa29a00280868606ee98a4b10e0390d4c311f52880d",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 10,
+      "previousHash": "4fcc4abd77288ae20b7168dadaf3035c984858ec6bd34954d5a18717559cc5a2",
+      "eventHash": "3fd6ad99c44b59519c6ff4e5a8b517d2e266608fff339eb3f4b4132dccf3a577"
+    },
+    {
+      "role": "MEDIA_ACCESSIBILITY",
+      "attempt": 1,
+      "status": "STARTED",
+      "inputHash": "36c2c301c4bace331c818c62253c29cd6fddb7f59cab4b80db21939f6b9367f7",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 11,
+      "previousHash": "3fd6ad99c44b59519c6ff4e5a8b517d2e266608fff339eb3f4b4132dccf3a577",
+      "eventHash": "16e735d7c6b995e3d4bfcb2944103f9389c036689c8ce95a50cf4b1c85186832"
+    },
+    {
+      "role": "MEDIA_ACCESSIBILITY",
+      "attempt": 1,
+      "status": "SUCCEEDED",
+      "inputHash": "36c2c301c4bace331c818c62253c29cd6fddb7f59cab4b80db21939f6b9367f7",
+      "outputHashes": [],
+      "error": null,
+      "sequence": 12,
+      "previousHash": "16e735d7c6b995e3d4bfcb2944103f9389c036689c8ce95a50cf4b1c85186832",
+      "eventHash": "c874189d00a536566d25a9622333b44fc9df5368db626da7e323ea34700b0ac0"
+    },
+    {
+      "role": "INDEPENDENT_QUALITY_REVIEWER",
+      "attempt": 0,
+      "status": "REVISION_REQUIRED",
+      "inputHash": "6b555a4ee0051e5c56bf7d2f71dfa84e99dc5cabb86ba7552ee566ba7d5db784",
+      "outputHashes": [],
+      "error": "excellence:BP-COVERAGE;excellence:BP-PRODUCTION;excellence:BP-REASONING;excellence:BP-SELECTED-SHARE;excellence:BP-RETENTION;excellence:BP-TRANSFER;excellence:BP-EXTENSION",
+      "sequence": 13,
+      "previousHash": "c874189d00a536566d25a9622333b44fc9df5368db626da7e323ea34700b0ac0",
+      "eventHash": "d122178b0de6cd69f330614bcedf9bf6c3341c39b483ef1bf169204efcea7043"
+    }
+  ],
+  "quality": {
+    "failures": [
+      "excellence:BP-COVERAGE",
+      "excellence:BP-PRODUCTION",
+      "excellence:BP-REASONING",
+      "excellence:BP-SELECTED-SHARE",
+      "excellence:BP-RETENTION",
+      "excellence:BP-TRANSFER",
+      "excellence:BP-EXTENSION"
+    ],
+    "assessmentBlueprint": {
+      "version": "liberialearn-assessment-blueprint/1.0.0",
+      "family": "DEFAULT",
+      "rules": [
+        {
+          "ruleId": "BP-COVERAGE",
+          "criterionId": "NF-ASM-1",
+          "layer": "NATIONAL_FOUNDATION",
+          "blocking": true,
+          "requirement": "Every objective has end-of-lesson mastery evidence at scaffold NONE.",
+          "missing": [
+            "g4-social-studies-coast-inland-evidence-o1",
+            "g4-social-studies-coast-inland-evidence-o2",
+            "g4-social-studies-coast-inland-evidence-o3"
+          ],
+          "detail": "0 end-of-lesson mastery task(s).",
+          "met": false
+        },
+        {
+          "ruleId": "BP-PREREQUISITE-DIAGNOSTIC",
+          "criterionId": "NF-PRG-1",
+          "layer": "NATIONAL_FOUNDATION",
+          "blocking": true,
+          "requirement": "Every stated prerequisite has a diagnostic task with a fallback route.",
+          "missing": [],
+          "detail": "0 of 0 prerequisite(s) diagnosed.",
+          "met": true
+        },
+        {
+          "ruleId": "BP-INDEPENDENT-PRACTICE",
+          "criterionId": "LM-PRG-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective reaches unscaffolded practice before mastery evidence.",
+          "missing": [],
+          "detail": "Formative IN_LESSON tasks at scaffold NONE.",
+          "met": true
+        },
+        {
+          "ruleId": "BP-PRODUCTION",
+          "criterionId": "LM-ASM-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective has mastery evidence that is a constructed response or performance.",
+          "missing": [
+            "g4-social-studies-coast-inland-evidence-o1",
+            "g4-social-studies-coast-inland-evidence-o2",
+            "g4-social-studies-coast-inland-evidence-o3"
+          ],
+          "detail": "Accepted kinds: SHORT_CONSTRUCTED_RESPONSE, EXTENDED_REASONING, PERFORMANCE_TASK, ORIGINAL_WRITING.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-REASONING",
+          "criterionId": "LM-RSN-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "At least one unscaffolded, rubric-scored reasoning or justification task.",
+          "missing": [
+            "EXTENDED_REASONING"
+          ],
+          "detail": "0 reasoning task(s) at mastery.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-SELECTED-SHARE",
+          "criterionId": "LM-ASM-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Selected response is at most 60% of end-of-lesson mastery evidence.",
+          "missing": [
+            "SELECTED_RESPONSE_SHARE"
+          ],
+          "detail": "No end-of-lesson mastery evidence.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-RETENTION",
+          "criterionId": "LM-ASM-3",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective has delayed retrieval at least 7 days after the lesson.",
+          "missing": [
+            "g4-social-studies-coast-inland-evidence-o1",
+            "g4-social-studies-coast-inland-evidence-o2",
+            "g4-social-studies-coast-inland-evidence-o3"
+          ],
+          "detail": "Spaced retrieval, unscaffolded.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-TRANSFER",
+          "criterionId": "GE-TRN-1",
+          "layer": "GLOBAL_EXCELLENCE",
+          "blocking": true,
+          "requirement": "At least one unscaffolded transfer task in a context the lesson did not rehearse.",
+          "missing": [
+            "TRANSFER_TASK"
+          ],
+          "detail": "Near or far transfer, NEW context.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-EXTENSION",
+          "criterionId": "GE-EXT-1",
+          "layer": "GLOBAL_EXCELLENCE",
+          "blocking": true,
+          "requirement": "An optional, non-gating extension task.",
+          "missing": [
+            "EXTENSION"
+          ],
+          "detail": "Extension is optional and never required for mastery.",
+          "met": false
+        }
+      ],
+      "selectedResponseShareOfMastery": null,
+      "blockingGaps": [
+        "BP-COVERAGE",
+        "BP-PRODUCTION",
+        "BP-REASONING",
+        "BP-SELECTED-SHARE",
+        "BP-RETENTION",
+        "BP-TRANSFER",
+        "BP-EXTENSION"
+      ]
+    },
+    "criteria": [
+      {
+        "criterionId": "NF-ALN-1",
+        "check": "HUMAN_REQUIRED",
+        "evidenceRequired": "Objective → MOE objective id with source page, or an extension record with the owner's decision.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "NF-ALN-2",
+        "check": "AI_JUDGMENT_ADVISORY",
+        "evidenceRequired": "Baseline competency id, evidence specificity (TOPIC/SUBJECT/FRAMEWORK level), and a NOT_CLAIMED external-authority status.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "NF-ALN-3",
+        "check": "HUMAN_REQUIRED",
+        "evidenceRequired": "Grade-scope decision for every above-scope element.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "NF-ACC-1",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "Item verification records (e.g. place-value arithmetic) or a documented reason verification is not mechanical.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "NF-ACC-2",
+        "check": "HUMAN_REQUIRED",
+        "evidenceRequired": "Exact-revision human subject review.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "NF-PRG-1",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "A diagnostic task per prerequisite, each with a stated fallback route.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "NF-ASM-1",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "Objective → mastery item/task map.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "NF-ACS-1",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "Curriculum V2 accessibility and deliverability fields.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "NF-REL-1",
+        "check": "HUMAN_REQUIRED",
+        "evidenceRequired": "Localization review.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "LM-PRG-1",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "Scene sequence with scaffold levels per objective.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "LM-CON-1",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "Misconception → instruction scene and → item distractor/response map, with each mapping consistent with the error it names.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "LM-CON-2",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "At least two evidence kinds per objective in the assessment plan.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "LM-RSN-1",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "A constructed-response reasoning task at scaffold NONE scored by a rubric.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "LM-ASM-1",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "Blueprint evaluation with no blocking gaps.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "LM-ASM-2",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "Mastery tasks at scaffold NONE with assistance recorded in governed evidence metadata.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "LM-ASM-3",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "Delayed retrieval task(s) bound to the objectives.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "LM-ACS-1",
+        "check": "HUMAN_REQUIRED",
+        "evidenceRequired": "Readability and language-support review.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "LM-REL-1",
+        "check": "AI_JUDGMENT_ADVISORY",
+        "evidenceRequired": "Application task with its context.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "GE-RSN-1",
+        "check": "AI_JUDGMENT_ADVISORY",
+        "evidenceRequired": "Task with stated framework comparison and cognitive-demand rating.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "GE-TRN-1",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "Transfer task marked NEW context, at scaffold NONE.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "GE-EXT-1",
+        "check": "DETERMINISTIC",
+        "evidenceRequired": "Extension task marked optional and non-gating.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "GE-ASM-1",
+        "check": "HUMAN_REQUIRED",
+        "evidenceRequired": "Pilot measurement plan anchor instrument and blind-scoring protocol.",
+        "status": "NOT_EVALUATED"
+      },
+      {
+        "criterionId": "GE-ACC-1",
+        "check": "HUMAN_REQUIRED",
+        "evidenceRequired": "Second exact-revision human review.",
+        "status": "NOT_EVALUATED"
+      }
+    ],
+    "humanRequired": [
+      "NF-ALN-1",
+      "NF-ALN-2",
+      "NF-ALN-3",
+      "NF-ACC-2",
+      "NF-REL-1",
+      "LM-ACS-1",
+      "LM-REL-1",
+      "GE-RSN-1",
+      "GE-ASM-1",
+      "GE-ACC-1"
+    ],
+    "releaseBlockers": [
+      "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+      "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+      "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+      "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+      "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+      "OBJECTIVE_MAPPING_PROPOSED:g4-social-studies-coast-inland-evidence-o1",
+      "OBJECTIVE_MAPPING_PROPOSED:g4-social-studies-coast-inland-evidence-o2",
+      "OBJECTIVE_MAPPING_PROPOSED:g4-social-studies-coast-inland-evidence-o3",
+      "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+      "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+      "RETENTION_POLICY_APPROVAL_REQUIRED"
+    ],
+    "isLearningEvidence": false
+  }
+}

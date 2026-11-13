@@ -1,0 +1,297 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "ea3ff95feafe3aee979e0a906581dbfdbab5044abf5c2bb742fd97fccda9215b",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "ft01-o1",
+      "statement": "Locate Liberia's fifteen counties on the supplied geographic outline map and match each with its administrative capital.",
+      "standards": [
+        {
+          "reference": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+          "statement": "Draw the map of Liberia and plot in the tribes according to the political sub-divisions.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-social-studies-g5-s1-p1-geography-con6",
+          "statement": "Ivory Coast on the East. Counties of Liberia:",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft01-o2",
+      "statement": "Distinguish county capitals from the national capital and well-known towns, using Montserrado and Nimba.",
+      "standards": [
+        {
+          "reference": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+          "statement": "Draw the map of Liberia and plot in the tribes according to the political sub-divisions.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft01-o3",
+      "statement": "Use the supplied geographic map to compare north-south position and coastal location, while distinguishing these from unverified road routes.",
+      "standards": [
+        {
+          "reference": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+          "statement": "Draw the map of Liberia and plot in the tribes according to the political sub-divisions.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "READING_PASSAGE",
+      "blockSha256": "e1e35379e1d61719b05525913acbb6861d7b28d2320d20d00228ed3fe4372cb3",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: On the supplied outline map, trace each county boundary and match its number to the key. Distinguish the county area from its administrative capital name.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "County-capital key for the geographic map. Bomi: Tubmanburg. Bong: Gbarnga. Gbarpolu: Bopolu. Grand Bassa: Buchanan. Grand Cape Mount: Robertsport. Grand Gedeh: Zwedru. Grand Kru: Barclayville. Lofa: Voinjama. Margibi: Kakata. Maryland: Harper. Montserrado: Bensonville, also called Bentol. Nimba: Sanniquellie. River Cess: Cestos City. River Gee: Fish Town. Sinoe: Greenville.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: County-capital key for the geographic map. Bomi: Tubmanburg. Bong: Gbarnga. Gbarpolu: Bopolu. Grand Bassa: Buchanan. Grand Cape Mount: Robertsport. Grand Gedeh: Zwedru. Grand Kru: Barclayville. Lofa: Voinjama. Margibi: Kakata. Maryland: Harper. Montserrado: Bensonville, also called Bentol. Nimba: Sanniquellie. River Cess: Cestos City. River Gee: Fish Town. Sinoe: Greenville.",
+        "responsePrompt": "On the supplied outline map, trace each county boundary and match its number to the key. Distinguish the county area from its administrative capital name. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "6bedae34447b67d4567ed1a74ee44dcc71b5e46cf537536f03f75b717c088784",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Find county numbers 8, 10 and 12 on the map. Name each county and copy its capital. Describe which lies farthest north.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-civics-misconception",
+          "responsePattern": "montserrado-capital-item:OPTION:other",
+          "feedback": "You substituted the national capital for the county capital. They have different administrative roles."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which is Montserrado's county capital? Options: Bensonville or Bentol; Monrovia.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which is Montserrado's county capital? Options: Bensonville or Bentol; Monrovia.",
+        "responsePrompt": "Find county numbers 8, 10 and 12 on the map. Name each county and copy its capital. Describe which lies farthest north. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "8dd412ce6ff00dc9d4d6b204ed2abb209ef495145e3d61b0d39b35818c01679e",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Find county numbers 8, 10 and 12 on the map. Name each county and copy its capital. Describe which lies farthest north.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-civics-misconception",
+          "responsePattern": "nimba-capital-item:OPTION:other",
+          "feedback": "A prominent commercial town need not be the seat of county administration."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which is Nimba's capital? Options: Sanniquellie; Ganta.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which is Nimba's capital? Options: Sanniquellie; Ganta.",
+        "responsePrompt": "Find county numbers 8, 10 and 12 on the map. Name each county and copy its capital. Describe which lies farthest north. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "a89a4d36b2a3dd8721198646fad4e3038f1938a140edec9deed8b518bd6a159a",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Explain why the map can support a north-south comparison but the name register alone cannot.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-civics-misconception",
+          "responsePattern": "map-scope-item:OPTION:other",
+          "feedback": "County numbers are identifiers. Their order has no geographic or transport meaning."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Can this map establish a delivery road from Gbarnga to Harper? Options: No. It shows county areas but no roads or capital points.; Yes. Joining the county numbers gives the road..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Can this map establish a delivery road from Gbarnga to Harper? Options: No. It shows county areas but no roads or capital points.; Yes. Joining the county numbers gives the road..",
+        "responsePrompt": "Explain why the map can support a north-south comparison but the name register alone cannot. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WRITING_ORGANIZER",
+      "blockSha256": "48bfee4b5078b157d291985fbb5b3fcfe283f1d1981e3e98ae2ecfa409ddf8d8",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Plan and write a response part by part, then revise against a checklist. Learner action: Name the data you need before claiming which counties and capitals a road passes. Do not guess a route from county numbers.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Separate your county-capital answer, your map-based location reasoning and the transport facts still unknown. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Separate your county-capital answer, your map-based location reasoning and the transport facts still unknown. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+        "responsePrompt": "Name the data you need before claiming which counties and capitals a road passes. Do not guess a route from county numbers. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

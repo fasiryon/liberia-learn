@@ -1,0 +1,41 @@
+{
+  "reviewedCode": "5daefe7ce484182f10fa412fa50e0e9e474f7f7b",
+  "testSourceSha256": "b733d2b612c426a510bdb4f031f0bbed33d7e84afa2b280d3ace7cd3aee87952",
+  "ordinaryWriterControlRejected": true,
+  "undetectedValidEntryPointForms": 7,
+  "results": [
+    {
+      "case": "ordinary-direct-writer",
+      "detectorRejected": true
+    },
+    {
+      "case": "whitespace-in-property-call",
+      "detectorRejected": false
+    },
+    {
+      "case": "computed-model-property",
+      "detectorRejected": false
+    },
+    {
+      "case": "arrow-export-provisioner",
+      "detectorRejected": false
+    },
+    {
+      "case": "namespace-import-provisioner",
+      "detectorRejected": false
+    },
+    {
+      "case": "cross-file-helper-provisioner",
+      "detectorRejected": false
+    },
+    {
+      "case": "guard-in-comment-only",
+      "detectorRejected": false
+    },
+    {
+      "case": "guard-only-in-other-handler",
+      "detectorRejected": false
+    }
+  ],
+  "completenessVerdict": "REVISE"
+}

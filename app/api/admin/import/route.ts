@@ -1,7 +1,10 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=bulk roster upload staged for account creation; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { createStudentImportBatch } from "@/lib/school-operations";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +29,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "School context required" }, { status: 400 });
     }
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const parsed = ImportSchema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) {
       return NextResponse.json({ error: "Validation failed", issues: parsed.error.flatten() }, { status: 400 });
@@ -40,6 +45,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, ...result }, { status: 201 });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json({ error: err?.message ?? "Import failed" }, { status: err?.status ?? 500 });
   }
 }

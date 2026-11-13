@@ -158,6 +158,7 @@ describe("Concurrency Guard 4 — 100 concurrent student submissions", () => {
 vi.mock("@/lib/db", () => ({
   prisma: {
     class:               { findUnique: mockClassFindUnique, findMany: mockClassFindMany },
+    teacherAssignment:   { findMany: async () => [] },
     curriculumContent:   { findUnique: mockContentFindUnique },
     scheduledWork:       {
       findMany:   mockScheduledWorkFindMany,
@@ -555,6 +556,10 @@ describe("Concurrency Guard 3 — Lab session race condition safety", () => {
       return { id, classId: fixture.classId, class: { schoolId: fixture.schoolId }, suggestedLabs: [] };
     });
     mockVirtualLabFindUnique.mockImplementation(async () => labBase);
+    // AT-GRADE-01: lab linking needs class authority; each teacher is the teacher of their own scheduled class.
+    mockClassFindUnique.mockImplementation(async (args: any) => args.where?.id === "class-A"
+      ? { schoolId: teacher1School, teacherId: "teacher-1" }
+      : args.where?.id === "class-B" ? { schoolId: teacher2School, teacherId: "teacher-2" } : null);
     const enrollmentsByClass: Record<string, Array<{ Student: { userId: string } }>> = {
       "class-A": [{ Student: { userId: "student-A1" } }, { Student: { userId: "student-A2" } }],
       "class-B": [{ Student: { userId: "student-B1" } }, { Student: { userId: "student-B2" } }, { Student: { userId: "student-B3" } }],

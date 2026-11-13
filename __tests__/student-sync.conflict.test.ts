@@ -250,9 +250,11 @@ describe("student sync conflict detection", () => {
 
     const response = await POST(req as any);
     expect(response.status).toBe(200);
+    // AT-LAB-STUDENT-SCORE: the client score is a labelled observation; labSession.score stays teacher-only.
     expect(prisma.labSession.update).toHaveBeenCalledWith(expect.objectContaining({
-      data: expect.objectContaining({ score: 100, masteryUpdated: false }),
+      data: expect.objectContaining({ masteryUpdated: false, observations: { provisionalScore: { value: 100, scorer: "STUDENT_CLIENT" } } }),
     }));
+    expect((prisma.labSession.update as any).mock.calls[0][0].data).not.toHaveProperty("score");
     expect(logLearningEvent).toHaveBeenCalledWith(expect.objectContaining({
       status: "provisional",
       metadata: expect.objectContaining({ evidenceAdmission: "NOT_AUTOMATIC", masteryUpdated: false }),

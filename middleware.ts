@@ -13,6 +13,8 @@ import {
 import { buildContentSecurityPolicy } from "@/lib/security/contentSecurityPolicy";
 import { assertReviewReadScope } from "@/lib/curriculum/review/access";
 import { SESSION_ADMITTED_HEADER, sessionClaimsFailure } from "@/lib/auth/sessionClaims";
+import {isLearningPreviewEnabled} from "@/lib/curriculum/v4/previewFlag";
+import {previewAutomationDisabled,isCronNamespace} from "@/lib/previewSideEffects";
 
 const PUBLIC_PATHS = [
   "/",
@@ -151,6 +153,20 @@ export async function middleware(req: NextRequest) {
   };
   // A refused token's cookie is cleared on the refusal response so the browser stops presenting it.
   const deny = <T extends NextResponse>(response: T): T => finalize(refusedToken ? clearSessionCookies(req, response) : response);
+
+  // A missing integration key is not a disable switch. All direct cron requests
+  // are refused in deployed Preview before public-path exemptions or work.
+  if(previewAutomationDisabled()&&isCronNamespace(pathname)){
+    return finalize(NextResponse.json({error:"Preview automation is disabled"},{status:401,headers:{"Cache-Control":"private, no-store"}}));
+  }
+
+  // Conceal an inactive pilot before the generic sign-in redirect/token parser.
+  // Enabling the flag still leaves every existing authentication/admission gate.
+  const previewNamespace=pathname==="/learn/day"||pathname==="/learn/preview"||pathname.startsWith("/learn/preview/")||
+    pathname==="/api/student/learning-preview"||pathname.startsWith("/api/student/learning-preview/");
+  if(previewNamespace&&!isLearningPreviewEnabled({V4_LEARNING_PREVIEW_ENABLED:process.env.V4_LEARNING_PREVIEW_ENABLED})){
+    return finalize(new NextResponse(null,{status:404,headers:{"Cache-Control":"private, no-store","Vary":"Cookie"}}));
+  }
 
   // Draft review includes restricted learner projections and media. Authorize before any read,
   // including in development, and never admit this namespace in a deployed runtime.

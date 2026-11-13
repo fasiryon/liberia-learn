@@ -5,16 +5,19 @@ const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockStudentFindFirst = vi.hoisted(() => vi.fn());
 const mockAppendReview = vi.hoisted(() => vi.fn());
 const mockReadState = vi.hoisted(() => vi.fn());
-const mockListAuthorizedClassIds = vi.hoisted(() => vi.fn());
+const mockClassFindUnique = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
-vi.mock("@/lib/db", () => ({ prisma: { student: { findFirst: mockStudentFindFirst } } }));
+// AT-GRADE-01 batch 3 (CoS ruling 8): the route reaches the learner through lib/authz/classAuthority, which reads the
+// class and the teacher's assignments; the retired listAuthorizedClassIdsForTeacher helper is no longer used.
+vi.mock("@/lib/db", () => ({ prisma: {
+  student: { findFirst: mockStudentFindFirst },
+  class: { findUnique: mockClassFindUnique },
+  teacherAssignment: { findMany: async () => [] },
+} }));
 vi.mock("@/lib/learning-state/masteryWriter", () => ({
   appendGovernedMisconceptionReview: mockAppendReview,
   readCanonicalStudentConceptState: mockReadState,
-}));
-vi.mock("@/lib/records/schoolOperations", () => ({
-  listAuthorizedClassIdsForTeacher: mockListAuthorizedClassIds,
 }));
 vi.mock("@/lib/learning-state/studentLearningModel", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/lib/learning-state/studentLearningModel")>();
@@ -42,8 +45,9 @@ describe("governed misconception review route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRequireRole.mockResolvedValue({ id: "teacher-a", role: "TEACHER", schoolId: "school-a" });
-    mockStudentFindFirst.mockResolvedValue({ id: "student-a", userId: "student-user-a" });
-    mockListAuthorizedClassIds.mockResolvedValue(["owned-class", "assigned-class", "timetable-class"]);
+    // The learner is enrolled in owned-class, which teacher-a teaches.
+    mockStudentFindFirst.mockResolvedValue({ id: "student-a", userId: "student-user-a", enrollments: [{ classId: "owned-class", Class: { schoolId: "school-a" } }] });
+    mockClassFindUnique.mockResolvedValue({ schoolId: "school-a", teacherId: "teacher-a" });
     mockAppendReview.mockResolvedValue({
       duplicate: false,
       update: { state: { authority: { canonical: true, mayChangeAdministrativeGrade: false } } },
@@ -92,15 +96,12 @@ describe("governed misconception review route", () => {
       administrativeGradeMayChange: false,
     });
     expect(mockReadState).toHaveBeenCalledTimes(3);
-    expect(mockListAuthorizedClassIds).toHaveBeenCalledWith("teacher-a", "school-a");
+    // The learner is looked up in the actor's school, and the class basis is decided by the class-authority service on
+    // the learner's own class (a timetable entry is no longer a basis; CoS ruling A).
     expect(mockStudentFindFirst).toHaveBeenCalledWith(expect.objectContaining({
-      where: expect.objectContaining({
-        enrollments: { some: { Class: {
-          schoolId: "school-a",
-          id: { in: ["owned-class", "assigned-class", "timetable-class"] },
-        } } },
-      }),
+      where: expect.objectContaining({ id: "student-a", user: { schoolId: "school-a" } }),
     }));
+    expect(mockClassFindUnique).toHaveBeenCalledWith(expect.objectContaining({ where: { id: "owned-class" } }));
   });
 
   it("fails closed when the learner is outside the actor's school", async () => {

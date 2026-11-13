@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useFixedBandHeight } from "./useFixedBandHeight";
 
 export const COOKIE_NOTICE_KEY = "liberialearn_session_cookie_notice_dismissed";
 
@@ -47,6 +48,8 @@ export function isCookieNoticePublicPage(pathname: string) {
 export function CookieNotice() {
   const pathname = usePathname() ?? "/";
   const [visible, setVisible] = useState(false);
+  // Reserved by globals.css like the PWA notice, which stacks above it (issue #199).
+  const bandRef = useFixedBandHeight<HTMLDivElement>("--ll-cookie-notice");
 
   useEffect(() => {
     if (!isCookieNoticePublicPage(pathname)) {
@@ -59,7 +62,7 @@ export function CookieNotice() {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--ll-border)] bg-[var(--ll-bg)]/95 px-4 py-3 shadow-none shadow-black/50">
+    <div ref={bandRef} role="region" aria-label="Cookie notice" data-cookie-notice="" className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3">
       <div className="mx-auto flex max-w-5xl flex-col gap-3 text-sm text-[var(--ll-text)] sm:flex-row sm:items-center sm:justify-between">
         <p className="leading-6">
           LiberiaLearn uses session cookies only for authentication. No tracking or advertising cookies are used.
@@ -70,7 +73,7 @@ export function CookieNotice() {
             window.localStorage.setItem(COOKIE_NOTICE_KEY, "true");
             setVisible(false);
           }}
-          className="min-h-11 rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+          className="min-h-11 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ll-accent)]"
         >
           Dismiss
         </button>

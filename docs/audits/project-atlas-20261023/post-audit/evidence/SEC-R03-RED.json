@@ -1,0 +1,93 @@
+{
+  "atlas_commit": "9fff8615b19591063882ee006dff96b83ccbe4b5",
+  "application_source_commit": "887f23eccbe5b194c2e7ff93c0b09c843549a9eb",
+  "command": [
+    "node",
+    "C:\\liberia-learn\\node_modules\\vitest\\vitest.mjs",
+    "run",
+    "--config",
+    "C:\\liberia-learn\\.task-worktrees\\project-atlas-20261023\\docs\\audits\\project-atlas-20261023\\post-audit\\vitest.config.ts",
+    "--reporter=json",
+    "--outputFile=C:\\liberia-learn\\.task-worktrees\\project-atlas-20261023\\docs\\audits\\project-atlas-20261023\\post-audit\\scratch\\SEC-R03-RED.json",
+    "moderation-audience.test.ts",
+    "runtime-audience.test.ts"
+  ],
+  "exit_code": 1,
+  "passed": 2,
+  "failed": 9,
+  "total": 11,
+  "method": "Actual route/resolver functions; synthetic authenticated identities; mocked in-memory ORM, provider and side-effect boundaries. Process environment allowlisted; fetch denied. Not a real login/database/integration/production test.",
+  "tests": [
+    {
+      "suite": "moderation-audience.test.ts",
+      "name": "guardian moderation fails closed on timeout",
+      "status": "failed",
+      "failure": "AssertionError: expected 'UNCERTAIN' to be 'UNSAFE' // Object.is equality"
+    },
+    {
+      "suite": "moderation-audience.test.ts",
+      "name": "guardian moderation fails closed on invalid JSON",
+      "status": "failed",
+      "failure": "AssertionError: expected 'UNCERTAIN' to be 'UNSAFE' // Object.is equality"
+    },
+    {
+      "suite": "moderation-audience.test.ts",
+      "name": "guardian moderation fails closed on UNCERTAIN",
+      "status": "failed",
+      "failure": "AssertionError: expected 'UNCERTAIN' to be 'UNSAFE' // Object.is equality"
+    },
+    {
+      "suite": "moderation-audience.test.ts",
+      "name": "internal/general moderation retains UNCERTAIN compatibility",
+      "status": "passed",
+      "failure": null
+    },
+    {
+      "suite": "runtime-audience.test.ts",
+      "name": "minor refuses uncertain input before invoking the model",
+      "status": "failed",
+      "failure": "AssertionError: expected 'SUCCESS' to be 'FAILURE' // Object.is equality"
+    },
+    {
+      "suite": "runtime-audience.test.ts",
+      "name": "guardian refuses uncertain input before invoking the model",
+      "status": "failed",
+      "failure": "AssertionError: expected 'SUCCESS' to be 'FAILURE' // Object.is equality"
+    },
+    {
+      "suite": "runtime-audience.test.ts",
+      "name": "minor never releases uncertain output, including regeneration",
+      "status": "failed",
+      "failure": "AssertionError: expected 'SUCCESS' to be 'ESCALATED' // Object.is equality"
+    },
+    {
+      "suite": "runtime-audience.test.ts",
+      "name": "guardian never releases uncertain output, including regeneration",
+      "status": "failed",
+      "failure": "AssertionError: expected 'SUCCESS' to be 'ESCALATED' // Object.is equality"
+    },
+    {
+      "suite": "runtime-audience.test.ts",
+      "name": "a guardian translation is moderated after translation before release",
+      "status": "failed",
+      "failure": "AssertionError: expected 'SUCCESS' to be 'ESCALATED' // Object.is equality"
+    },
+    {
+      "suite": "runtime-audience.test.ts",
+      "name": "internal agents retain their existing uncertain-classifier behavior",
+      "status": "passed",
+      "failure": null
+    },
+    {
+      "suite": "runtime-audience.test.ts",
+      "name": "all built-in agents explicitly declare an audience; teaching and family are public",
+      "status": "failed",
+      "failure": "AssertionError: expected { name: 'content-qa', \u2026(9) } to have property \"audience\""
+    }
+  ],
+  "observations": [],
+  "mode": "unchanged audited source",
+  "source_head": "5ba8f6bc468fc14c224749d99fa10a53b53a3294",
+  "application_files_modified": false,
+  "raw_result_sha256": "2069f6ed4f27bbccba607b9ce9bf26d2ffaf3e1da507350cd763fc13ef643d4e"
+}

@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g4-social-studies-coast-inland-evidence-v4",
+  "version": "4.0.0",
+  "contentHash": "acb84a171a3ab41bf6bc087ef244c85fe7b621d8508096268533dd51bb967c70",
+  "grade": 4,
+  "subject": "SOCIAL_STUDIES",
+  "unitId": "g4-social-studies-coast-inland-evidence",
+  "title": "g4-social-studies-coast-inland-evidence",
+  "repositoryCommit": "3e3f6cf46e2dee4da5853ef240f3c11dfd39f35b",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "d9c7f0ba04a82527627b9bd30e52627a2cfa4e86cad87659171dfc7286a9de32",
+      "sourceRef": "curriculum/factory-v4/primary-social-studies.2-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "g4-social-studies-coast-inland-evidence-o1",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Use geographical vocabulary and a labelled sketch to compare coastal and inland landscapes in Liberia.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-social-studies-coast-inland-evidence-o1",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-social-studies-coast-inland-evidence-o2",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Support a comparison with relevant text evidence while distinguishing observations from unsupported generalizations.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-social-studies-coast-inland-evidence-o2",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-social-studies-coast-inland-evidence-o3",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Recommend a community reading-club site using local evidence, a counterargument and a question for further checking.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-social-studies-coast-inland-evidence-o3",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g4-social-studies-coast-inland-evidence-outcome",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g4-social-studies-coast-inland-evidence-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g4-social-studies-coast-inland-evidence-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g4-social-studies-coast-inland-evidence-practice",
+      "resourceId": "g4-social-studies-coast-inland-evidence-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "d9c7f0ba04a82527627b9bd30e52627a2cfa4e86cad87659171dfc7286a9de32",
+      "sourceRef": "curriculum/factory-v4/primary-social-studies.2-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "teachingRegistryVersion": "teaching-blocks/1.2.0"
+}

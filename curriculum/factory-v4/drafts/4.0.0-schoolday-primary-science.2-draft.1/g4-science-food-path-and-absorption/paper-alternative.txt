@@ -1,0 +1,57 @@
+Model food's path and explain absorption
+
+Where does a mouthful go?
+
+A fictional school group in Buchanan is preparing a poster about what happens after eating rice. Before using the poster, sketch your own idea of the route. Keep your first drawing so that you can later explain a change. What route do you predict, and where might useful parts leave it? Label one uncertainty in your first model.
+
+What route do you predict, and where might useful parts leave it? Label one uncertainty in your first model.
+Response: __________________________
+
+Build a connected food route
+
+Use large paper cards and a paper food token. Move the token from mouth to anus through the route you arrange. Chewing starts breakdown; the esophagus moves food; the stomach mixes it. Digestion continues in the small intestine, where most nutrients are absorbed. The large intestine absorbs water. Its rectum stores stool before it leaves through the anus. The liver and pancreas supply juices; swallowed food does not pass through them. Order the simplified main stages. The rectum is the final part of the large intestine. organ: Mouth. organ: Esophagus. organ: Stomach. organ: Small intestine. organ: Large intestine. organ part: Rectum. opening: Anus. Separate the food route from organs supplying juices. Groups: Swallowed food passes through, Supplies juices to the route. Cards: Stomach, Small intestine, Liver, Pancreas.
+
+Follow the connected tube from the mouth through the stomach and intestines.
+
+An organ can supply a juice without being a place the swallowed food passes through.
+
+Crossing a wall does not mean disappearing
+
+Draw two regions: inside the small intestine, and the rest of the body. Use twelve large paper tokens for already-digested nutrients. Move five across the boundary, then five more. Keep transferred tokens in the body region. This represents absorption, not whole food leaving the stomach. The counts are invented for the model; they are not a human absorption rate. Illustrative tokens left inside the model intestine. Transfer round 0 round: Tokens inside 12 tokens; Transfer round 1 round: Tokens inside 7 tokens; Transfer round 2 round: Tokens inside 2 tokens. The ten transferred tokens still exist in the model's body region. Rounds are model actions, not minutes. Where are all twelve model tokens after both transfers? Step 1: Ten tokens crossed to the body region; two remained inside the tube. 12 − 5 − 5 = 2 Step 2: Both regions still contain the original total together. 10 + 2 = 12
+
+Operate and check your own paper model
+
+Use fourteen large paper tokens, drawn marks or counters too large to swallow. Mark an inside region and a body region. Move nine tokens across the wall. Keep every token visible. A crossing changes its region, not whether it exists. Starting, transferred and remaining counts describe different groups. Count both regions before answering. A partner may move tokens while you direct. Keep objects away from mouths. Account for the paper-model tokens. Tokens still inside after nine of fourteen cross: write your answer. Total tokens in both regions: write your answer. Explain what one crossing models. Name one thing these paper tokens do not show about a real intestine.
+
+The starting count includes both regions. A transferred token is no longer inside.
+
+A token that crosses remains visible in the body region. Add both regions to check the total.
+
+Explain what one crossing models. Name one thing these paper tokens do not show about a real intestine.
+Response: __________________________
+
+Interpret a new model independently
+
+A different paper model starts with sixteen nutrient tokens inside. Five cross during the first round, then eight more cross during the second. Use a drawing or paper tokens independently. These specified movements describe a model, not observations of a real person's digestion. Find the count still inside after each round. After the first round: write your answer. After the second round: write your answer. Where are the tokens that crossed? Explain what the model can show about absorption and why it cannot tell you a real digestion time.
+
+Where are the tokens that crossed? Explain what the model can show about absorption and why it cannot tell you a real digestion time.
+Response: __________________________
+
+Separate a model from evidence about a body
+
+Compare your first route with the organ model. Explain a change using the job of an organ. The token model helps show a transfer across a wall. It does not reproduce living tissue or measure how quickly a person's body absorbs a meal. What does moving a nutrient token into the body region represent? Options: A digested nutrient crossing the small-intestine wall.; The nutrient ceasing to exist.; A whole mouthful passing directly from stomach to liver.. Which claim cannot be established with this paper model? Options: The original tokens can be counted across two regions.; The specified transfers leave three of sixteen tokens inside.; Every pupil absorbs a real meal in exactly two minutes..
+
+Separate a path through an organ from a juice entering that path.
+
+Counted paper tokens can represent a transfer but cannot measure living tissue.
+
+Improve the Buchanan school group's poster
+
+The fictional poster says: Food passes through the liver before reaching the stomach. The stomach absorbs all nutrients. Use the route and transfer models to replace both claims. Explain the corrections so a younger reader could follow them, while keeping the diagram's limits clear. Correct the two poster claims using the connected route and the job of the small intestine. State one limitation. For an advanced challenge, design a clearer model that distinguishes breaking food down from absorbing the resulting nutrients, and explain how you would check its clarity.
+
+Correct the two poster claims using the connected route and the job of the small intestine. State one limitation. For an advanced challenge, design a clearer model that distinguishes breaking food down from absorbing the resulting nutrients, and explain how you would check its clarity.
+Response: __________________________
+
+Independent assessment unavailable
+
+No independent assessment is available in this draft.

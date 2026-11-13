@@ -1,0 +1,841 @@
+{
+  "id": "g4-support-retrieve-reteach-retry-lesson",
+  "version": "4.0.0",
+  "payload": {
+    "kind": "LESSON",
+    "candidate": {
+      "contractVersion": "candidate-lesson-v2/1.1.0",
+      "title": "Recall, reconnect and try again",
+      "instruction": {
+        "standard": "liberialearn-v4-instruction/1.1.0",
+        "retention": {
+          "delayDays": 7,
+          "prompts": [
+            "Without the worked example, explain: Retrieve and explain learning from the six accepted periods without opening worked support.",
+            "Without the worked example, explain: Choose a relevant misconception card and improve an explanation with guided evidence."
+          ]
+        }
+      },
+      "estimatedMinutes": 20,
+      "ageBand": "UPPER_PRIMARY",
+      "pedagogy": {
+        "primaryStrategy": "GUIDED_TO_INDEPENDENT",
+        "rationale": "Independent retrieval precedes teacher-selected support and a fresh retry. Six period cards preserve all 23 named source misconceptions; selection is teacher-guided, not an automatic diagnosis."
+      },
+      "prerequisiteAssumptions": [
+        "Use work from lessons actually attempted today.",
+        "Read with teacher support or explain orally to a scribe as needed."
+      ],
+      "misconceptions": [
+        {
+          "id": "copying-is-retrieval",
+          "objectiveId": "g4-support-retrieve-reteach-retry-o1",
+          "description": "Copying a worked answer is taken as evidence of independent recall.",
+          "response": "Try first without support, use the selected card to reconnect the idea, then answer a fresh question without copying."
+        },
+        {
+          "id": "answer-without-reason",
+          "objectiveId": "g4-support-retrieve-reteach-retry-o2",
+          "description": "A final answer is offered without the step, observation or text detail that supports it.",
+          "response": "Identify the relevant step, observation or text detail and explain how it supports your answer."
+        }
+      ],
+      "scenes": [
+        {
+          "id": "retrieve-p1",
+          "type": "PRACTICE",
+          "title": "Recall P1",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1"
+          ],
+          "learnerAction": "Find 312 times 3. Show the value of each digit and explain how the partial products combine.",
+          "content": {
+            "body": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "retrieve-p1-response-0",
+                "prompt": "Find 312 times 3. Show the value of each digit and explain how the partial products combine.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Find 312 times 3. Show the value of each digit and explain how the partial products combine.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "RETRIEVE",
+            "blocks": []
+          }
+        },
+        {
+          "id": "retrieve-p2",
+          "type": "PRACTICE",
+          "title": "Recall P2",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1"
+          ],
+          "learnerAction": "Sketch the food route and main absorption site. Distinguish liver and pancreas from that route. In a paper model, start with 16 tokens and transfer 6. Distinguish total, transferred and remaining.",
+          "content": {
+            "body": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "retrieve-p2-response-0",
+                "prompt": "Sketch the food route and main absorption site. Distinguish liver and pancreas from that route. In a paper model, start with 16 tokens and transfer 6. Distinguish total, transferred and remaining.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Sketch the food route and main absorption site. Distinguish liver and pancreas from that route. In a paper model, start with 16 tokens and transfer 6. Distinguish total, transferred and remaining.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "RETRIEVE",
+            "blocks": []
+          }
+        },
+        {
+          "id": "retrieve-p3",
+          "type": "PRACTICE",
+          "title": "Recall P3",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1"
+          ],
+          "learnerAction": "Use today's text. Explain its main problem, response and result. Cite a later detail that supported or changed your prediction. Name one unanswered question.",
+          "content": {
+            "body": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "retrieve-p3-response-0",
+                "prompt": "Use today's text. Explain its main problem, response and result. Cite a later detail that supported or changed your prediction. Name one unanswered question.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Use today's text. Explain its main problem, response and result. Cite a later detail that supported or changed your prediction. Name one unanswered question.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "RETRIEVE",
+            "blocks": []
+          }
+        },
+        {
+          "id": "retrieve-p4",
+          "type": "PRACTICE",
+          "title": "Recall P4",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1"
+          ],
+          "learnerAction": "Use today's club records. Give a conditional site recommendation with separate room and route evidence. Name missing information. Explain why physical-region and county labels answer different questions.",
+          "content": {
+            "body": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "retrieve-p4-response-0",
+                "prompt": "Use today's club records. Give a conditional site recommendation with separate room and route evidence. Name missing information. Explain why physical-region and county labels answer different questions.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Use today's club records. Give a conditional site recommendation with separate room and route evidence. Name missing information. Explain why physical-region and county labels answer different questions.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "RETRIEVE",
+            "blocks": []
+          }
+        },
+        {
+          "id": "retrieve-p5",
+          "type": "PRACTICE",
+          "title": "Recall P5",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1"
+          ],
+          "learnerAction": "Start score at 3. A hit adds 2. Reset sets score to 1. Trace hit, reset, hit, including the initial value. Explain each change.",
+          "content": {
+            "body": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "retrieve-p5-response-0",
+                "prompt": "Start score at 3. A hit adds 2. Reset sets score to 1. Trace hit, reset, hit, including the initial value. Explain each change.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Start score at 3. A hit adds 2. Reset sets score to 1. Trace hit, reset, hit, including the initial value. Explain each change.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "RETRIEVE",
+            "blocks": []
+          }
+        },
+        {
+          "id": "retrieve-p6",
+          "type": "PRACTICE",
+          "title": "Recall P6",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1"
+          ],
+          "learnerAction": "Explain what opening a switch changes. Compare available design records. Label counted (MEASURED) or given-to-us (SUPPLIED) values, worked-out (CALCULATED) differences and your conclusion (INFERRED). Without data, sketch a fair test; never invent counts.",
+          "content": {
+            "body": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "retrieve-p6-response-0",
+                "prompt": "Explain what opening a switch changes. Compare available design records. Label counted (MEASURED) or given-to-us (SUPPLIED) values, worked-out (CALCULATED) differences and your conclusion (INFERRED). Without data, sketch a fair test; never invent counts.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Try before opening any card. Use only a lesson you actually studied. If you did not attempt it, say so; that is not evidence of a learning gap. Explain what opening a switch changes. Compare available design records. Label counted (MEASURED) or given-to-us (SUPPLIED) values, worked-out (CALCULATED) differences and your conclusion (INFERRED). Without data, sketch a fair test; never invent counts.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "RETRIEVE",
+            "blocks": []
+          }
+        },
+        {
+          "id": "selected-support",
+          "type": "PRACTICE",
+          "title": "Choose the card that helps your reasoning",
+          "purpose": "GUIDED_PRACTICE",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1",
+            "g4-support-retrieve-reteach-retry-o2",
+            "g4-support-retrieve-reteach-retry-o3"
+          ],
+          "learnerAction": "Choose one relevant card, work with its guidance and explain which evidence supports the correction.",
+          "content": {
+            "body": "With your teacher, choose a card for an explanation you want to improve. You do not need every card. Use its model or evidence, then explain the correction in your own words. Keep your first attempt. Tokens are a model, not measurements of nutrients in a person."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "selected-support-response-0",
+                "prompt": "Name the card you chose and explain your correction.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [
+            "Choose the card that matches an actual first attempt.",
+            "Name the step, observation or text detail that changes or supports your explanation."
+          ],
+          "misconceptionIds": [
+            "copying-is-retrieval",
+            "answer-without-reason"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "With your teacher, choose a card for an explanation you want to improve. You do not need every card. Use its model or evidence, then explain the correction in your own words. Keep your first attempt. Tokens are a model, not measurements of nutrients in a person. P1: choose a relevant card with your teacher. Card 1. A mistake to check: The digits of a factor are multiplied as single units and their products are added. Better idea: Name the full place values before multiplying: 2 hundreds is 200, not 2. Reconnect: Represent 312 as 300, 10 and 2. Multiply each full value by 3 before combining. Card 2. A mistake to check: Tens or hundreds formed by a partial product are discarded when writing the final digits. Better idea: Keep the value of every partial product and regroup it into the correct place rather than deleting it. Reconnect: Trade ten ones for one ten without throwing away value. Show how 4 times 4 ones becomes one ten and six ones. P2: choose a relevant card with your teacher. Card 1. A mistake to check: The swallowed food route is drawn through the liver or pancreas instead of distinguishing the juices they supply. Better idea: Keep the continuous food route separate from the liver and pancreas, which supply digestive juices. Reconnect: Use one arrow for swallowed food and different arrows for digestive juices. Place liver and pancreas beside the food route. Card 2. A mistake to check: The stomach is treated as the place where all nutrients enter the body. Better idea: Most digested nutrients are absorbed through the small-intestine wall. Reconnect: Compare the stomach with the small intestine. Locate where most digested nutrients enter the body. Card 3. A mistake to check: Nutrients that cross the wall are treated as disappearing from the model total. Better idea: Keep transferred tokens visible in the body region. Count both regions to conserve the total. Reconnect: Move paper nutrient tokens into a body region while keeping every token visible. Transferred tokens still exist. Card 4. A mistake to check: The starting count is reported as still inside after tokens have crossed the wall. Better idea: The starting count describes both regions together. Subtract transferred tokens to find what remains inside. Reconnect: Label the starting total before moving tokens. Label the tokens still in the first region separately. Card 5. A mistake to check: The",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "PARTIAL"
+          },
+          "teaching": {
+            "phase": "SOLVE_WITH_SUPPORT",
+            "blocks": [
+              {
+                "type": "READING_PASSAGE",
+                "id": "card-p1",
+                "title": "P1: choose a relevant card with your teacher",
+                "paragraphs": [
+                  "Card 1. A mistake to check: The digits of a factor are multiplied as single units and their products are added. Better idea: Name the full place values before multiplying: 2 hundreds is 200, not 2. Reconnect: Represent 312 as 300, 10 and 2. Multiply each full value by 3 before combining.",
+                  "Card 2. A mistake to check: Tens or hundreds formed by a partial product are discarded when writing the final digits. Better idea: Keep the value of every partial product and regroup it into the correct place rather than deleting it. Reconnect: Trade ten ones for one ten without throwing away value. Show how 4 times 4 ones becomes one ten and six ones."
+                ],
+                "glossary": [
+                  {
+                    "term": "evidence",
+                    "meaning": "A step, observation or text detail that supports a reason."
+                  }
+                ],
+                "origin": {
+                  "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                  "license": "Original LiberiaLearn teaching guidance; review-only.",
+                  "attribution": "LiberiaLearn accepted lesson foundations and Support author"
+                }
+              },
+              {
+                "type": "READING_PASSAGE",
+                "id": "card-p2",
+                "title": "P2: choose a relevant card with your teacher",
+                "paragraphs": [
+                  "Card 1. A mistake to check: The swallowed food route is drawn through the liver or pancreas instead of distinguishing the juices they supply. Better idea: Keep the continuous food route separate from the liver and pancreas, which supply digestive juices. Reconnect: Use one arrow for swallowed food and different arrows for digestive juices. Place liver and pancreas beside the food route.",
+                  "Card 2. A mistake to check: The stomach is treated as the place where all nutrients enter the body. Better idea: Most digested nutrients are absorbed through the small-intestine wall. Reconnect: Compare the stomach with the small intestine. Locate where most digested nutrients enter the body.",
+                  "Card 3. A mistake to check: Nutrients that cross the wall are treated as disappearing from the model total. Better idea: Keep transferred tokens visible in the body region. Count both regions to conserve the total. Reconnect: Move paper nutrient tokens into a body region while keeping every token visible. Transferred tokens still exist.",
+                  "Card 4. A mistake to check: The starting count is reported as still inside after tokens have crossed the wall. Better idea: The starting count describes both regions together. Subtract transferred tokens to find what remains inside. Reconnect: Label the starting total before moving tokens. Label the tokens still in the first region separately.",
+                  "Card 5. A mistake to check: The number transferred during a round is confused with the number remaining inside. Better idea: Transferred and remaining name different groups. Track the inside count after every transfer. Reconnect: Keep transferred and remaining tokens in two labelled groups. Point to the group named by each question."
+                ],
+                "glossary": [
+                  {
+                    "term": "evidence",
+                    "meaning": "A step, observation or text detail that supports a reason."
+                  }
+                ],
+                "origin": {
+                  "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                  "license": "Original LiberiaLearn teaching guidance; review-only.",
+                  "attribution": "LiberiaLearn accepted lesson foundations and Support author"
+                }
+              },
+              {
+                "type": "READING_PASSAGE",
+                "id": "card-p3",
+                "title": "P3: choose a relevant card with your teacher",
+                "paragraphs": [
+                  "Card 1. A mistake to check: A plausible prediction is reported as something the story has already established. Better idea: Name the detail that makes the idea plausible, use might or may, and change the prediction if later evidence conflicts. Reconnect: Mark an early clue, your prediction and a later detail in the accepted reading text. Treat the prediction as a possibility.",
+                  "Card 2. A mistake to check: A summary lists incidental details or invents an outcome instead of connecting the central problem, response and result. Better idea: Keep the problem, the action taken and the result supported by the story; remove details that do not explain that connection. Reconnect: Choose details that explain the main problem, response and result. Put minor details aside."
+                ],
+                "glossary": [
+                  {
+                    "term": "evidence",
+                    "meaning": "A step, observation or text detail that supports a reason."
+                  }
+                ],
+                "origin": {
+                  "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                  "license": "Original LiberiaLearn teaching guidance; review-only.",
+                  "attribution": "LiberiaLearn accepted lesson foundations and Support author"
+                }
+              },
+              {
+                "type": "READING_PASSAGE",
+                "id": "card-p4",
+                "title": "P4: choose a relevant card with your teacher",
+                "paragraphs": [
+                  "Card 1. A mistake to check: Every inland location is assumed to be high or mountainous. Better idea: Inland means away from the coast. A broad terrain description does not determine every local elevation. Reconnect: Separate coastal or inland labels from evidence about elevation or a particular route. Use the accepted records.",
+                  "Card 2. A mistake to check: One observation or place description is treated as evidence about all communities. Better idea: Name the place and observation, limit the conclusion to that evidence and seek additional observations. Reconnect: Compare what the two club records actually describe. One record does not describe every place.",
+                  "Card 3. A mistake to check: Coastal or inland is treated as enough evidence to select a safe site. Better idea: Compare the actual site, path and local observations. A region label alone does not establish safety. Reconnect: Match each room or route claim to its actual observation. A place name does not establish safety.",
+                  "Card 4. A mistake to check: General coast-to-inland landform descriptions are treated as exact county boundaries. Better idea: Use an administrative map for county boundaries. A physical sketch does not establish those lines. Reconnect: Use separate labels for a physical region and an administrative county. They answer different kinds of questions.",
+                  "Card 5. A mistake to check: Evidence about a dry room or a clear path is treated as proving the other requirement too. Better idea: Check each requirement separately. Room and route observations answer different questions. Reconnect: Make separate columns for room conditions and route access. Check each need with relevant evidence."
+                ],
+                "glossary": [
+                  {
+                    "term": "evidence",
+                    "meaning": "A step, observation or text detail that supports a reason."
+                  }
+                ],
+                "origin": {
+                  "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                  "license": "Original LiberiaLearn teaching guidance; review-only.",
+                  "attribution": "LiberiaLearn accepted lesson foundations and Support author"
+                }
+              },
+              {
+                "type": "READING_PASSAGE",
+                "id": "card-p5",
+                "title": "P5: choose a relevant card with your teacher",
+                "paragraphs": [
+                  "Card 1. A mistake to check: The variable's name is changed whenever its number changes. Better idea: Keep the name score fixed and replace the number stored beneath it. Reconnect: Keep the score name card fixed and replace only the number card when its value changes.",
+                  "Card 2. A mistake to check: Set score to a number is treated as adding that number. Better idea: Set replaces the current value. Add uses the current value to calculate the next one. Reconnect: Compare set to 2 with add 2 from the same starting score of 4. Set replaces; add uses the previous value.",
+                  "Card 3. A mistake to check: Initialization is repeated before every event, discarding the accumulated score. Better idea: Initialize at new-game start and retain the updated value between events. Reconnect: Initialize at the start of a new game. Keep the updated value between hits unless a reset event occurs.",
+                  "Card 4. A mistake to check: A set instruction is ignored and the previous value is retained. Better idea: Follow every instruction in order. Set replaces the old value even if no points were earned. Reconnect: Follow every instruction in order, including set. Replace the number even when no points were earned.",
+                  "Card 5. A mistake to check: A new game starts without initialization and inherits an earlier game's score. Better idea: Give each new game its stated starting value before processing events. Reconnect: Show the end of one game and the starting value of a new game on separate cards. Initialize the new game."
+                ],
+                "glossary": [
+                  {
+                    "term": "evidence",
+                    "meaning": "A step, observation or text detail that supports a reason."
+                  }
+                ],
+                "origin": {
+                  "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                  "license": "Original LiberiaLearn teaching guidance; review-only.",
+                  "attribution": "LiberiaLearn accepted lesson foundations and Support author"
+                }
+              },
+              {
+                "type": "READING_PASSAGE",
+                "id": "card-p6",
+                "title": "P6: choose a relevant card with your teacher",
+                "paragraphs": [
+                  "Card 1. A mistake to check: The switch creates the energy that lights the lamp. Better idea: The battery supplies energy. Closing the switch completes a conducting path; the switch does not create energy. Reconnect: Sketch the battery, lamp and conducting return path. Open and close the switch on the sketch.",
+                  "Card 2. A mistake to check: One successful test proves the switch always works. Better idea: Record every trial, including failures. Five trials support a limited comparison, not a guarantee. Reconnect: Read every actual or explicitly supplied trial from the accepted Engineering activity. Include failures and identify the source.",
+                  "Card 3. A mistake to check: Changing several components establishes which single change caused an outcome. Better idea: Change one contact feature while keeping battery, bulb, wires and procedure fixed. Reconnect: Name one contact feature to change. Keep battery, lamp, wires and procedure fixed.",
+                  "Card 4. A mistake to check: The taller closed-switch bar proves the best design without checking open-switch control. Better idea: Use both closed-light and open-dark observations, and acknowledge the limits of the tests. Reconnect: Read both closed-light bars, then inspect both open-dark counts. Both criteria matter."
+                ],
+                "glossary": [
+                  {
+                    "term": "evidence",
+                    "meaning": "A step, observation or text detail that supports a reason."
+                  }
+                ],
+                "origin": {
+                  "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                  "license": "Original LiberiaLearn teaching guidance; review-only.",
+                  "attribution": "LiberiaLearn accepted lesson foundations and Support author"
+                }
+              },
+              {
+                "type": "CHECK",
+                "id": "independent-retry",
+                "items": [
+                  {
+                    "id": "independent-retry-item",
+                    "prompt": "Which approach shows what you can explain independently?",
+                    "options": [
+                      {
+                        "id": "opt-0e23a816e0a7",
+                        "text": "Have a partner write the fresh answer for you and call it your recall.",
+                        "feedback": "A scribe may record your own reasoning. Another person's answer does not show your recall.",
+                        "misconceptionId": "copying-is-retrieval"
+                      },
+                      {
+                        "id": "opt-e9517ed96028",
+                        "text": "Try first, use a relevant card, then put it away and answer a fresh question.",
+                        "feedback": "This response explains the relevant evidence and what it supports."
+                      },
+                      {
+                        "id": "opt-2cdf35fce0bb",
+                        "text": "Copy the worked answer into the fresh question.",
+                        "feedback": "A copied answer does not show what you can retrieve. Put the card away and try a new question.",
+                        "misconceptionId": "copying-is-retrieval"
+                      }
+                    ],
+                    "formativeKey": {
+                      "expectedOptionId": "opt-e9517ed96028"
+                    },
+                    "misconceptionId": "copying-is-retrieval"
+                  }
+                ]
+              },
+              {
+                "type": "CHECK",
+                "id": "show-the-reason",
+                "items": [
+                  {
+                    "id": "show-the-reason-item",
+                    "prompt": "What makes an explanation checkable?",
+                    "options": [
+                      {
+                        "id": "opt-8b80ea787d32",
+                        "text": "State only your site choice, without room or route evidence.",
+                        "feedback": "A choice needs relevant observations. Explain which room and route details support it.",
+                        "misconceptionId": "answer-without-reason"
+                      },
+                      {
+                        "id": "opt-dcfe80953546",
+                        "text": "Point to a relevant step or detail and explain why it supports the answer.",
+                        "feedback": "This response explains the relevant evidence and what it supports."
+                      },
+                      {
+                        "id": "opt-093dcb87abd3",
+                        "text": "Write only the final number, with no steps or reason.",
+                        "feedback": "A number alone hides the method. Show the place values, trace or other relevant reasoning.",
+                        "misconceptionId": "answer-without-reason"
+                      }
+                    ],
+                    "formativeKey": {
+                      "expectedOptionId": "opt-dcfe80953546"
+                    },
+                    "misconceptionId": "answer-without-reason"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "fresh-retry",
+          "type": "PRACTICE",
+          "title": "Try a fresh question without the guidance",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1",
+            "g4-support-retrieve-reteach-retry-o2",
+            "g4-support-retrieve-reteach-retry-o3"
+          ],
+          "learnerAction": "Solve one fresh question independently and check it using a different representation or relevant evidence.",
+          "content": {
+            "body": "Choose the fresh question that matches your selected card. Put the worked guidance away. Explain your own answer. A scribe may write what you say. Keep missing observations missing; use a proposed test when no Engineering data are available."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "fresh-retry-response-0",
+                "prompt": "State the fresh question you chose, your answer and the reasoning.",
+                "minLength": 20
+              },
+              {
+                "id": "fresh-retry-response-1",
+                "prompt": "Explain how you checked the answer. What is clearer, or still uncertain?",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Choose the fresh question that matches your selected card. Put the worked guidance away. Explain your own answer. A scribe may write what you say. Keep missing observations missing; use a proposed test when no Engineering data are available. Choose the fresh question for your card. P1. Card 1: Find 214 times 4. Explain the value of each digit. Card 2: Find 214 times 4 and explain where the regrouped ten goes. P2. Card 1: Trace food to the small intestine and explain one supporting organ. Card 2: Explain why the food route continues beyond the stomach. Card 3: Start with 16 tokens. Transfer 6. Explain where all 16 are now. Card 4: Start with 16 and transfer 6. Find and distinguish the starting and remaining counts. Card 5: Start with 16 and transfer 6. Find the transferred and remaining counts and explain the difference. P3. Card 1: Name an unanswered question from the text without inventing an ending. Card 2: Summarize the text and justify one detail you kept. P4. Card 1: Explain what further observation would support a claim about one site. Card 2: Give a conditional recommendation and state one limit of the records. Card 3: Identify a missing observation before deciding whether a site meets a need. Card 4: Explain why a coastal label is not by itself the name of a county. Card 5: Explain how a dry room could still be reached by a difficult route. P5. Card 1: Start score at 2 and add 3. Explain what changes and what stays fixed. Card 2: Start at 1. Add 3, set to 2, then add 3. Explain every state. Card 3: Start at 0 and add 2 for each of three hits. Explain why resetting before every hit loses the total. Card 4: Start at 7, set to 2, then add 3. Record all three states. Card 5: One game ends at 9. A new game starts at 0. Explain the new score before its first hit. P6. Card 1: Explain why closing a switch does not create energy. Card 2: Explain what five trials support and what they do not guarantee. Card 3: Propose a further test and explain which conditions you will keep fixed. Card 4: Use available records to justify a choice. Without data, explain a plan only. State the fresh question you chose, your answer and the reasoning. Explain how you checked the answer. What is clearer, or still uncertain?",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "PRACTICE_INDEPENDENTLY",
+            "blocks": [
+              {
+                "type": "READING_PASSAGE",
+                "id": "fresh-question-menu",
+                "title": "Choose the fresh question for your card",
+                "paragraphs": [
+                  "P1. Card 1: Find 214 times 4. Explain the value of each digit. Card 2: Find 214 times 4 and explain where the regrouped ten goes.",
+                  "P2. Card 1: Trace food to the small intestine and explain one supporting organ. Card 2: Explain why the food route continues beyond the stomach. Card 3: Start with 16 tokens. Transfer 6. Explain where all 16 are now. Card 4: Start with 16 and transfer 6. Find and distinguish the starting and remaining counts. Card 5: Start with 16 and transfer 6. Find the transferred and remaining counts and explain the difference.",
+                  "P3. Card 1: Name an unanswered question from the text without inventing an ending. Card 2: Summarize the text and justify one detail you kept.",
+                  "P4. Card 1: Explain what further observation would support a claim about one site. Card 2: Give a conditional recommendation and state one limit of the records. Card 3: Identify a missing observation before deciding whether a site meets a need. Card 4: Explain why a coastal label is not by itself the name of a county. Card 5: Explain how a dry room could still be reached by a difficult route.",
+                  "P5. Card 1: Start score at 2 and add 3. Explain what changes and what stays fixed. Card 2: Start at 1. Add 3, set to 2, then add 3. Explain every state. Card 3: Start at 0 and add 2 for each of three hits. Explain why resetting before every hit loses the total. Card 4: Start at 7, set to 2, then add 3. Record all three states. Card 5: One game ends at 9. A new game starts at 0. Explain the new score before its first hit.",
+                  "P6. Card 1: Explain why closing a switch does not create energy. Card 2: Explain what five trials support and what they do not guarantee. Card 3: Propose a further test and explain which conditions you will keep fixed. Card 4: Use available records to justify a choice. Without data, explain a plan only."
+                ],
+                "glossary": [],
+                "origin": {
+                  "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                  "license": "Original educational questions; review-only.",
+                  "attribution": "LiberiaLearn"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "extension",
+          "type": "PRACTICE",
+          "title": "Extend an idea when ready",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1",
+            "g4-support-retrieve-reteach-retry-o2",
+            "g4-support-retrieve-reteach-retry-o3"
+          ],
+          "learnerAction": "Construct a counterexample or explain a useful next practice step.",
+          "content": {
+            "body": "With your teacher, choose a further challenge when ready. Compare a rule or claim from two periods. Find a case that would challenge an overconfident claim. If more practice would help first, explain which card you will revisit and why."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "extension-response-0",
+                "prompt": "Give your counterexample and explain what it shows, or justify the next practice you need.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "With your teacher, choose a further challenge when ready. Compare a rule or claim from two periods. Find a case that would challenge an overconfident claim. If more practice would help first, explain which card you will revisit and why. Give your counterexample and explain what it shows, or justify the next practice you need.",
+            "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "APPLY",
+            "blocks": []
+          }
+        },
+        {
+          "id": "independent-explanation",
+          "type": "MASTERY_CHECK",
+          "title": "Explain your fresh attempt",
+          "purpose": "ASSESS_MASTERY",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1",
+            "g4-support-retrieve-reteach-retry-o2",
+            "g4-support-retrieve-reteach-retry-o3"
+          ],
+          "learnerAction": "Share a specific response and its reasoning with your teacher.",
+          "content": {
+            "body": "Keep your first response and fresh attempt. Explain what you can now justify and what still needs practice."
+          },
+          "interaction": {
+            "kind": "ASSESSMENT_HANDOFF",
+            "assessmentRequestId": "future-independent-explanation"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "MASTERY_RESPONSE",
+            "evidenceType": "QUIZ",
+            "responses": [
+              {
+                "responseKey": "future-0",
+                "objectiveId": "g4-support-retrieve-reteach-retry-o1",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              },
+              {
+                "responseKey": "future-1",
+                "objectiveId": "g4-support-retrieve-reteach-retry-o2",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              },
+              {
+                "responseKey": "future-2",
+                "objectiveId": "g4-support-retrieve-reteach-retry-o3",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "Keep your first response and fresh attempt. Explain what you can now justify and what still needs practice.",
+            "keyboardPath": "Use the independently supplied assessment controls when available.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Keep your first response and fresh attempt. Explain what you can now justify and what still needs practice."
+          },
+          "completion": "ALL_ANSWERED",
+          "teaching": {
+            "phase": "ASSESS",
+            "blocks": []
+          }
+        }
+      ],
+      "assessmentRequests": [
+        {
+          "id": "future-independent-explanation",
+          "objectiveIds": [
+            "g4-support-retrieve-reteach-retry-o1",
+            "g4-support-retrieve-reteach-retry-o2",
+            "g4-support-retrieve-reteach-retry-o3"
+          ],
+          "interaction": "FREE_RESPONSE",
+          "evidenceType": "QUIZ",
+          "difficulty": "CORE",
+          "misconceptionIds": [
+            "copying-is-retrieval",
+            "answer-without-reason"
+          ],
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "offline": "FULL_OFFLINE"
+        }
+      ],
+      "labProposals": []
+    }
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "g4-support-retrieve-reteach-retry-v4",
+    "version": "4.0.0",
+    "contentHash": "983127c8cd7682abb25bd267a2df53a2f23e94eed7b8a470b20be9652ef260e8"
+  },
+  "dependencies": [],
+  "contentHash": "e86f08323a1f5c99a759735f62fd7c43d2beb5dd490c5ccf31700c8643b4013c"
+}

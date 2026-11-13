@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=school dashboard and school-scoped actions; every PATCH action refused on any deployed Preview/staging after authentication and before body parsing (PREVIEW_IDENTITY_FROZEN); Preview errors are fixed codes only
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
@@ -10,6 +11,8 @@ import {
   inviteTeacherToSchool,
   moveStudentBetweenClasses,
 } from "@/lib/school-operations";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +76,8 @@ export async function GET() {
     const dashboard = await getPrincipalSchoolDashboard(user.schoolId!);
     return NextResponse.json({ ok: true, dashboard });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json({ error: err?.message ?? "Failed" }, { status: err?.status ?? 500 });
   }
 }
@@ -80,6 +85,10 @@ export async function GET() {
 export async function PATCH(req: Request) {
   try {
     const user = await requireSchoolAdmin();
+    // Every action mutates identity, roster or school records: on a deployed Preview the whole PATCH is frozen after
+    // authority and before body parsing (malformed bodies fail closed too).
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const parsed = ActionSchema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) {
       return NextResponse.json({ error: "Validation failed", issues: parsed.error.flatten() }, { status: 400 });
@@ -87,7 +96,6 @@ export async function PATCH(req: Request) {
 
     const schoolId = user.schoolId!;
     const body = parsed.data;
-
     if (body.action === "inviteTeacher") {
       const result = await inviteTeacherToSchool({
         actorUserId: user.id,
@@ -145,6 +153,8 @@ export async function PATCH(req: Request) {
     });
     return NextResponse.json({ ok: true });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json({ error: err?.message ?? "Failed" }, { status: err?.status ?? 500 });
   }
 }

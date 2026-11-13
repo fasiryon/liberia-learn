@@ -1,0 +1,1673 @@
+{
+  "agents": [
+    {
+      "id": "ai-provider-router",
+      "name": "AI provider routing infrastructure",
+      "aliases": [],
+      "purpose": "Shared completions, embeddings, tier selection and fallback",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/ai/router.ts",
+        "lib/ai/routedCompletion.ts",
+        "lib/ai/providerRetryPolicy.ts",
+        "lib/ai/budgetGuard.ts",
+        "lib/ai/circuit-breaker.ts"
+      ],
+      "type": "LLM infrastructure",
+      "model_provider": "Groq / OpenAI / xAI; embeddings OpenAI",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Imported by AI features; API keys and route gates",
+      "inputs_outputs": "Shared completions, embeddings, tier selection and fallback",
+      "tools_permissions": "Provider requests only; callers own authorization",
+      "database_access": [
+        "AIInteraction",
+        "AiInteractionLog"
+      ],
+      "external_services": "Groq / OpenAI / xAI; embeddings OpenAI",
+      "dependencies": [],
+      "feature_flags": [
+        "provider credential presence"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "No live run or measured user outcomes inspected.",
+      "recommendation": "IMPROVE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-001",
+        "ROOT-002"
+      ]
+    },
+    {
+      "id": "moe-alignment",
+      "name": "MOE alignment assistance",
+      "aliases": [],
+      "purpose": "Keyword match standards first, LLM fallback and versioned alignment persistence",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/moe/alignment-engine.ts",
+        "app/api/moe/align/route.ts",
+        "lib/agents/tools/contentqa.tools.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Authorized MOE alignment request or content QA tool",
+      "inputs_outputs": "Keyword match standards first, LLM fallback and versioned alignment persistence",
+      "tools_permissions": "Reads standards and lesson; updateCurriculumContent alignment revision",
+      "database_access": [
+        "Standard",
+        "CurriculumContent",
+        "CurriculumRevision"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "route authorization / provenance guards"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "No live run or measured user outcomes inspected.",
+      "recommendation": "KEEP",
+      "depth": "B",
+      "evidence": [
+        "ROOT-014"
+      ]
+    },
+    {
+      "id": "curriculum-optimizer",
+      "name": "Curriculum emphasis advisor",
+      "aliases": [],
+      "purpose": "Deterministic weak-strand emphasis with optional AI advisory text",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/ai/curriculum/curriculumOptimizer.ts",
+        "app/api/admin/national/curriculum-signals/route.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "National curriculum signal API",
+      "inputs_outputs": "Deterministic weak-strand emphasis with optional AI advisory text",
+      "tools_permissions": "Advisory output; no publish action",
+      "database_access": [
+        "aggregated NationalCurriculumSignals"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "ENABLE_CURRICULUM_OPTIMIZATION_AI default OFF"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "AI call omits aiUsage so shared budget and persisted telemetry are optional/bypassed.",
+      "recommendation": "KEEP",
+      "depth": "B",
+      "evidence": [
+        "ROOT-003"
+      ]
+    },
+    {
+      "id": "school-intervention-advisor",
+      "name": "School and district intervention advisor",
+      "aliases": [],
+      "purpose": "Deterministic school risk priority and optional LLM action descriptions",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/ai/interventions/recommendationEngine.ts",
+        "app/api/admin/dashboard/school/interventions/route.ts",
+        "app/api/admin/dashboard/district/interventions/route.ts",
+        "lib/reporting/dashboard/districtAggregator.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "School/district dashboards",
+      "inputs_outputs": "Deterministic school risk priority and optional LLM action descriptions",
+      "tools_permissions": "Advisory recommendations from aggregate metrics",
+      "database_access": [
+        "ImpactSnapshot",
+        "dashboard aggregate inputs"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "AI_INTERVENTIONS_AI_ENHANCED explicit true"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Overlaps detector and learning recommendation systems; optional LLM omits aiUsage; provider failure requires caller review.",
+      "recommendation": "CONSOLIDATE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-004"
+      ]
+    },
+    {
+      "id": "unit-assembler",
+      "name": "Curriculum unit assembler",
+      "aliases": [],
+      "purpose": "Select lessons, fill missing content and generate unit supporting material",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/ai/units/unitAssembler.ts",
+        "app/api/admin/curriculum/units/route.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Authorized admin unit request",
+      "inputs_outputs": "Select lessons, fill missing content and generate unit supporting material",
+      "tools_permissions": "CurriculumUnit writes and governed lesson writes",
+      "database_access": [
+        "Standard",
+        "CurriculumContent",
+        "CurriculumUnit"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "route access / provider availability"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "No live run or measured user outcomes inspected.",
+      "recommendation": "INTEGRATE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-015"
+      ]
+    },
+    {
+      "id": "textbook-compiler",
+      "name": "Textbook compilation workflow",
+      "aliases": [],
+      "purpose": "Compile student/teacher/workbook/assessment books from existing curriculum",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/ai/textbook/textbookCompiler.ts",
+        "lib/textbooks/textbookGenerationQueue.ts",
+        "worker/handlers/textbook.ts"
+      ],
+      "type": "deterministic workflow",
+      "model_provider": "No model in compiler; separate generation scripts may call OpenAI",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Admin textbook API, DB queue cron or SQS worker",
+      "inputs_outputs": "Compile student/teacher/workbook/assessment books from existing curriculum",
+      "tools_permissions": "Read curriculum, produce textbook assets; no LLM in compiler itself",
+      "database_access": [
+        "CurriculumUnit",
+        "CurriculumContent",
+        "School",
+        "TextbookGenerationJob"
+      ],
+      "external_services": "No model in compiler; separate generation scripts may call OpenAI",
+      "dependencies": [],
+      "feature_flags": [
+        "queue configuration / caller guards"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "No live run or measured user outcomes inspected.",
+      "recommendation": "CONSOLIDATE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-016"
+      ]
+    },
+    {
+      "id": "rag-indexing",
+      "name": "RAG indexing and embeddings",
+      "aliases": [],
+      "purpose": "Chunk approved content and policies, embed and persist retrieval vectors",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/ai/rag/ragIngestionService.ts",
+        "lib/ai/rag/embeddingService.ts",
+        "worker/handlers/embeddings.ts"
+      ],
+      "type": "LLM infrastructure",
+      "model_provider": "OpenAI text-embedding-3-small",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Curriculum approve/generate/teacher lesson paths; worker embedding job",
+      "inputs_outputs": "Chunk approved content and policies, embed and persist retrieval vectors",
+      "tools_permissions": "RagChunk replace and vector writes; governed curriculum embedding write",
+      "database_access": [
+        "RagChunk",
+        "CurriculumContent"
+      ],
+      "external_services": "OpenAI text-embedding-3-small",
+      "dependencies": [],
+      "feature_flags": [
+        "OPENAI_API_KEY presence"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "No live run or measured user outcomes inspected.",
+      "recommendation": "IMPROVE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-013"
+      ]
+    },
+    {
+      "id": "rag-reranking",
+      "name": "Optional retrieval reranking",
+      "aliases": [],
+      "purpose": "Rank hybrid retrieval top candidates before grounded answer",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/ai/rag/ragReranker.ts",
+        "lib/ai/rag/hybridRetrieval.ts"
+      ],
+      "type": "LLM infrastructure",
+      "model_provider": "Cohere rerank-english-v3.0",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Hybrid retrieval when COHERE_API_KEY configured",
+      "inputs_outputs": "Rank hybrid retrieval top candidates before grounded answer",
+      "tools_permissions": "Sends title/content previews to external rerank service",
+      "database_access": [
+        "RagChunk via caller"
+      ],
+      "external_services": "Cohere rerank-english-v3.0",
+      "dependencies": [],
+      "feature_flags": [
+        "COHERE_API_KEY presence"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "External content transfer and cost need provider inventory; gracefully falls back to fusion order.",
+      "recommendation": "VERIFY THEN ENABLE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-012"
+      ]
+    },
+    {
+      "id": "canva-generation",
+      "name": "Canva document and asset assistant",
+      "aliases": [],
+      "purpose": "Generate school documents, certificates, thumbnails and staff/student templates",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/canva/canvaMcp.ts",
+        "lib/canva/templates/studentIdCard.ts",
+        "lib/certificates/canvaCertificate.ts",
+        "lib/reports/moeProgressReport.ts",
+        "lib/schools/generateOnboardingKit.ts",
+        "lib/certifications/generateCertificationAssets.ts",
+        "lib/courses/generateCourseThumbnail.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "Anthropic default claude-opus-4-1-20250805 + Canva MCP",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Authorized document endpoints or asset queue jobs",
+      "inputs_outputs": "Generate school documents, certificates, thumbnails and staff/student templates",
+      "tools_permissions": "Anthropic remote Canva MCP credential; generated documents/assets",
+      "database_access": [
+        "GeneratedDocument",
+        "asset records via callers"
+      ],
+      "external_services": "Anthropic default claude-opus-4-1-20250805 + Canva MCP",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "Anthropic key / Canva OAuth or MCP token"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Direct SDK bypasses shared router budget; student ID template includes names/grade/student number in external prompt; review vendor permissions/retention. Server does not specify remote tool allowlist in request.",
+      "recommendation": "IMPROVE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-005",
+        "ROOT-006"
+      ]
+    },
+    {
+      "id": "lesson-illustration",
+      "name": "Lesson illustration and vision QA workflow",
+      "aliases": [],
+      "purpose": "Generate Fal illustrations with structural QA and optional OpenAI vision check",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/media/generateIllustration.ts",
+        "lib/media/falClient.ts",
+        "lib/media/imageQA.ts",
+        "lib/media/processLesson.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "Fal FLUX schnell / optional OpenAI gpt-4o-mini",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Lesson media pipeline",
+      "inputs_outputs": "Generate Fal illustrations with structural QA and optional OpenAI vision check",
+      "tools_permissions": "External image generation/download; at most two attempts",
+      "database_access": [
+        "lesson media via caller"
+      ],
+      "external_services": "Fal FLUX schnell / optional OpenAI gpt-4o-mini",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "FAL_KEY",
+        "MEDIA_VISION_QA=1 with OpenAI key"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Costs tracked per image attempts but separate from text budget; model quality gate is optional; no learning-effectiveness evidence.",
+      "recommendation": "IMPROVE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-017",
+        "ROOT-018"
+      ]
+    },
+    {
+      "id": "lesson-narration",
+      "name": "Lesson speech generation",
+      "aliases": [],
+      "purpose": "Generate narration and track audio assets",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/audio/lessonAudioProvider.ts",
+        "lib/lessons/audioGeneration.ts",
+        "lib/audio/audioGenerationQueue.ts",
+        "lib/elevenlabs.ts"
+      ],
+      "type": "LLM infrastructure",
+      "model_provider": "OpenAI tts-1; separate ElevenLabs eleven_turbo_v2 path",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Admin queue / process-audio-generation cron; separate ElevenLabs helper",
+      "inputs_outputs": "Generate narration and track audio assets",
+      "tools_permissions": "TTS request and audio storage",
+      "database_access": [
+        "LessonAudio",
+        "audio generation jobs"
+      ],
+      "external_services": "OpenAI tts-1; separate ElevenLabs eleven_turbo_v2 path",
+      "dependencies": [],
+      "feature_flags": [
+        "provider key / queue conditions"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Multiple audio pipelines and unimplemented GENERATE_LESSON_AUDIO worker dispatch need explicit ownership.",
+      "recommendation": "CONSOLIDATE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-019",
+        "ROOT-020"
+      ]
+    },
+    {
+      "id": "rag-evaluation",
+      "name": "Grounded assistant evaluation harness",
+      "aliases": [],
+      "purpose": "Evaluate retrieval recall, citations, answer proxies and fallback",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/evals/runner.ts",
+        "lib/evals/retrieval.ts",
+        "lib/evals/answer.ts",
+        ".github/workflows/evals.yml"
+      ],
+      "type": "deterministic workflow",
+      "model_provider": "Invokes existing grounded answer provider",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Evaluation CLI / GitHub eval workflow",
+      "inputs_outputs": "Evaluate retrieval recall, citations, answer proxies and fallback",
+      "tools_permissions": "Read scoped test corpus and invoke grounded answer",
+      "database_access": [
+        "RagChunk",
+        "evaluation records through caller"
+      ],
+      "external_services": "Invokes existing grounded answer provider",
+      "dependencies": [],
+      "feature_flags": [
+        "eval workflow inputs/provider/database configuration"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Retrieval/citation scores are quality proxies, not demonstrated learner gains.",
+      "recommendation": "KEEP",
+      "depth": "B",
+      "evidence": [
+        "ROOT-021"
+      ]
+    },
+    {
+      "id": "sqs-worker",
+      "name": "SQS application job dispatcher",
+      "aliases": [],
+      "purpose": "Dispatch imports, analytics, SMS, embeddings, assets, textbooks and regeneration",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "worker/index.ts",
+        "worker/handlers/index.ts",
+        "lib/queue.ts"
+      ],
+      "type": "deterministic workflow",
+      "model_provider": "AWS SQS / handler providers",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "SQS polling with configured queue URL",
+      "inputs_outputs": "Dispatch imports, analytics, SMS, embeddings, assets, textbooks and regeneration",
+      "tools_permissions": "AWS receive/send/delete; handler-specific database and external actions",
+      "database_access": [
+        "handler-specific records"
+      ],
+      "external_services": "AWS SQS / handler providers",
+      "dependencies": [],
+      "feature_flags": [
+        "SQS_QUEUE_URL",
+        "SQS_DLQ_URL",
+        "AWS region/credentials"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Lesson audio and AUTONOMOUS_WORKFLOW_RUN dispatch return noop and enter retry/DLQ; at-least-once jobs need handler idempotency evidence.",
+      "recommendation": "IMPROVE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-007",
+        "ROOT-008"
+      ]
+    },
+    {
+      "id": "grounded-role-assistant",
+      "name": "Shared grounded role assistant",
+      "aliases": [],
+      "purpose": "Answer approved classroom/policy questions for teacher, admin, student and guardian audiences",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "app/api/rag/query/route.ts",
+        "lib/ai/rag/groundedAnswerService.ts",
+        "lib/ai/rag/assistantAccess.ts",
+        "lib/ai/rag/audienceScope.ts",
+        "lib/ai/rag/assistantActions.ts",
+        "lib/ai/rag/actionDrafts.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Authenticated POST /api/rag/query with mode resolved by server role",
+      "inputs_outputs": "Answer approved classroom/policy questions for teacher, admin, student and guardian audiences",
+      "tools_permissions": "Audience-restricted retrieval and bounded draft actions; no official grading or publication",
+      "database_access": [
+        "RagChunk",
+        "AIInteraction",
+        "AuditLog"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "route rate/budget guards and caller school context"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Same engine backs student tutor; entries distinguish role-facing route from tutor adapter. Prompt injection remains adversarial evaluation requirement, not proven bypass.",
+      "recommendation": "KEEP",
+      "depth": "B",
+      "evidence": [
+        "ROOT-023",
+        "ROOT-024"
+      ]
+    },
+    {
+      "id": "agent-safety-language",
+      "name": "Agent moderation and language services",
+      "aliases": [],
+      "purpose": "Classify input/output safety and optionally detect/translate guardian language",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/agents/moderation.ts",
+        "lib/agents/translation.ts"
+      ],
+      "type": "LLM infrastructure",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Generic runtime and SMS guardian pipeline",
+      "inputs_outputs": "Classify input/output safety and optionally detect/translate guardian language",
+      "tools_permissions": "Provider classifications and translated text only",
+      "database_access": [
+        "AI interaction usage through router"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [],
+      "feature_flags": [
+        "invoking agent guards"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Extra detection/translation calls can cost more than deterministic language selection; moderation UNCERTAIN must not grant child-facing release.",
+      "recommendation": "IMPROVE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-025"
+      ]
+    },
+    {
+      "id": "autonomous-governance",
+      "name": "Governed detector and action workflow family",
+      "aliases": [],
+      "purpose": "Deterministic operational detectors, advisory recommendations, approved interventions, evaluation and recovery",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/autonomous/detectors/detectorRegistry.ts",
+        "lib/autonomous/detectors/detectorExecutionService.ts",
+        "lib/autonomous/actions/actionRegistry.ts",
+        "lib/autonomous/actions/actionExecutor.ts",
+        "lib/autonomous/workflowOrchestrator.ts",
+        "lib/autonomous/runtime/autonomousSchedulerService.ts"
+      ],
+      "type": "deterministic workflow",
+      "model_provider": "None in inspected core; optional AI advice is separate registry entry",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Eligible LearningEvent/API detector requests and five autonomous cron pipelines",
+      "inputs_outputs": "Deterministic operational detectors, advisory recommendations, approved interventions, evaluation and recovery",
+      "tools_permissions": "Seven action categories with approval/forbidden effects; teacher support/guardian/governance drafts; approved interventions/curriculum flags",
+      "database_access": [
+        "WorkflowRun",
+        "AgentDecision",
+        "ActionExecution",
+        "ApprovalRequest",
+        "Intervention",
+        "CurriculumFlag",
+        "AuditLog",
+        "operational memory/outcome records through services"
+      ],
+      "external_services": "None in inspected core; optional AI advice is separate registry entry",
+      "dependencies": [],
+      "feature_flags": [
+        "ENABLE_DETECTOR_EXECUTION",
+        "ENABLE_ACTION_GOVERNANCE",
+        "ENABLE_ACTION_EXECUTION",
+        "AUTONOMOUS_RECOMMEND_ONLY_MODE",
+        "ENABLE_LOW_RISK_AUTONOMY",
+        "five cron flags default OFF"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Large governance foundation does not establish operational deployment; SQS autonomous dispatch unsupported; verify approvals, locked tenant context and outcome evidence end-to-end before execution.",
+      "recommendation": "IMPROVE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-009",
+        "ROOT-010",
+        "ROOT-011"
+      ]
+    },
+    {
+      "id": "legacy-curriculum-generation",
+      "name": "Legacy curriculum payload generation",
+      "aliases": [],
+      "purpose": "Multi-pass model-generated lesson payloads and regeneration",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/ai/curriculum-factory.ts",
+        "lib/curriculum/generateLessonV2.ts",
+        "lib/curriculum/v2/pipeline.ts",
+        "app/api/admin/curriculum/generate/route.ts",
+        "app/api/admin/curriculum/generate-full-pack/route.ts",
+        "worker/handlers/curriculumRegeneration.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Authorized curriculum routes, queued regeneration or maintenance scripts",
+      "inputs_outputs": "Multi-pass model-generated lesson payloads and regeneration",
+      "tools_permissions": "Draft generation; persistence/review controlled by caller and curriculum write services",
+      "database_access": [
+        "CurriculumContent",
+        "revision/provenance records via callers"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "route permissions / provenance gates / provider keys"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Naming overlaps deterministic Content Factory V2 but these are distinct paths; generated payload does not imply approved Excellence bundle or MOE attestation.",
+      "recommendation": "INTEGRATE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-035",
+        "ROOT-036"
+      ]
+    },
+    {
+      "id": "exam-generation",
+      "name": "School exam draft generator",
+      "aliases": [],
+      "purpose": "Generate draft questions/mark schemes for school exams",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/exams/examGenerator.ts",
+        "app/api/admin/exams/generate/route.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Authorized admin request",
+      "inputs_outputs": "Generate draft questions/mark schemes for school exams",
+      "tools_permissions": "Draft output; separate publish/result routes own official lifecycle",
+      "database_access": [
+        "Exam and ExamQuestion via caller"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "route permission / usage context"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "LLM generation alone cannot establish governed assessment validity or independent moderation.",
+      "recommendation": "INTEGRATE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-037"
+      ]
+    },
+    {
+      "id": "exercise-generation",
+      "name": "Coding and AI literacy exercise generators",
+      "aliases": [],
+      "purpose": "Generate structured computing tasks with schemas and prompt contracts",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/exercises/generateCodeExercise.ts",
+        "lib/exercises/generateAILiteracy.ts",
+        "scripts/generate-code-exercises.ts",
+        "scripts/generate-ai-literacy.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Explicit generation CLI; no independent application daemon established",
+      "inputs_outputs": "Generate structured computing tasks with schemas and prompt contracts",
+      "tools_permissions": "Draft exercise output; script persistence",
+      "database_access": [
+        "exercise records through generation scripts"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "provider configuration / explicit CLI"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Useful computing foundations; not evidence of complete K-12 computing/engineering progression.",
+      "recommendation": "INTEGRATE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-038",
+        "ROOT-039"
+      ]
+    },
+    {
+      "id": "specialist-response-grading",
+      "name": "Essay and AI literacy advisory grading",
+      "aliases": [],
+      "purpose": "Evaluate extended responses against rubrics with moderation and usage context",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/grading/gradeEssay.ts",
+        "lib/grading/gradeAILiteracy.ts",
+        "app/api/grading/essay/route.ts",
+        "app/api/grading/ai-literacy/route.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Authorized grading API / content QA tool",
+      "inputs_outputs": "Evaluate extended responses against rubrics with moderation and usage context",
+      "tools_permissions": "Provisional rubric feedback; official release requires separate authority",
+      "database_access": [
+        "GradedSubmission via caller"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "route authorization / provider and budget guards"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "Overlaps homework and teacher grading assistance; do not collapse distinct official/advisory score semantics.",
+      "recommendation": "CONSOLIDATE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-040",
+        "ROOT-041"
+      ]
+    },
+    {
+      "id": "scaffold-generation",
+      "name": "Adaptive scaffold generation",
+      "aliases": [],
+      "purpose": "Generate structured instructional scaffold variants",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "lib/adaptive/generateScaffold.ts",
+        "scripts/generate-scaffolds.ts",
+        "scripts/scaffold-priority.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Explicit scaffold scripts and exported generator",
+      "inputs_outputs": "Generate structured instructional scaffold variants",
+      "tools_permissions": "Structured content proposals, no canonical learner-state writer",
+      "database_access": [
+        "scaffold records through scripts"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "provider configuration / explicit CLI"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "No live run or measured user outcomes inspected.",
+      "recommendation": "INTEGRATE",
+      "depth": "B",
+      "evidence": [
+        "ROOT-042"
+      ]
+    },
+    {
+      "id": "maintenance-generation-tools",
+      "name": "Historical and maintenance AI generation CLIs",
+      "aliases": [],
+      "purpose": "Manually invoked content generation, tagging and model comparison; grouped maintenance family",
+      "intended_users": "Authorized staff / operations unless stated",
+      "implementation": [
+        "scripts/generate-missing-curriculum-content.ts",
+        "scripts/generate-labs-for-approved.ts",
+        "scripts/generate-textbooks-for-approved.ts",
+        "scripts/tag-waec-content.ts",
+        "scripts/finetune/eval-compare.ts",
+        "scripts/test-gen-single.ts",
+        "scripts/moe-alignment-dry-run.ts"
+      ],
+      "type": "LLM",
+      "model_provider": "routedCompletion: Groq/OpenAI; xAI optional",
+      "orchestration": "Direct function calls; no LangChain/LangGraph observed",
+      "trigger": "Explicit CLI invocation; no scheduled registration proven",
+      "inputs_outputs": "Manually invoked content generation, tagging and model comparison; grouped maintenance family",
+      "tools_permissions": "Provider calls and script-specific writes; do not run as audit",
+      "database_access": [
+        "script-specific curriculum/lab/textbook data; read/write authority requires per-run review"
+      ],
+      "external_services": "routedCompletion: Groq/OpenAI; xAI optional",
+      "dependencies": [
+        "ai-provider-router"
+      ],
+      "feature_flags": [
+        "CLI credentials / flags / invocation"
+      ],
+      "status": "implemented but unverified",
+      "last_execution": "UNKNOWN; code and caller evidence only",
+      "logging_evaluation_cost": "Router budget/logging requires aiUsage; inspect per caller. No production costs available.",
+      "risks": "CLI family is sampled, not fully validated for retirement or safe dry-run. A script named dry-run can still spend money. Production invocation unknown.",
+      "recommendation": "INVESTIGATE",
+      "depth": "B",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ROOT-001",
+      "path": "lib/ai/router.ts",
+      "symbol": "compatibility exports",
+      "line_start": 1,
+      "line_end": 10,
+      "claim": "router.ts re-exports routedCompletion; it is not an independent orchestration implementation.",
+      "related": [
+        "ai-provider-router"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-002",
+      "path": "lib/ai/routedCompletion.ts",
+      "symbol": "routedCompletion",
+      "line_start": 360,
+      "line_end": 410,
+      "claim": "Budget checks are conditional on optional opts.aiUsage.",
+      "related": [
+        "ai-provider-router"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-003",
+      "path": "lib/ai/curriculum/curriculumOptimizer.ts",
+      "symbol": "getAiAugmentation",
+      "line_start": 69,
+      "line_end": 79,
+      "claim": "LLM request passes maxTokens and forceSmartTier without aiUsage.",
+      "related": [
+        "curriculum-optimizer"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-004",
+      "path": "lib/ai/interventions/recommendationEngine.ts",
+      "symbol": "tryAiEnhancement",
+      "line_start": 108,
+      "line_end": 125,
+      "claim": "Optional intervention LLM request lacks aiUsage.",
+      "related": [
+        "school-intervention-advisor"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-005",
+      "path": "lib/canva/canvaMcp.ts",
+      "symbol": "generateCanvaAsset",
+      "line_start": 39,
+      "line_end": 62,
+      "claim": "Direct Anthropic beta messages request uses remote Canva MCP without request tool allowlist.",
+      "related": [
+        "canva-generation"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-006",
+      "path": "lib/canva/templates/studentIdCard.ts",
+      "symbol": "generateCanvaAsset call",
+      "line_start": 48,
+      "line_end": 59,
+      "claim": "Student ID generation prompt contains student name, number, grade and school.",
+      "related": [
+        "canva-generation"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-007",
+      "path": "worker/handlers/index.ts",
+      "symbol": "dispatchJob",
+      "line_start": 23,
+      "line_end": 65,
+      "claim": "Dispatcher handles 15 job variants including probes; lesson audio and autonomous workflow run are known but unimplemented.",
+      "related": [
+        "sqs-worker"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-008",
+      "path": "worker/index.ts",
+      "symbol": "handleMessage / retry",
+      "line_start": 94,
+      "line_end": 119,
+      "claim": "Worker recognizes noop and unknown statuses as failures rather than successful completion.",
+      "related": [
+        "sqs-worker"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-009",
+      "path": "lib/autonomous/actions/actionRegistry.ts",
+      "symbol": "actionRegistry",
+      "line_start": 3,
+      "line_end": 79,
+      "claim": "Seven governed action categories have forbidden effects, draft or aggregate restrictions.",
+      "related": [
+        "autonomous-governance"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-010",
+      "path": "lib/autonomous/actions/actionExecutor.ts",
+      "symbol": "executeApprovedAction / executeLowRiskPreparedAction",
+      "line_start": 150,
+      "line_end": 278,
+      "claim": "Action execution flags, recommendation-only mode and low-risk health/quota/breaker gates; primary effects intervention creation and curriculum flags.",
+      "related": [
+        "autonomous-governance"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-011",
+      "path": "lib/autonomous/runtime/workflowRecoveryService.ts",
+      "symbol": "recoverStuckWorkflows",
+      "line_start": 22,
+      "line_end": 72,
+      "claim": "Recovery default disabled, per-workflow max attempts and exponential backoff.",
+      "related": [
+        "autonomous-governance"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-012",
+      "path": "lib/ai/rag/ragReranker.ts",
+      "symbol": "rerankChunks",
+      "line_start": 35,
+      "line_end": 81,
+      "claim": "Cohere reranking uses key presence and returns fusion order on missing key or failure.",
+      "related": [
+        "rag-reranking"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-013",
+      "path": "lib/ai/rag/ragIngestionService.ts",
+      "symbol": "writeChunkEmbeddings / replaceChunksForSource",
+      "line_start": 43,
+      "line_end": 105,
+      "claim": "Embedding requests and replacement transaction are separate; failed embedding can leave chunks awaiting embeddings.",
+      "related": [
+        "rag-indexing"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-014",
+      "path": "lib/moe/alignment-engine.ts",
+      "symbol": "alignContentToMOE",
+      "line_start": 51,
+      "line_end": 213,
+      "claim": "Keyword matching precedes bounded LLM standard-code selection and governed alignment persistence.",
+      "related": [
+        "moe-alignment"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-015",
+      "path": "lib/ai/units/unitAssembler.ts",
+      "symbol": "assembleUnit / generation",
+      "line_start": 104,
+      "line_end": 185,
+      "claim": "Assembler reads standards/lessons and creates unit before completing content; has compensating delete on failure later.",
+      "related": [
+        "unit-assembler"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-016",
+      "path": "lib/ai/textbook/textbookCompiler.ts",
+      "symbol": "compileTextbook",
+      "line_start": 328,
+      "line_end": 400,
+      "claim": "Compiler assembles existing curriculum and supports format selection; not a distinct LLM agent.",
+      "related": [
+        "textbook-compiler"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-017",
+      "path": "lib/media/generateIllustration.ts",
+      "symbol": "generateLessonIllustration",
+      "line_start": 30,
+      "line_end": 75,
+      "claim": "Illustration orchestration has two attempts, cumulative cost and structural plus optional vision checks.",
+      "related": [
+        "lesson-illustration"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-018",
+      "path": "lib/media/imageQA.ts",
+      "symbol": "isVisionQAEnabled",
+      "line_start": 20,
+      "line_end": 22,
+      "claim": "Vision QA is explicit MEDIA_VISION_QA=1 plus OpenAI key.",
+      "related": [
+        "lesson-illustration"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-019",
+      "path": "lib/audio/lessonAudioProvider.ts",
+      "symbol": "createOpenAiLessonAudioProvider",
+      "line_start": 8,
+      "line_end": 20,
+      "claim": "OpenAI speech generation uses tts-1.",
+      "related": [
+        "lesson-narration"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-020",
+      "path": "lib/elevenlabs.ts",
+      "symbol": "generateSpeech",
+      "line_start": 10,
+      "line_end": 32,
+      "claim": "Separate ElevenLabs speech helper uses provider-specific credentials/model.",
+      "related": [
+        "lesson-narration"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-021",
+      "path": "lib/evals/runner.ts",
+      "symbol": "runEvalCases",
+      "line_start": 287,
+      "line_end": 365,
+      "claim": "Harness computes retrieval and answer metrics, not causal educational effect.",
+      "related": [
+        "rag-evaluation"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-022",
+      "path": "i18n.ts",
+      "symbol": "SUPPORTED",
+      "line_start": 4,
+      "line_end": 14,
+      "claim": "UI locale selection supports en/kpe/bss; does not list Koloqua.",
+      "related": [
+        "localization"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-023",
+      "path": "app/api/rag/query/route.ts",
+      "symbol": "POST",
+      "line_start": 1,
+      "line_end": 190,
+      "claim": "Role-scoped grounded assistant has authenticated school context and AI rate limit.",
+      "related": [
+        "grounded-role-assistant"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-024",
+      "path": "lib/ai/rag/assistantAccess.ts",
+      "symbol": "ROLE_CONFIG / resolveAllowedMode",
+      "line_start": 4,
+      "line_end": 79,
+      "claim": "Teacher/admin can use policy/mixed; student and guardian restricted to classroom.",
+      "related": [
+        "grounded-role-assistant"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-025",
+      "path": "lib/agents/translation.ts",
+      "symbol": "detectLanguage",
+      "line_start": 42,
+      "line_end": 65,
+      "claim": "Language detection invokes a model; cached and defaults English on failure.",
+      "related": [
+        "agent-safety-language"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-026",
+      "path": "docs/curriculum/modernization/LIBRARY_QUALITY_BASELINE_V1.md",
+      "symbol": "Review outcomes and methodology",
+      "line_start": 3,
+      "line_end": 22,
+      "claim": "Frozen 2026-10-16 catalog of 1105 had zero mechanical passes, 701 revise, 51 rebuild and 353 authority holds; all judgment areas await independent review and no lesson has outcome evidence.",
+      "related": [
+        "curriculum-quality"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-027",
+      "path": "docs/ops/CRONS_PAUSED.md",
+      "symbol": "Paused Cron Jobs",
+      "line_start": 1,
+      "line_end": 5,
+      "claim": "Documentation says high-frequency crons removed, while current vercel.json declares them; current hosted plan unknown.",
+      "related": [
+        "scheduling"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-028",
+      "path": "docs/ops/LOAD_TEST_RESULTS.md",
+      "symbol": "NR-4 / NR-5 conditional pass",
+      "line_start": 1,
+      "line_end": 32,
+      "claim": "Historical load report records browse p95 7162ms above 1500ms threshold; not current device or national readiness evidence.",
+      "related": [
+        "performance"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-029",
+      "path": "docs/ops/LEARNER_SYNC_SUPPORT_DIAGNOSTICS_V1.md",
+      "symbol": "Support view and privacy contract",
+      "line_start": 9,
+      "line_end": 56,
+      "claim": "Current support design includes bounded privacy-minimized per-learner sync telemetry; older audit missing-surface finding is superseded in source.",
+      "related": [
+        "offline-support"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-030",
+      "path": "app/api/admin/enrollment/route.ts",
+      "symbol": "GET / POST / PATCH",
+      "line_start": 19,
+      "line_end": 117,
+      "claim": "Enrollment entry points resolve administrative school scope and delegate academic enrollment services.",
+      "related": [
+        "school-enrollment"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-031",
+      "path": "app/api/admin/onboarding/import-teachers/route.ts",
+      "symbol": "POST",
+      "line_start": 37,
+      "line_end": 96,
+      "claim": "Teacher import requires school ADMIN and writes users within caller school.",
+      "related": [
+        "staff-management"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-032",
+      "path": "app/api/admin/guardian-link/route.ts",
+      "symbol": "GET / POST",
+      "line_start": 27,
+      "line_end": 116,
+      "claim": "Guardian linkage reads/writes use student school checks and reject foreign school guardian linkage in reviewed branch.",
+      "related": [
+        "guardian-access"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-033",
+      "path": "app/api/admin/curriculum/schedule/route.ts",
+      "symbol": "POST",
+      "line_start": 17,
+      "line_end": 108,
+      "claim": "Teacher/admin schedule path checks class school and creates ScheduledWork.",
+      "related": [
+        "scheduling"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-034",
+      "path": "lib/content-factory/v2/manager.ts",
+      "symbol": "ROLE_DEPENDENCIES / runFactory",
+      "line_start": 6,
+      "line_end": 32,
+      "claim": "Eight-role dependency graph is an injected deterministic executor DAG, bounded attempts 1-5; no autonomous approval writers.",
+      "related": [
+        "content-factory-v2"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-035",
+      "path": "lib/ai/curriculum-factory.ts",
+      "symbol": "generateCurriculumPayload",
+      "line_start": 611,
+      "line_end": 640,
+      "claim": "Older curriculum payload generator is separate from V2 manager and remains exported.",
+      "related": [
+        "legacy-curriculum-generation"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-036",
+      "path": "lib/curriculum/generateLessonV2.ts",
+      "symbol": "generateLessonV2",
+      "line_start": 510,
+      "line_end": 540,
+      "claim": "Two-pass lesson generation uses routed provider with curriculum aiUsage context.",
+      "related": [
+        "legacy-curriculum-generation"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-037",
+      "path": "lib/exams/examGenerator.ts",
+      "symbol": "generateExamWithUsage / generateExam",
+      "line_start": 205,
+      "line_end": 240,
+      "claim": "Exam draft generators expose usage-aware and compatibility APIs.",
+      "related": [
+        "exam-generation"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-038",
+      "path": "lib/exercises/generateCodeExercise.ts",
+      "symbol": "generateCodeExercise",
+      "line_start": 76,
+      "line_end": 140,
+      "claim": "Coding exercise generator calls shared router with usage context.",
+      "related": [
+        "exercise-generation"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-039",
+      "path": "lib/exercises/generateAILiteracy.ts",
+      "symbol": "generateAILiteracy",
+      "line_start": 150,
+      "line_end": 180,
+      "claim": "AI literacy exercise generation calls shared router with usage context.",
+      "related": [
+        "exercise-generation"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-040",
+      "path": "lib/grading/gradeEssay.ts",
+      "symbol": "gradeEssay",
+      "line_start": 110,
+      "line_end": 175,
+      "claim": "Essay grading calls shared router with usage context.",
+      "related": [
+        "specialist-response-grading"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-041",
+      "path": "lib/grading/gradeAILiteracy.ts",
+      "symbol": "gradeAILiteracy",
+      "line_start": 86,
+      "line_end": 150,
+      "claim": "AI literacy grading is a separate rubric mode with usage context.",
+      "related": [
+        "specialist-response-grading"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-042",
+      "path": "lib/adaptive/generateScaffold.ts",
+      "symbol": "generateScaffold",
+      "line_start": 89,
+      "line_end": 140,
+      "claim": "Scaffold generation uses routed completion with usage context; standalone content generation, not autonomous mastery.",
+      "related": [
+        "scaffold-generation"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-043",
+      "path": "lib/adaptive/practiceGenerator.ts",
+      "symbol": "generateTargetedPracticeWithUsage",
+      "line_start": 84,
+      "line_end": 122,
+      "claim": "Adaptive practice is a routed content generator with caller usage context, not an independent learner-state authority.",
+      "related": [
+        "adaptive-practice-generator"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-044",
+      "path": "lib/workflows/ai/assignmentTutor.ts",
+      "symbol": "getAssignmentTutorGuidance",
+      "line_start": 139,
+      "line_end": 170,
+      "claim": "Assignment tutor generates scoped guidance through shared provider; usageContext supplied by caller.",
+      "related": [
+        "assignment-tutor"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-045",
+      "path": "lib/ai/homework-grader.ts",
+      "symbol": "persisted HomeworkGrader agent task",
+      "line_start": 58,
+      "line_end": 104,
+      "claim": "Legacy HomeworkGrader uses persistent Agent/AgentTask records distinct from custom registered agent runtime.",
+      "related": [
+        "homework-grader-legacy"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-046",
+      "path": "lib/ai/teacher/teacherAssist.ts",
+      "symbol": "getTeacherAssistResponse",
+      "line_start": 164,
+      "line_end": 190,
+      "claim": "Teacher assistant uses shared router with caller usageContext.",
+      "related": [
+        "teacher-ai-assist"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-047",
+      "path": "lib/ai/teacher/classInsights.ts",
+      "symbol": "getTeacherClassInsightsResponse",
+      "line_start": 97,
+      "line_end": 120,
+      "claim": "Class insights use shared router and caller usageContext.",
+      "related": [
+        "teacher-class-insights"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-048",
+      "path": "lib/teacher/gradingAssist.ts",
+      "symbol": "getGradingAssistance",
+      "line_start": 13,
+      "line_end": 55,
+      "claim": "Simple teacher grading assist uses shared router with explicit usage context.",
+      "related": [
+        "teacher-grading-assists"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-049",
+      "path": "lib/workflows/ai/gradingAssist.ts",
+      "symbol": "getGradingAssistFeedback",
+      "line_start": 214,
+      "line_end": 240,
+      "claim": "Separate grading workflow mode uses common router with optional caller usageContext.",
+      "related": [
+        "teacher-grading-assists"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-050",
+      "path": "lib/records/systemOfRecord.ts",
+      "symbol": "enrollment schema grade bounds",
+      "line_start": 31,
+      "line_end": 52,
+      "claim": "Enrollment and update contracts require integer grades1-12; Kindergarten0 is outside these contracts.",
+      "related": [
+        "kindergarten-admission"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    },
+    {
+      "id": "ROOT-051",
+      "path": "lib/interactive-labs/v2/registry.ts",
+      "symbol": "interactiveLabDefinitions",
+      "line_start": 1,
+      "line_end": 9,
+      "claim": "Seven interactive lab definitions are registered; definition registration alone is not certification, hosted availability or educational effect.",
+      "related": [
+        "interactive-labs"
+      ],
+      "category": "implementation",
+      "confidence": "high",
+      "verification": "static source inspected; execution unverified"
+    }
+  ],
+  "findings": [
+    {
+      "id": "AT-R-COST",
+      "priority": "P1",
+      "severity": "High",
+      "likelihood": "Medium",
+      "impact": "Unmetered provider spend and incomplete feature cost accounting",
+      "claim": "Shared budget guard is optional; selected advisory callers omit aiUsage; direct Canva SDK is outside it.",
+      "evidence": [
+        "ROOT-002",
+        "ROOT-003",
+        "ROOT-004",
+        "ROOT-005"
+      ],
+      "recommendation": "Require explicit usage context or a documented nonbillable adapter; bring direct providers into a common ledger before expanding use."
+    },
+    {
+      "id": "AT-R-WORKER",
+      "priority": "P1",
+      "severity": "High",
+      "likelihood": "Medium if enabled",
+      "impact": "Recovery/audio jobs can repeatedly fail and end in DLQ",
+      "claim": "SQS dispatcher does not implement AUTONOMOUS_WORKFLOW_RUN or GENERATE_LESSON_AUDIO.",
+      "evidence": [
+        "ROOT-007",
+        "ROOT-008",
+        "ROOT-011"
+      ],
+      "recommendation": "Verify selected execution transport; keep unsupported queue producers gated until job handler or supported cron transport is demonstrated."
+    },
+    {
+      "id": "AT-R-VENDOR",
+      "priority": "P1",
+      "severity": "High",
+      "likelihood": "Unknown",
+      "impact": "Student identifiers cross provider boundary without audited processor evidence",
+      "claim": "Canva student-ID workflow sends identifiers to Anthropic/Canva; source inspection cannot verify organizational vendor authorization or retention.",
+      "evidence": [
+        "ROOT-005",
+        "ROOT-006"
+      ],
+      "recommendation": "Verify approved processors, minimization, tool permissions and retention for this workflow before pilot use. This is not evidence of an external breach."
+    }
+  ],
+  "inspected_files": [
+    "app/api/admin/curriculum/schedule/route.ts",
+    "app/api/admin/enrollment/route.ts",
+    "app/api/admin/guardian-link/route.ts",
+    "app/api/admin/onboarding/import-teachers/route.ts",
+    "app/api/rag/query/route.ts",
+    "docs/curriculum/modernization/LIBRARY_QUALITY_BASELINE_V1.md",
+    "docs/ops/CRONS_PAUSED.md",
+    "docs/ops/LEARNER_SYNC_SUPPORT_DIAGNOSTICS_V1.md",
+    "docs/ops/LOAD_TEST_RESULTS.md",
+    "i18n.ts",
+    "lib/adaptive/generateScaffold.ts",
+    "lib/adaptive/practiceGenerator.ts",
+    "lib/agents/translation.ts",
+    "lib/ai/curriculum-factory.ts",
+    "lib/ai/curriculum/curriculumOptimizer.ts",
+    "lib/ai/homework-grader.ts",
+    "lib/ai/interventions/recommendationEngine.ts",
+    "lib/ai/rag/assistantAccess.ts",
+    "lib/ai/rag/ragIngestionService.ts",
+    "lib/ai/rag/ragReranker.ts",
+    "lib/ai/routedCompletion.ts",
+    "lib/ai/router.ts",
+    "lib/ai/teacher/classInsights.ts",
+    "lib/ai/teacher/teacherAssist.ts",
+    "lib/ai/textbook/textbookCompiler.ts",
+    "lib/ai/units/unitAssembler.ts",
+    "lib/audio/lessonAudioProvider.ts",
+    "lib/autonomous/actions/actionExecutor.ts",
+    "lib/autonomous/actions/actionRegistry.ts",
+    "lib/autonomous/runtime/workflowRecoveryService.ts",
+    "lib/canva/canvaMcp.ts",
+    "lib/canva/templates/studentIdCard.ts",
+    "lib/content-factory/v2/manager.ts",
+    "lib/curriculum/generateLessonV2.ts",
+    "lib/elevenlabs.ts",
+    "lib/evals/runner.ts",
+    "lib/exams/examGenerator.ts",
+    "lib/exercises/generateAILiteracy.ts",
+    "lib/exercises/generateCodeExercise.ts",
+    "lib/grading/gradeAILiteracy.ts",
+    "lib/grading/gradeEssay.ts",
+    "lib/interactive-labs/v2/registry.ts",
+    "lib/media/generateIllustration.ts",
+    "lib/media/imageQA.ts",
+    "lib/moe/alignment-engine.ts",
+    "lib/records/systemOfRecord.ts",
+    "lib/teacher/gradingAssist.ts",
+    "lib/workflows/ai/assignmentTutor.ts",
+    "lib/workflows/ai/gradingAssist.ts",
+    "worker/handlers/index.ts",
+    "worker/index.ts"
+  ]
+}

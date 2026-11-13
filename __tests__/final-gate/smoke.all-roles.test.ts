@@ -87,7 +87,10 @@ async function dbReturn(model: string, method: string, args: any) {
   if (model === "studentAdaptiveAttempt" && method === "findMany") return [{ score: state.gapScore, completedAt: new Date() }];
   if (model === "studentAdaptiveAttempt" && method === "findFirst") return null;
   if (model === "strandCatalog" && method === "findFirst") return { subject: "MATH", strandKey: "MATH.NUM.1" };
-  if (model === "exam" && method === "findMany") return [{ id: "exam-1", title: "Midterm Mathematics", subject: "MATH", grade: 7, status: "PUBLISHED", timeLimit: 45, passingScore: 0.7, moeStandards: ["M1"], questions: QUESTIONS, attempts: [{ passed: true, score: 0.8, integrityFlags: [] }], _count: { questions: QUESTIONS.length }, createdAt: new Date() }];
+  // AT-GRADE-01-2D: the exam is bound to the teacher's class (unclassed exams are ADMIN-only), and the class lookup the
+  // class-authority service makes answers for that class only.
+  if (model === "class" && method === "findUnique" && args?.where?.id === "class-a-1") return { id: "class-a-1", schoolId: "school-a", teacherId: "teacher-user-1" };
+  if (model === "exam" && method === "findMany") return [{ id: "exam-1", classId: "class-a-1", title: "Midterm Mathematics", subject: "MATH", grade: 7, status: "PUBLISHED", timeLimit: 45, passingScore: 0.7, moeStandards: ["M1"], questions: QUESTIONS, attempts: [{ passed: true, score: 0.8, integrityFlags: [] }], _count: { questions: QUESTIONS.length }, createdAt: new Date() }];
   if (model === "exam" && method === "findFirst") return { id: "exam-1", title: "Midterm Mathematics", subject: "MATH", grade: 7, status: "PUBLISHED", schoolId: "school-a", timeLimit: 45, passingScore: 0.7, questions: QUESTIONS, _count: { questions: QUESTIONS.length } };
   if (model === "academicYear" && method === "findFirst") return { id: "academic-year-a" };
   if (model === "exam" && method === "create") return { id: "exam-created-1" };

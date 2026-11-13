@@ -1,0 +1,5842 @@
+{
+  "program": "stem-excellence-v1",
+  "generatedBy": "scripts/cos-stem/build-program.cjs",
+  "inventoryCapturedAt": "2026-10-16T18:44:42.884Z",
+  "batches": [
+    "4.0.0-draft.6 (SEALED)",
+    "4.0.0-schoolday.1-draft.2 (COMMITTED_REVIEW_DRAFT, HELD)"
+  ],
+  "weekly": {
+    "K-2": {
+      "ENGLISH": 8,
+      "MATH": 7,
+      "SCIENCE": 4,
+      "SOCIAL_STUDIES": 3,
+      "COMPUTING": 2,
+      "ENGINEERING": 2,
+      "ARTS_PE": 4
+    },
+    "3-5": {
+      "ENGLISH": 7,
+      "MATH": 7,
+      "SCIENCE": 5,
+      "SOCIAL_STUDIES": 3,
+      "COMPUTING": 3,
+      "ENGINEERING": 2,
+      "ARTS_PE": 3
+    },
+    "6-9": {
+      "ENGLISH": 6,
+      "MATH": 6,
+      "SCIENCE": 6,
+      "SOCIAL_STUDIES": 3,
+      "CIVICS": 2,
+      "COMPUTING": 3,
+      "ENGINEERING": 2,
+      "ARTS_PE": 2
+    },
+    "10-12": {
+      "ENGLISH": 5,
+      "MATH": 6,
+      "BIOLOGY": 3,
+      "CHEMISTRY": 3,
+      "PHYSICS": 3,
+      "COMPUTING": 3,
+      "ENGINEERING": 2,
+      "SOCIAL_STUDIES": 2,
+      "CIVICS": 1,
+      "ARTS_PE": 2
+    }
+  },
+  "courses": [
+    {
+      "courseId": "stem1-k-english",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 8,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Listening and speaking",
+          "performanceTask": "listen to a story and answer who, what, where"
+        },
+        {
+          "unit": 2,
+          "title": "Letter sounds",
+          "performanceTask": "match ten letters to their sounds with pictures"
+        },
+        {
+          "unit": 3,
+          "title": "Rhymes and syllables",
+          "performanceTask": "clap syllables and find rhyming words"
+        },
+        {
+          "unit": 4,
+          "title": "Print concepts",
+          "performanceTask": "show the front, the title and where to start reading"
+        },
+        {
+          "unit": 5,
+          "title": "Retelling a story",
+          "performanceTask": "retell a story in order with picture cards"
+        },
+        {
+          "unit": 6,
+          "title": "Early writing",
+          "performanceTask": "write own name and label a drawing with sounds"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SENTENCE_BUILDER",
+          "SEQUENCE",
+          "SORT"
+        ],
+        "proposed": [
+          "PHONICS_BLENDER",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-k-math",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 7,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Counting to 20 with objects",
+          "performanceTask": "count a pile of seeds two ways and show the total is the same"
+        },
+        {
+          "unit": 2,
+          "title": "More, fewer, the same",
+          "performanceTask": "match two groups one-to-one and say which has more"
+        },
+        {
+          "unit": 3,
+          "title": "Shapes around us",
+          "performanceTask": "find circles, triangles and rectangles in the classroom and sort them"
+        },
+        {
+          "unit": 4,
+          "title": "Patterns with beads and seeds",
+          "performanceTask": "copy, extend and create an AB and ABB pattern"
+        },
+        {
+          "unit": 5,
+          "title": "Comparing length and weight",
+          "performanceTask": "order three sticks by length and two bags by weight"
+        },
+        {
+          "unit": 6,
+          "title": "Joining and separating within 10",
+          "performanceTask": "act out a market story and record it with counters"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "SHAPE_MODEL",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "TEN_FRAME_COUNTERS",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-k-science",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "strand": null,
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 4,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Using our senses to observe",
+          "performanceTask": "describe a mystery object using touch, sight, sound and smell (no tasting)"
+        },
+        {
+          "unit": 2,
+          "title": "Living and non-living things",
+          "performanceTask": "sort pictures and objects and explain one reason"
+        },
+        {
+          "unit": 3,
+          "title": "Plants need water and light",
+          "performanceTask": "plant beans in two conditions and draw what happens each week"
+        },
+        {
+          "unit": 4,
+          "title": "Weather today",
+          "performanceTask": "record sun, rain or wind each day for two weeks on a picture chart"
+        },
+        {
+          "unit": 5,
+          "title": "Sinking and floating",
+          "performanceTask": "predict, test and sort ten classroom objects"
+        },
+        {
+          "unit": 6,
+          "title": "Pushes and pulls",
+          "performanceTask": "make a toy car move faster or slower and say what changed"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "PROCESS_CYCLE",
+          "CHECK"
+        ],
+        "proposed": [
+          "OBSERVATION_LOG",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-k-social-studies",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Me and my family",
+          "performanceTask": "draw and describe the people in my family"
+        },
+        {
+          "unit": 2,
+          "title": "My school",
+          "performanceTask": "draw a map of the classroom and name places in it"
+        },
+        {
+          "unit": 3,
+          "title": "Community helpers",
+          "performanceTask": "match helpers to the jobs they do"
+        },
+        {
+          "unit": 4,
+          "title": "Rules keep us safe",
+          "performanceTask": "explain one class rule and why we have it"
+        },
+        {
+          "unit": 5,
+          "title": "Where things are",
+          "performanceTask": "use near, far, left and right to describe locations"
+        },
+        {
+          "unit": 6,
+          "title": "Celebrations in Liberia",
+          "performanceTask": "describe a national or family celebration"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "MAP_EXPLORER"
+        ],
+        "proposed": [
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-k-computing",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Following step-by-step instructions",
+          "performanceTask": "follow and give three-step instructions to a partner (unplugged)"
+        },
+        {
+          "unit": 2,
+          "title": "Sequences in daily routines",
+          "performanceTask": "order picture cards for getting ready for school"
+        },
+        {
+          "unit": 3,
+          "title": "Sorting by attributes",
+          "performanceTask": "sort objects by colour, size or shape and explain the rule"
+        },
+        {
+          "unit": 4,
+          "title": "Repeating patterns as loops",
+          "performanceTask": "clap and draw a repeating pattern and say what repeats"
+        },
+        {
+          "unit": 5,
+          "title": "Moving on a grid",
+          "performanceTask": "guide a friend across a floor grid with arrow cards"
+        },
+        {
+          "unit": 6,
+          "title": "Safe and kind with devices",
+          "performanceTask": "show how to hold, share and put away a tablet"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-k-engineering",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Build a tall tower",
+          "performanceTask": "build the tallest tower from local materials and explain what made it stand"
+        },
+        {
+          "unit": 2,
+          "title": "A paper bridge",
+          "performanceTask": "make a paper bridge hold a cup and fold it to make it stronger"
+        },
+        {
+          "unit": 3,
+          "title": "A shelter for a toy animal",
+          "performanceTask": "build a shelter that stays dry when sprinkled"
+        },
+        {
+          "unit": 4,
+          "title": "Ramps and rolling",
+          "performanceTask": "change a ramp so a ball rolls further"
+        },
+        {
+          "unit": 5,
+          "title": "Strong shapes",
+          "performanceTask": "test whether triangles or squares of straws are stronger"
+        },
+        {
+          "unit": 6,
+          "title": "Share and improve",
+          "performanceTask": "show a design, hear an idea and make one change"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SEQUENCE",
+          "CHECK"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "OBSERVATION_LOG"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-k-arts-pe",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 4,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g1-english",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 8,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Short vowels and phonics",
+          "performanceTask": "blend and read CVC words"
+        },
+        {
+          "unit": 2,
+          "title": "High-frequency words",
+          "performanceTask": "read and use 50 sight words in sentences"
+        },
+        {
+          "unit": 3,
+          "title": "Reading simple sentences",
+          "performanceTask": "read a decodable text with accuracy"
+        },
+        {
+          "unit": 4,
+          "title": "Retelling and main events",
+          "performanceTask": "retell beginning, middle and end"
+        },
+        {
+          "unit": 5,
+          "title": "Writing sentences",
+          "performanceTask": "write a complete sentence with a capital and full stop"
+        },
+        {
+          "unit": 6,
+          "title": "Speaking to an audience",
+          "performanceTask": "tell the class about a family event"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SENTENCE_BUILDER",
+          "SEQUENCE",
+          "SORT"
+        ],
+        "proposed": [
+          "PHONICS_BLENDER",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g1-math",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 7,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Numbers to 100 in tens and ones",
+          "performanceTask": "bundle sticks into tens and write the number"
+        },
+        {
+          "unit": 2,
+          "title": "Addition and subtraction within 20",
+          "performanceTask": "solve a story problem with make-ten and explain the strategy"
+        },
+        {
+          "unit": 3,
+          "title": "Place value tens and ones",
+          "performanceTask": "show 47 three ways and say what each digit is worth"
+        },
+        {
+          "unit": 4,
+          "title": "Measuring length with units",
+          "performanceTask": "measure a desk with hand spans and with cubes, explain why counts differ"
+        },
+        {
+          "unit": 5,
+          "title": "Time and Liberian money",
+          "performanceTask": "pay for an item with coins and count the change"
+        },
+        {
+          "unit": 6,
+          "title": "Halves and quarters of shapes",
+          "performanceTask": "fold paper into equal parts and explain what equal means"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "SHAPE_MODEL",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "TEN_FRAME_COUNTERS",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g1-science",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "strand": null,
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 4,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Parts of a plant",
+          "performanceTask": "label root, stem, leaf and flower on a real plant and say each job"
+        },
+        {
+          "unit": 2,
+          "title": "Animals and their homes",
+          "performanceTask": "match Liberian animals to habitats and explain the fit"
+        },
+        {
+          "unit": 3,
+          "title": "Day, night and the sun",
+          "performanceTask": "track a shadow at morning, noon and afternoon"
+        },
+        {
+          "unit": 4,
+          "title": "Materials and their properties",
+          "performanceTask": "test which material keeps rain off a toy best"
+        },
+        {
+          "unit": 5,
+          "title": "Water around us",
+          "performanceTask": "find where water collects at school and why"
+        },
+        {
+          "unit": 6,
+          "title": "Keeping my body healthy",
+          "performanceTask": "plan a healthy plate from local foods"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "PROCESS_CYCLE",
+          "CHECK"
+        ],
+        "proposed": [
+          "OBSERVATION_LOG",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g1-social-studies",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "My community",
+          "performanceTask": "identify places and services in my community"
+        },
+        {
+          "unit": 2,
+          "title": "Simple maps",
+          "performanceTask": "make a map of the school with a key"
+        },
+        {
+          "unit": 3,
+          "title": "Needs and wants",
+          "performanceTask": "sort needs and wants"
+        },
+        {
+          "unit": 4,
+          "title": "Rules, rights and duties",
+          "performanceTask": "explain a right and a matching duty"
+        },
+        {
+          "unit": 5,
+          "title": "Long ago and today",
+          "performanceTask": "compare daily life then and now"
+        },
+        {
+          "unit": 6,
+          "title": "Our flag and symbols",
+          "performanceTask": "explain the parts of the Liberian flag"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "MAP_EXPLORER"
+        ],
+        "proposed": [
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g1-computing",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Algorithms as recipes",
+          "performanceTask": "write picture steps to make a cup of lemonade"
+        },
+        {
+          "unit": 2,
+          "title": "Debugging wrong instructions",
+          "performanceTask": "find and fix the wrong step in an instruction card"
+        },
+        {
+          "unit": 3,
+          "title": "Grid robot paths",
+          "performanceTask": "plan a path for a robot to reach a target on a grid"
+        },
+        {
+          "unit": 4,
+          "title": "Loops in patterns",
+          "performanceTask": "replace repeated arrows with one repeat card"
+        },
+        {
+          "unit": 5,
+          "title": "Data: sorting and counting",
+          "performanceTask": "count and tally class pets and make a pictograph"
+        },
+        {
+          "unit": 6,
+          "title": "Using a tablet safely",
+          "performanceTask": "open, use and close an app independently and safely"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g1-engineering",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "A bag to carry books",
+          "performanceTask": "design and test a carrier that holds three books"
+        },
+        {
+          "unit": 2,
+          "title": "A sun shade",
+          "performanceTask": "build a shade that keeps a toy cool and test it"
+        },
+        {
+          "unit": 3,
+          "title": "Ramp and ball",
+          "performanceTask": "design a ramp for a ball to stop on a target"
+        },
+        {
+          "unit": 4,
+          "title": "A boat that floats",
+          "performanceTask": "build a boat that carries the most pebbles"
+        },
+        {
+          "unit": 5,
+          "title": "A musical instrument",
+          "performanceTask": "make an instrument that plays high and low sounds"
+        },
+        {
+          "unit": 6,
+          "title": "Improve a design",
+          "performanceTask": "test, find one problem and redesign"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SEQUENCE",
+          "CHECK"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "OBSERVATION_LOG"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g1-arts-pe",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 4,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g2-english",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 8,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Long vowels and blends",
+          "performanceTask": "read and spell words with blends and long vowels"
+        },
+        {
+          "unit": 2,
+          "title": "Reading fluency",
+          "performanceTask": "read a passage aloud with expression"
+        },
+        {
+          "unit": 3,
+          "title": "Comprehension",
+          "performanceTask": "answer literal and simple inference questions"
+        },
+        {
+          "unit": 4,
+          "title": "Narrative writing",
+          "performanceTask": "write a three-sentence story with a beginning, middle and end"
+        },
+        {
+          "unit": 5,
+          "title": "Nouns and verbs",
+          "performanceTask": "sort and use nouns and verbs"
+        },
+        {
+          "unit": 6,
+          "title": "Oral presentation",
+          "performanceTask": "present a short report with a picture"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SENTENCE_BUILDER",
+          "SEQUENCE",
+          "SORT"
+        ],
+        "proposed": [
+          "PHONICS_BLENDER",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g2-math",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 7,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Numbers to 1,000",
+          "performanceTask": "build 3-digit numbers with base-ten blocks and compare them"
+        },
+        {
+          "unit": 2,
+          "title": "Add and subtract within 100 with regrouping",
+          "performanceTask": "solve a two-step market problem and check by the inverse"
+        },
+        {
+          "unit": 3,
+          "title": "Equal groups: the start of multiplication",
+          "performanceTask": "arrange 12 mangoes in equal rows in every way possible"
+        },
+        {
+          "unit": 4,
+          "title": "Measuring in centimetres, metres and kilograms",
+          "performanceTask": "estimate, then measure, and record the difference"
+        },
+        {
+          "unit": 5,
+          "title": "Picture and bar graphs",
+          "performanceTask": "survey the class and draw a bar graph that answers a question"
+        },
+        {
+          "unit": 6,
+          "title": "Fractions of shapes and sets",
+          "performanceTask": "shade 1/2, 1/3, 1/4 of shapes and of a set of bottle caps"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "SHAPE_MODEL",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "TEN_FRAME_COUNTERS",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g2-science",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "strand": null,
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 4,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Life cycles",
+          "performanceTask": "sequence the life cycle of a frog and a butterfly from observations"
+        },
+        {
+          "unit": 2,
+          "title": "Soil types",
+          "performanceTask": "compare how fast water drains through sand, clay and loam"
+        },
+        {
+          "unit": 3,
+          "title": "States of water",
+          "performanceTask": "observe ice melting and water drying and describe the change"
+        },
+        {
+          "unit": 4,
+          "title": "Light and shadows",
+          "performanceTask": "make a shadow longer and shorter and explain why"
+        },
+        {
+          "unit": 5,
+          "title": "Sound and vibration",
+          "performanceTask": "make a drum and show that sound comes from vibration"
+        },
+        {
+          "unit": 6,
+          "title": "Habitats of Liberia",
+          "performanceTask": "compare rainforest and mangrove habitats"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "PROCESS_CYCLE",
+          "CHECK"
+        ],
+        "proposed": [
+          "OBSERVATION_LOG",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g2-social-studies",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Neighbourhoods and towns",
+          "performanceTask": "compare a town and a village"
+        },
+        {
+          "unit": 2,
+          "title": "Maps and directions",
+          "performanceTask": "use cardinal directions on a map"
+        },
+        {
+          "unit": 3,
+          "title": "Work and trade",
+          "performanceTask": "explain how goods reach the market"
+        },
+        {
+          "unit": 4,
+          "title": "Leaders in my community",
+          "performanceTask": "describe what a town chief does"
+        },
+        {
+          "unit": 5,
+          "title": "Liberian culture",
+          "performanceTask": "describe a tradition from a Liberian ethnic group"
+        },
+        {
+          "unit": 6,
+          "title": "Caring for our environment",
+          "performanceTask": "plan a clean-up and explain why"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "MAP_EXPLORER"
+        ],
+        "proposed": [
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g2-computing",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Sequences and loops with arrows",
+          "performanceTask": "program a grid robot with a loop to reach a goal"
+        },
+        {
+          "unit": 2,
+          "title": "Events and simple conditions",
+          "performanceTask": "act out 'if it rains, then...' rules"
+        },
+        {
+          "unit": 3,
+          "title": "Pictographs and data",
+          "performanceTask": "collect data and answer a question from the pictograph"
+        },
+        {
+          "unit": 4,
+          "title": "Debugging",
+          "performanceTask": "find the bug in a robot program and test the fix"
+        },
+        {
+          "unit": 5,
+          "title": "Passwords and privacy",
+          "performanceTask": "explain why passwords are private"
+        },
+        {
+          "unit": 6,
+          "title": "Stories as sequences",
+          "performanceTask": "sequence a short story in a block-based storyboard"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g2-engineering",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Wind spinner",
+          "performanceTask": "design a spinner that turns in a light breeze"
+        },
+        {
+          "unit": 2,
+          "title": "Simple water filter",
+          "performanceTask": "compare cloth, sand and gravel layers (adult-led, water not for drinking)"
+        },
+        {
+          "unit": 3,
+          "title": "A strong bridge",
+          "performanceTask": "build a bridge across a 20 cm gap that holds the most weight"
+        },
+        {
+          "unit": 4,
+          "title": "Seed-planting tool",
+          "performanceTask": "design a tool that plants seeds at equal spacing"
+        },
+        {
+          "unit": 5,
+          "title": "Marble run",
+          "performanceTask": "build a run that takes as long as possible"
+        },
+        {
+          "unit": 6,
+          "title": "Design journal",
+          "performanceTask": "record ideas, tests and changes in pictures and words"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SEQUENCE",
+          "CHECK"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "OBSERVATION_LOG"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g2-arts-pe",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 4,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g3-english",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 7,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Fluency and expression",
+          "performanceTask": "read a passage at grade-level pace with expression"
+        },
+        {
+          "unit": 2,
+          "title": "Main idea and details",
+          "performanceTask": "find the main idea of an informational text"
+        },
+        {
+          "unit": 3,
+          "title": "Paragraphs",
+          "performanceTask": "write a paragraph with a topic sentence and details"
+        },
+        {
+          "unit": 4,
+          "title": "Vocabulary from context",
+          "performanceTask": "work out word meanings from context clues"
+        },
+        {
+          "unit": 5,
+          "title": "Poetry",
+          "performanceTask": "read and perform a poem and explain an image in it"
+        },
+        {
+          "unit": 6,
+          "title": "Informational text",
+          "performanceTask": "use text features to find information"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "SENTENCE_BUILDER",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g3-math",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 7,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Multiplication and division facts with arrays",
+          "performanceTask": "use an array to show why 6 x 4 = 4 x 6 and 24 / 6 = 4"
+        },
+        {
+          "unit": 2,
+          "title": "Place value to 10,000 and rounding",
+          "performanceTask": "round a town population and justify on a number line"
+        },
+        {
+          "unit": 3,
+          "title": "Fractions on the number line",
+          "performanceTask": "place unit and non-unit fractions between 0 and 1"
+        },
+        {
+          "unit": 4,
+          "title": "Area by counting squares",
+          "performanceTask": "compare the area of two garden plots on grid paper"
+        },
+        {
+          "unit": 5,
+          "title": "Perimeter",
+          "performanceTask": "find the fence needed around a plot and contrast it with area"
+        },
+        {
+          "unit": 6,
+          "title": "Scaled bar graphs",
+          "performanceTask": "read and draw a graph where one square stands for 5"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "AREA_MODEL",
+          "FRACTION_MODEL",
+          "FRACTION_NUMBER_LINE",
+          "PLACE_VALUE_CHART",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g3-science",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "strand": null,
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 5,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Plant growth fair test",
+          "performanceTask": "change one variable and keep others the same"
+        },
+        {
+          "unit": 2,
+          "title": "Food chains",
+          "performanceTask": "build a food chain from a Liberian forest and predict a change"
+        },
+        {
+          "unit": 3,
+          "title": "Magnets",
+          "performanceTask": "test which materials are magnetic and how distance matters"
+        },
+        {
+          "unit": 4,
+          "title": "Rocks, soil and erosion",
+          "performanceTask": "model erosion on a slope with and without plants"
+        },
+        {
+          "unit": 5,
+          "title": "The water cycle",
+          "performanceTask": "explain where rain comes from with a cycle model"
+        },
+        {
+          "unit": 6,
+          "title": "Measuring temperature",
+          "performanceTask": "read a thermometer and record temperatures through a day"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PREDICT_OBSERVE",
+          "PROCESS_CYCLE",
+          "DATA_PLOT",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g3-social-studies",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "My county",
+          "performanceTask": "locate my county and its capital on a map"
+        },
+        {
+          "unit": 2,
+          "title": "Landforms and water",
+          "performanceTask": "identify rivers, hills and coast on a map of Liberia"
+        },
+        {
+          "unit": 3,
+          "title": "Liberian people and cultures",
+          "performanceTask": "compare two ethnic groups' traditions"
+        },
+        {
+          "unit": 4,
+          "title": "Local government",
+          "performanceTask": "explain the roles of local leaders"
+        },
+        {
+          "unit": 5,
+          "title": "Goods and services",
+          "performanceTask": "explain how money is used to trade"
+        },
+        {
+          "unit": 6,
+          "title": "History through sources",
+          "performanceTask": "use a photograph as a source about the past"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SEQUENCE",
+          "SOURCE_EVIDENCE",
+          "SORT"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g3-computing",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Block coding sequences",
+          "performanceTask": "program a character to move through a scene"
+        },
+        {
+          "unit": 2,
+          "title": "Loops",
+          "performanceTask": "use a loop to draw a shape and explain why the loop is shorter"
+        },
+        {
+          "unit": 3,
+          "title": "Conditionals",
+          "performanceTask": "make a character react to an event"
+        },
+        {
+          "unit": 4,
+          "title": "Data tables",
+          "performanceTask": "organise collected data in a table and read it"
+        },
+        {
+          "unit": 5,
+          "title": "Internet safety",
+          "performanceTask": "identify safe and unsafe online behaviour"
+        },
+        {
+          "unit": 6,
+          "title": "Animated story project",
+          "performanceTask": "plan, build, test and improve a short animation"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM",
+          "BLOCK_PROGRAM"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g3-engineering",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "The engineering design cycle",
+          "performanceTask": "define, imagine, plan, build, test and improve a pencil holder"
+        },
+        {
+          "unit": 2,
+          "title": "Structures and loads",
+          "performanceTask": "test how shape changes the strength of a column"
+        },
+        {
+          "unit": 3,
+          "title": "Levers",
+          "performanceTask": "build a lever that lifts a load with the least effort"
+        },
+        {
+          "unit": 4,
+          "title": "Rain catchment model",
+          "performanceTask": "design a roof gutter model that collects the most water"
+        },
+        {
+          "unit": 5,
+          "title": "Insulated cooler box",
+          "performanceTask": "design a box that keeps ice longest and measure melt time"
+        },
+        {
+          "unit": 6,
+          "title": "Design reflection",
+          "performanceTask": "compare two designs using test data"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g3-arts-pe",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 3,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g4-english",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 7,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Comprehension strategies",
+          "performanceTask": "predict, question and summarise a text"
+        },
+        {
+          "unit": 2,
+          "title": "Text features",
+          "performanceTask": "use headings, captions and diagrams to answer questions"
+        },
+        {
+          "unit": 3,
+          "title": "Opinion writing",
+          "performanceTask": "write an opinion paragraph with two reasons"
+        },
+        {
+          "unit": 4,
+          "title": "Grammar: sentences and agreement",
+          "performanceTask": "correct subject-verb agreement errors"
+        },
+        {
+          "unit": 5,
+          "title": "Folktales",
+          "performanceTask": "compare two Liberian folktales and their lessons"
+        },
+        {
+          "unit": 6,
+          "title": "Short research",
+          "performanceTask": "answer a question from two sources"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "SENTENCE_BUILDER",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g4-math",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 7,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Multi-digit multiplication",
+          "performanceTask": "multiply a 3-digit by a 1-digit number with the area model and an algorithm"
+        },
+        {
+          "unit": 2,
+          "title": "Division with remainders",
+          "performanceTask": "share 157 exercise books among 6 classes and interpret the remainder"
+        },
+        {
+          "unit": 3,
+          "title": "Equivalent and comparing fractions",
+          "performanceTask": "prove 2/3 = 4/6 with models and order fractions with benchmarks"
+        },
+        {
+          "unit": 4,
+          "title": "Decimals: tenths and hundredths",
+          "performanceTask": "link money to decimals and place them on a number line"
+        },
+        {
+          "unit": 5,
+          "title": "Angles, lines and symmetry",
+          "performanceTask": "measure angles with a protractor and classify them"
+        },
+        {
+          "unit": 6,
+          "title": "Measurement conversions",
+          "performanceTask": "convert between metres and centimetres in a building task"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "AREA_MODEL",
+          "FRACTION_MODEL",
+          "FRACTION_NUMBER_LINE",
+          "PLACE_VALUE_CHART",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g4-science",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "strand": null,
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 5,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Digestion and the human body",
+          "performanceTask": "model the path of food and the job of each organ"
+        },
+        {
+          "unit": 2,
+          "title": "Simple electric circuits",
+          "performanceTask": "build a working circuit and explain why a break stops it"
+        },
+        {
+          "unit": 3,
+          "title": "Forces and motion",
+          "performanceTask": "measure how ramp height changes how far a car rolls"
+        },
+        {
+          "unit": 4,
+          "title": "Mixtures and separation",
+          "performanceTask": "separate sand, salt and water and explain each step"
+        },
+        {
+          "unit": 5,
+          "title": "Recording weather",
+          "performanceTask": "collect a week of rainfall and temperature data and graph it"
+        },
+        {
+          "unit": 6,
+          "title": "Ecosystems and conservation",
+          "performanceTask": "explain how deforestation affects one food web"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PREDICT_OBSERVE",
+          "PROCESS_CYCLE",
+          "DATA_PLOT",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER"
+        ]
+      },
+      "labs": [
+        "electric-circuit"
+      ]
+    },
+    {
+      "courseId": "stem1-g4-social-studies",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Regions of Liberia",
+          "performanceTask": "compare coastal and inland regions"
+        },
+        {
+          "unit": 2,
+          "title": "Natural resources",
+          "performanceTask": "map Liberia's natural resources and their uses"
+        },
+        {
+          "unit": 3,
+          "title": "Early history of Liberia",
+          "performanceTask": "sequence key events with a timeline"
+        },
+        {
+          "unit": 4,
+          "title": "National government",
+          "performanceTask": "describe the three branches of government"
+        },
+        {
+          "unit": 5,
+          "title": "Trade and economy",
+          "performanceTask": "explain imports and exports with examples"
+        },
+        {
+          "unit": 6,
+          "title": "Citizenship",
+          "performanceTask": "explain the responsibilities of a citizen"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SEQUENCE",
+          "SOURCE_EVIDENCE",
+          "SORT"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g4-computing",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Variables",
+          "performanceTask": "keep score in a game with a variable"
+        },
+        {
+          "unit": 2,
+          "title": "Nested loops",
+          "performanceTask": "draw a pattern of shapes with a loop inside a loop"
+        },
+        {
+          "unit": 3,
+          "title": "Conditionals with input",
+          "performanceTask": "build a quiz that responds to answers"
+        },
+        {
+          "unit": 4,
+          "title": "Binary numbers",
+          "performanceTask": "represent numbers 0-15 in binary with cards"
+        },
+        {
+          "unit": 5,
+          "title": "How networks carry messages",
+          "performanceTask": "model packet routing with a class relay"
+        },
+        {
+          "unit": 6,
+          "title": "Game project",
+          "performanceTask": "design, build, test and refine a simple game"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM",
+          "BLOCK_PROGRAM"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g4-engineering",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Flashlight circuit",
+          "performanceTask": "design and build a working flashlight with a switch"
+        },
+        {
+          "unit": 2,
+          "title": "Water filter design",
+          "performanceTask": "test filter designs by measured clarity and flow rate (not for drinking)"
+        },
+        {
+          "unit": 3,
+          "title": "Wind-powered lifter",
+          "performanceTask": "design a wind machine that lifts a load"
+        },
+        {
+          "unit": 4,
+          "title": "Earthquake-resistant tower",
+          "performanceTask": "build a tower and test it on a shake table"
+        },
+        {
+          "unit": 5,
+          "title": "Protective packaging",
+          "performanceTask": "design packaging that protects an egg in a drop test"
+        },
+        {
+          "unit": 6,
+          "title": "Design showcase",
+          "performanceTask": "present a design with test evidence"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g4-arts-pe",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 3,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g5-english",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 7,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Reading comprehension",
+          "performanceTask": "answer literal and inferential questions and cite the text"
+        },
+        {
+          "unit": 2,
+          "title": "Descriptive writing",
+          "performanceTask": "write a description using sensory detail"
+        },
+        {
+          "unit": 3,
+          "title": "Reading science texts",
+          "performanceTask": "explain a process described in a science text"
+        },
+        {
+          "unit": 4,
+          "title": "Grammar and mechanics",
+          "performanceTask": "use commas and conjunctions correctly"
+        },
+        {
+          "unit": 5,
+          "title": "Persuasive writing",
+          "performanceTask": "write a persuasive letter to the principal"
+        },
+        {
+          "unit": 6,
+          "title": "Research skills",
+          "performanceTask": "take notes from a source and write in own words"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "SENTENCE_BUILDER",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g5-math",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 7,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Multiplication models and multi-digit multiplication",
+          "performanceTask": "split both factors in an area model and explain every partial product"
+        },
+        {
+          "unit": 2,
+          "title": "Division with two-digit divisors",
+          "performanceTask": "estimate, divide and check a bulk-buying problem"
+        },
+        {
+          "unit": 3,
+          "title": "Adding and subtracting unlike fractions",
+          "performanceTask": "rename with a common unit on a model before computing"
+        },
+        {
+          "unit": 4,
+          "title": "Decimal operations",
+          "performanceTask": "add, subtract and multiply decimals in a shopping budget"
+        },
+        {
+          "unit": 5,
+          "title": "Volume of rectangular prisms",
+          "performanceTask": "build boxes from unit cubes and derive V = l x w x h"
+        },
+        {
+          "unit": 6,
+          "title": "Coordinate plane and patterns",
+          "performanceTask": "plot a rule-generated pattern and describe the relationship"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "AREA_MODEL",
+          "FRACTION_MODEL",
+          "FRACTION_NUMBER_LINE",
+          "PLACE_VALUE_CHART",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g5-science",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "strand": null,
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 5,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Earth and water",
+          "performanceTask": "trace rainfall from the sky to the St. Paul River and the ocean"
+        },
+        {
+          "unit": 2,
+          "title": "Heat transfer",
+          "performanceTask": "compare which cup keeps water warm longest"
+        },
+        {
+          "unit": 3,
+          "title": "Simple machines",
+          "performanceTask": "lift a load with a lever and measure the effort"
+        },
+        {
+          "unit": 4,
+          "title": "Animal systems and habitats",
+          "performanceTask": "explain how body structures help survival"
+        },
+        {
+          "unit": 5,
+          "title": "The solar system and seasons",
+          "performanceTask": "model day length and the dry and rainy seasons"
+        },
+        {
+          "unit": 6,
+          "title": "Scientific problem-solving in agriculture",
+          "performanceTask": "design a fair test of seedling growth"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PREDICT_OBSERVE",
+          "PROCESS_CYCLE",
+          "DATA_PLOT",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER"
+        ]
+      },
+      "labs": [
+        "weather-system"
+      ]
+    },
+    {
+      "courseId": "stem1-g5-social-studies",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Geography of Liberia",
+          "performanceTask": "locate counties, capitals and natural features on a map"
+        },
+        {
+          "unit": 2,
+          "title": "Counties and natural resources",
+          "performanceTask": "link resources to livelihoods by county"
+        },
+        {
+          "unit": 3,
+          "title": "Liberia in West Africa",
+          "performanceTask": "locate neighbouring countries and ECOWAS"
+        },
+        {
+          "unit": 4,
+          "title": "Rights and responsibilities",
+          "performanceTask": "apply rights and duties to a community case"
+        },
+        {
+          "unit": 5,
+          "title": "History through sources",
+          "performanceTask": "compare two accounts of the same event"
+        },
+        {
+          "unit": 6,
+          "title": "Economy and livelihoods",
+          "performanceTask": "explain how farmers, fishers and traders earn a living"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SEQUENCE",
+          "SOURCE_EVIDENCE",
+          "SORT"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g5-computing",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Procedures and functions",
+          "performanceTask": "refactor repeated code into a procedure"
+        },
+        {
+          "unit": 2,
+          "title": "Debugging strategies",
+          "performanceTask": "trace a program step by step to find a logic error"
+        },
+        {
+          "unit": 3,
+          "title": "Data collection and spreadsheets",
+          "performanceTask": "record rainfall in a spreadsheet and make a chart"
+        },
+        {
+          "unit": 4,
+          "title": "Pixels and binary images",
+          "performanceTask": "encode a black-and-white image as binary"
+        },
+        {
+          "unit": 5,
+          "title": "Online safety and misinformation",
+          "performanceTask": "check a claim against two sources"
+        },
+        {
+          "unit": 6,
+          "title": "Simulation project",
+          "performanceTask": "build a rainfall counter that totals a week's data"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM",
+          "BLOCK_PROGRAM"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g5-engineering",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Pulleys for a well bucket",
+          "performanceTask": "design a pulley system and measure effort"
+        },
+        {
+          "unit": 2,
+          "title": "Truss bridges",
+          "performanceTask": "load-test truss designs and record failure points"
+        },
+        {
+          "unit": 3,
+          "title": "Solar oven",
+          "performanceTask": "design an oven and measure temperature rise over time"
+        },
+        {
+          "unit": 4,
+          "title": "Irrigation channel",
+          "performanceTask": "design a channel that delivers water evenly to a plot"
+        },
+        {
+          "unit": 5,
+          "title": "Specifications and fair tests",
+          "performanceTask": "write criteria and constraints before building"
+        },
+        {
+          "unit": 6,
+          "title": "Design review",
+          "performanceTask": "critique and improve a peer design with evidence"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g5-arts-pe",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 3,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g6-english",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Grammar and mechanics",
+          "performanceTask": "edit a paragraph for punctuation and agreement"
+        },
+        {
+          "unit": 2,
+          "title": "Literature",
+          "performanceTask": "analyse a character's motivation with evidence"
+        },
+        {
+          "unit": 3,
+          "title": "Introduction to argument",
+          "performanceTask": "state a claim and support it with reasons and evidence"
+        },
+        {
+          "unit": 4,
+          "title": "Vocabulary",
+          "performanceTask": "use roots and affixes to work out meanings"
+        },
+        {
+          "unit": 5,
+          "title": "Summary writing",
+          "performanceTask": "summarise an informational text objectively"
+        },
+        {
+          "unit": 6,
+          "title": "Speech",
+          "performanceTask": "deliver a two-minute informative speech"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER",
+          "SENTENCE_BUILDER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g6-math",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Ratios and rates",
+          "performanceTask": "compare two cooking ratios with a table and a double number line"
+        },
+        {
+          "unit": 2,
+          "title": "Percent",
+          "performanceTask": "find discounts and VAT on market prices and check by estimation"
+        },
+        {
+          "unit": 3,
+          "title": "Dividing fractions",
+          "performanceTask": "explain 3/4 / 1/8 with a measurement model"
+        },
+        {
+          "unit": 4,
+          "title": "Integers on the number line",
+          "performanceTask": "model temperatures and bank balances with negatives"
+        },
+        {
+          "unit": 5,
+          "title": "Expressions and one-step equations",
+          "performanceTask": "write and solve an equation from a story and check it"
+        },
+        {
+          "unit": 6,
+          "title": "Area of triangles and polygons; mean and median",
+          "performanceTask": "decompose shapes, and summarise rainfall data"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "FRACTION_COMPARE",
+          "SHAPE_MODEL",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "EQUATION_BALANCE",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g6-science",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "strand": null,
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Cells and microscopes",
+          "performanceTask": "identify plant and animal cell parts and their jobs"
+        },
+        {
+          "unit": 2,
+          "title": "Energy forms and transformations",
+          "performanceTask": "trace energy from the sun to a cooked meal"
+        },
+        {
+          "unit": 3,
+          "title": "The particle model of matter",
+          "performanceTask": "explain dissolving with particles"
+        },
+        {
+          "unit": 4,
+          "title": "Plant reproduction",
+          "performanceTask": "dissect a flower and explain pollination"
+        },
+        {
+          "unit": 5,
+          "title": "Earth's layers and rocks",
+          "performanceTask": "model rock formation and the rock cycle"
+        },
+        {
+          "unit": 6,
+          "title": "Health and disease",
+          "performanceTask": "explain how malaria spreads and how nets interrupt it"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "PROCESS_CYCLE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [
+        "molecule-motion"
+      ]
+    },
+    {
+      "courseId": "stem1-g6-social-studies",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Founding of Liberia",
+          "performanceTask": "analyse sources about the founding period"
+        },
+        {
+          "unit": 2,
+          "title": "Government and constitution",
+          "performanceTask": "explain how a law is made"
+        },
+        {
+          "unit": 3,
+          "title": "Population and settlement",
+          "performanceTask": "interpret population data by county"
+        },
+        {
+          "unit": 4,
+          "title": "Africa and the world",
+          "performanceTask": "locate African regions and major features"
+        },
+        {
+          "unit": 5,
+          "title": "Economic activity",
+          "performanceTask": "compare primary, secondary and tertiary activities"
+        },
+        {
+          "unit": 6,
+          "title": "Peace and conflict resolution",
+          "performanceTask": "apply a conflict-resolution process to a case"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g6-civics",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "CIVICS"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "The Constitution of Liberia",
+          "performanceTask": "explain key constitutional principles with articles"
+        },
+        {
+          "unit": 2,
+          "title": "Rights and responsibilities",
+          "performanceTask": "apply a constitutional right to a case"
+        },
+        {
+          "unit": 3,
+          "title": "Elections and voting",
+          "performanceTask": "explain how a fair election works"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g6-computing",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Algorithms and efficiency",
+          "performanceTask": "compare two sorting methods by counting steps"
+        },
+        {
+          "unit": 2,
+          "title": "Variables and operators",
+          "performanceTask": "compute change in a shop program"
+        },
+        {
+          "unit": 3,
+          "title": "Lists",
+          "performanceTask": "store and search a class list"
+        },
+        {
+          "unit": 4,
+          "title": "Spreadsheet formulas",
+          "performanceTask": "model a school-garden budget with formulas"
+        },
+        {
+          "unit": 5,
+          "title": "The internet and networks",
+          "performanceTask": "explain how a web page reaches a phone"
+        },
+        {
+          "unit": 6,
+          "title": "Interactive project",
+          "performanceTask": "build an interactive quiz with scoring"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL",
+          "CHECK"
+        ],
+        "proposed": [
+          "BLOCK_PROGRAM",
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g6-engineering",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Criteria and constraints",
+          "performanceTask": "write a design brief with budget and materials limits"
+        },
+        {
+          "unit": 2,
+          "title": "Gears and mechanisms",
+          "performanceTask": "build a gear train and calculate the ratio"
+        },
+        {
+          "unit": 3,
+          "title": "Electric circuit design",
+          "performanceTask": "design a circuit with two switches for a door alarm"
+        },
+        {
+          "unit": 4,
+          "title": "Sustainable housing model",
+          "performanceTask": "design a house model that stays cool and test it"
+        },
+        {
+          "unit": 5,
+          "title": "Water purification design",
+          "performanceTask": "design a multi-stage filter and evaluate it (not for drinking)"
+        },
+        {
+          "unit": 6,
+          "title": "Product design",
+          "performanceTask": "design a product that solves a classroom problem"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g6-arts-pe",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 2,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g7-english",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Reading for evidence",
+          "performanceTask": "select and quote evidence that supports an answer about an informational text"
+        },
+        {
+          "unit": 2,
+          "title": "Essay structure and argument",
+          "performanceTask": "write a structured argumentative essay with a counterclaim"
+        },
+        {
+          "unit": 3,
+          "title": "Literary analysis",
+          "performanceTask": "analyse theme and character in a short story"
+        },
+        {
+          "unit": 4,
+          "title": "Grammar for clarity",
+          "performanceTask": "combine sentences for clarity and variety"
+        },
+        {
+          "unit": 5,
+          "title": "Scientific writing",
+          "performanceTask": "write a lab report with method, results and conclusion"
+        },
+        {
+          "unit": 6,
+          "title": "Debate",
+          "performanceTask": "argue a position and respond to an opposing argument"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER",
+          "SENTENCE_BUILDER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g7-math",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Number sense and place value: millions to thousandths",
+          "performanceTask": "read, write and compare large and small quantities in context"
+        },
+        {
+          "unit": 2,
+          "title": "Fractions: one whole, equal units",
+          "performanceTask": "represent, rename and combine fractions on models and number lines"
+        },
+        {
+          "unit": 3,
+          "title": "Area and perimeter of rectangles and triangles",
+          "performanceTask": "decide which measurement a real problem needs and compute it with units"
+        },
+        {
+          "unit": 4,
+          "title": "Proportional relationships",
+          "performanceTask": "test whether a table is proportional and find the unit rate"
+        },
+        {
+          "unit": 5,
+          "title": "Linear equations",
+          "performanceTask": "solve two-step equations and model a mobile-money tariff"
+        },
+        {
+          "unit": 6,
+          "title": "Probability and data",
+          "performanceTask": "run a chance experiment, compare experimental and theoretical probability"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "FRACTION_COMPARE",
+          "SHAPE_MODEL",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "EQUATION_BALANCE",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g7-science",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "strand": null,
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Observation and inference",
+          "performanceTask": "separate what you observe from what you infer in an investigation"
+        },
+        {
+          "unit": 2,
+          "title": "States of matter and energy",
+          "performanceTask": "predict and explain melting, freezing and evaporation with the particle model"
+        },
+        {
+          "unit": 3,
+          "title": "Mixtures, solutions and separation",
+          "performanceTask": "purify muddy water and evaluate the method"
+        },
+        {
+          "unit": 4,
+          "title": "Human body and nutrition",
+          "performanceTask": "analyse a meal for nutrients and justify a balanced diet"
+        },
+        {
+          "unit": 5,
+          "title": "Weather and climate",
+          "performanceTask": "compare a month of local weather data with climate averages"
+        },
+        {
+          "unit": 6,
+          "title": "Ecosystems and energy flow",
+          "performanceTask": "build an energy pyramid and predict effects of overfishing"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "PROCESS_CYCLE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [
+        "molecule-motion",
+        "weather-system",
+        "ecosystem-balance"
+      ]
+    },
+    {
+      "courseId": "stem1-g7-social-studies",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "General geography: the Earth",
+          "performanceTask": "explain latitude, longitude and time zones"
+        },
+        {
+          "unit": 2,
+          "title": "Maps and scale",
+          "performanceTask": "calculate real distances from a map scale"
+        },
+        {
+          "unit": 3,
+          "title": "Weather and climate of Liberia",
+          "performanceTask": "interpret rainfall and temperature charts"
+        },
+        {
+          "unit": 4,
+          "title": "Population and migration",
+          "performanceTask": "explain push and pull factors with data"
+        },
+        {
+          "unit": 5,
+          "title": "Resources and economy",
+          "performanceTask": "evaluate a natural-resource decision"
+        },
+        {
+          "unit": 6,
+          "title": "West African history",
+          "performanceTask": "sequence and explain major West African kingdoms"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g7-civics",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "CIVICS"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Counties and capitals of Liberia",
+          "performanceTask": "locate counties and capitals on a geographic map and reason about neighbours and directions"
+        },
+        {
+          "unit": 2,
+          "title": "Liberian history and national symbols",
+          "performanceTask": "explain the meaning of national symbols with sources"
+        },
+        {
+          "unit": 3,
+          "title": "Government structure",
+          "performanceTask": "compare the roles of the three branches"
+        },
+        {
+          "unit": 4,
+          "title": "Rule of law",
+          "performanceTask": "explain how courts protect rights"
+        },
+        {
+          "unit": 5,
+          "title": "Citizenship in the community",
+          "performanceTask": "plan a civic action and its evidence of impact"
+        },
+        {
+          "unit": 6,
+          "title": "Human rights",
+          "performanceTask": "apply the Universal Declaration to a local case"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g7-computing",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Algorithm design and flowcharts",
+          "performanceTask": "design a flowchart for a mobile-money transfer and test it by hand"
+        },
+        {
+          "unit": 2,
+          "title": "Introduction to text programming",
+          "performanceTask": "write, run and debug a short program with input and output"
+        },
+        {
+          "unit": 3,
+          "title": "Conditionals and loops in code",
+          "performanceTask": "write a program that validates a PIN with three attempts"
+        },
+        {
+          "unit": 4,
+          "title": "Data and charts",
+          "performanceTask": "analyse market-price data with a spreadsheet chart"
+        },
+        {
+          "unit": 5,
+          "title": "Cybersecurity basics",
+          "performanceTask": "explain phishing and strong authentication"
+        },
+        {
+          "unit": 6,
+          "title": "Project: mobile-money simulator",
+          "performanceTask": "specify, build, test and refine a balance-tracking program"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL",
+          "CHECK"
+        ],
+        "proposed": [
+          "BLOCK_PROGRAM",
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g7-engineering",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Design briefs and budgets",
+          "performanceTask": "write a brief with measurable criteria and a cost limit"
+        },
+        {
+          "unit": 2,
+          "title": "Garden-bed design",
+          "performanceTask": "design a raised bed using area and perimeter within a fencing budget"
+        },
+        {
+          "unit": 3,
+          "title": "Rain-gutter capacity",
+          "performanceTask": "design a gutter and test its capacity against a rainfall rate"
+        },
+        {
+          "unit": 4,
+          "title": "Trusses and structures",
+          "performanceTask": "model forces in a truss and test a prototype"
+        },
+        {
+          "unit": 5,
+          "title": "Hand-crank generator",
+          "performanceTask": "build a generator that lights an LED and measure output"
+        },
+        {
+          "unit": 6,
+          "title": "Prototype, test and refine",
+          "performanceTask": "run two test-refine cycles and report data"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": [
+        "electric-circuit"
+      ]
+    },
+    {
+      "courseId": "stem1-g7-arts-pe",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 2,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g8-english",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Literary analysis",
+          "performanceTask": "analyse how setting shapes conflict"
+        },
+        {
+          "unit": 2,
+          "title": "Argument writing",
+          "performanceTask": "write an argument with credible evidence and reasoning"
+        },
+        {
+          "unit": 3,
+          "title": "Informational writing",
+          "performanceTask": "explain a technical process clearly"
+        },
+        {
+          "unit": 4,
+          "title": "Grammar and style",
+          "performanceTask": "use active and passive voice purposefully"
+        },
+        {
+          "unit": 5,
+          "title": "Research",
+          "performanceTask": "write a short research report with citations"
+        },
+        {
+          "unit": 6,
+          "title": "Media literacy",
+          "performanceTask": "evaluate a news report for bias and evidence"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER",
+          "SENTENCE_BUILDER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g8-math",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Exponents and scientific notation",
+          "performanceTask": "compare distances in the solar system in scientific notation"
+        },
+        {
+          "unit": 2,
+          "title": "Linear functions and slope",
+          "performanceTask": "interpret slope as a rate in a taxi-fare graph"
+        },
+        {
+          "unit": 3,
+          "title": "Systems of linear equations",
+          "performanceTask": "solve a two-supplier price comparison by graph and by substitution"
+        },
+        {
+          "unit": 4,
+          "title": "The Pythagorean theorem",
+          "performanceTask": "prove it with areas and find a ladder length"
+        },
+        {
+          "unit": 5,
+          "title": "Transformations and congruence",
+          "performanceTask": "describe a sequence of moves that maps one figure to another"
+        },
+        {
+          "unit": 6,
+          "title": "Bivariate data and scatter plots",
+          "performanceTask": "fit a line to height-armspan data and judge the fit"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "FRACTION_COMPARE",
+          "SHAPE_MODEL",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "EQUATION_BALANCE",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g8-science",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "strand": null,
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Atoms, elements and the periodic table",
+          "performanceTask": "explain periodic patterns from atomic structure"
+        },
+        {
+          "unit": 2,
+          "title": "Chemical reactions",
+          "performanceTask": "distinguish physical and chemical change by evidence and balance a simple equation"
+        },
+        {
+          "unit": 3,
+          "title": "Forces and gravity",
+          "performanceTask": "test how mass and height affect falling objects"
+        },
+        {
+          "unit": 4,
+          "title": "Waves, sound and light",
+          "performanceTask": "measure the relationship between frequency and wavelength"
+        },
+        {
+          "unit": 5,
+          "title": "Cell division",
+          "performanceTask": "sequence mitosis and explain why it matters for growth"
+        },
+        {
+          "unit": 6,
+          "title": "Earthquakes and plate tectonics",
+          "performanceTask": "explain where earthquakes happen using plate boundaries"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "PROCESS_CYCLE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [
+        "periodic-table",
+        "chemical-reaction",
+        "gravity-explorer",
+        "wave-motion",
+        "cell-division",
+        "tectonic-plates"
+      ]
+    },
+    {
+      "courseId": "stem1-g8-social-studies",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Liberian geography",
+          "performanceTask": "analyse regional differences with maps and data"
+        },
+        {
+          "unit": 2,
+          "title": "Natural resources and the environment",
+          "performanceTask": "evaluate forest and mining trade-offs"
+        },
+        {
+          "unit": 3,
+          "title": "Liberian history",
+          "performanceTask": "analyse the causes and consequences of a historical event"
+        },
+        {
+          "unit": 4,
+          "title": "Economic development",
+          "performanceTask": "compare development indicators"
+        },
+        {
+          "unit": 5,
+          "title": "Regional cooperation",
+          "performanceTask": "explain the role of ECOWAS and the AU"
+        },
+        {
+          "unit": 6,
+          "title": "Historical sources",
+          "performanceTask": "evaluate the reliability of two sources"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g8-civics",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "CIVICS"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Liberian history and governance",
+          "performanceTask": "analyse a constitutional change"
+        },
+        {
+          "unit": 2,
+          "title": "Local and national government",
+          "performanceTask": "compare county and national responsibilities"
+        },
+        {
+          "unit": 3,
+          "title": "Elections and participation",
+          "performanceTask": "analyse turnout data"
+        },
+        {
+          "unit": 4,
+          "title": "Rights and the courts",
+          "performanceTask": "analyse a court case summary"
+        },
+        {
+          "unit": 5,
+          "title": "Civic responsibility",
+          "performanceTask": "evaluate a community project"
+        },
+        {
+          "unit": 6,
+          "title": "Media and citizenship",
+          "performanceTask": "evaluate political information for accuracy"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g8-computing",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Functions and parameters",
+          "performanceTask": "write reusable functions with parameters and return values"
+        },
+        {
+          "unit": 2,
+          "title": "Lists and iteration",
+          "performanceTask": "process a list of test scores to find mean and max"
+        },
+        {
+          "unit": 3,
+          "title": "Data analysis with code",
+          "performanceTask": "answer a question from a dataset with a program"
+        },
+        {
+          "unit": 4,
+          "title": "Hardware and logic gates",
+          "performanceTask": "build truth tables for AND, OR, NOT"
+        },
+        {
+          "unit": 5,
+          "title": "Networks and encryption",
+          "performanceTask": "encrypt and decrypt with a Caesar cipher and explain its weakness"
+        },
+        {
+          "unit": 6,
+          "title": "Project: market price tracker",
+          "performanceTask": "build a program that records and summarises prices"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL",
+          "CHECK"
+        ],
+        "proposed": [
+          "BLOCK_PROGRAM",
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g8-engineering",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Mechanisms and motion",
+          "performanceTask": "design a linkage that converts rotary to linear motion"
+        },
+        {
+          "unit": 2,
+          "title": "Electrical systems",
+          "performanceTask": "design a solar charging circuit with protection"
+        },
+        {
+          "unit": 3,
+          "title": "Materials testing",
+          "performanceTask": "compare tensile strength of local fibres"
+        },
+        {
+          "unit": 4,
+          "title": "Solar lamp design",
+          "performanceTask": "design a lamp that runs four hours and test it"
+        },
+        {
+          "unit": 5,
+          "title": "Bridge project",
+          "performanceTask": "design a bridge to a load specification and test to failure"
+        },
+        {
+          "unit": 6,
+          "title": "Technical sketching",
+          "performanceTask": "produce orthographic sketches of a design"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": [
+        "electric-circuit"
+      ]
+    },
+    {
+      "courseId": "stem1-g8-arts-pe",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 2,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g9-english",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Literature",
+          "performanceTask": "analyse a novel's theme across chapters"
+        },
+        {
+          "unit": 2,
+          "title": "Argument and rhetoric",
+          "performanceTask": "analyse persuasive techniques in a speech"
+        },
+        {
+          "unit": 3,
+          "title": "Technical writing",
+          "performanceTask": "write instructions a peer can follow"
+        },
+        {
+          "unit": 4,
+          "title": "Grammar and usage",
+          "performanceTask": "edit for complex-sentence errors"
+        },
+        {
+          "unit": 5,
+          "title": "Research",
+          "performanceTask": "synthesise three sources into an argument"
+        },
+        {
+          "unit": 6,
+          "title": "Oral communication",
+          "performanceTask": "lead a structured discussion"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER",
+          "SENTENCE_BUILDER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g9-math",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Algebraic expressions and polynomials",
+          "performanceTask": "expand and factor expressions using an area model"
+        },
+        {
+          "unit": 2,
+          "title": "Linear equations and inequalities",
+          "performanceTask": "model a budget constraint and graph the solution set"
+        },
+        {
+          "unit": 3,
+          "title": "Quadratics and factoring",
+          "performanceTask": "find when a thrown ball lands by factoring"
+        },
+        {
+          "unit": 4,
+          "title": "Functions",
+          "performanceTask": "distinguish linear, quadratic and exponential growth from tables"
+        },
+        {
+          "unit": 5,
+          "title": "Similar triangles and geometric reasoning",
+          "performanceTask": "measure a tree height with shadows and justify by similarity"
+        },
+        {
+          "unit": 6,
+          "title": "Statistics and sampling",
+          "performanceTask": "design a fair survey and explain sampling bias"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "FRACTION_COMPARE",
+          "SHAPE_MODEL",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "EQUATION_BALANCE",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g9-science",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "strand": null,
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Electricity and magnetism",
+          "performanceTask": "build an electromagnet and test what changes its strength"
+        },
+        {
+          "unit": 2,
+          "title": "Acids, bases and indicators",
+          "performanceTask": "make a cabbage indicator and classify household liquids"
+        },
+        {
+          "unit": 3,
+          "title": "Heredity and variation",
+          "performanceTask": "predict offspring traits with a Punnett square"
+        },
+        {
+          "unit": 4,
+          "title": "Ecosystem balance",
+          "performanceTask": "model predator-prey populations and explain fluctuations"
+        },
+        {
+          "unit": 5,
+          "title": "Energy resources and hydropower",
+          "performanceTask": "evaluate Mount Coffee hydropower against other sources"
+        },
+        {
+          "unit": 6,
+          "title": "The heart and circulation",
+          "performanceTask": "measure pulse before and after exercise and explain the change"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "PROCESS_CYCLE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [
+        "electric-circuit",
+        "ecosystem-balance",
+        "human-heart"
+      ]
+    },
+    {
+      "courseId": "stem1-g9-social-studies",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Modern Liberian history",
+          "performanceTask": "analyse the civil wars and peace process with sources"
+        },
+        {
+          "unit": 2,
+          "title": "Geography of Africa",
+          "performanceTask": "compare African climate zones with data"
+        },
+        {
+          "unit": 3,
+          "title": "Economics",
+          "performanceTask": "explain supply and demand with a market example"
+        },
+        {
+          "unit": 4,
+          "title": "Globalisation",
+          "performanceTask": "analyse how global trade affects Liberia"
+        },
+        {
+          "unit": 5,
+          "title": "Environment and sustainability",
+          "performanceTask": "evaluate a climate-adaptation plan"
+        },
+        {
+          "unit": 6,
+          "title": "Research project",
+          "performanceTask": "answer a historical or geographic question with sources"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g9-civics",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "CIVICS"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Constitutional democracy",
+          "performanceTask": "analyse checks and balances"
+        },
+        {
+          "unit": 2,
+          "title": "Public policy",
+          "performanceTask": "evaluate a public policy with evidence"
+        },
+        {
+          "unit": 3,
+          "title": "International organisations",
+          "performanceTask": "explain Liberia's role in the UN and ECOWAS"
+        },
+        {
+          "unit": 4,
+          "title": "Peacebuilding",
+          "performanceTask": "analyse reconciliation processes"
+        },
+        {
+          "unit": 5,
+          "title": "Economic citizenship",
+          "performanceTask": "explain taxes and public services"
+        },
+        {
+          "unit": 6,
+          "title": "Civic research",
+          "performanceTask": "present a policy proposal with evidence"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g9-computing",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Data structures",
+          "performanceTask": "choose between lists and dictionaries for a contact book"
+        },
+        {
+          "unit": 2,
+          "title": "Search and sort algorithms",
+          "performanceTask": "implement linear and binary search and compare steps"
+        },
+        {
+          "unit": 3,
+          "title": "Data science basics",
+          "performanceTask": "clean and visualise a small dataset"
+        },
+        {
+          "unit": 4,
+          "title": "Web pages",
+          "performanceTask": "build a page with HTML and CSS about a local business"
+        },
+        {
+          "unit": 5,
+          "title": "Ethics and AI literacy",
+          "performanceTask": "evaluate an AI system's errors and fairness"
+        },
+        {
+          "unit": 6,
+          "title": "Capstone app",
+          "performanceTask": "specify, build, test and present an app for a school need"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL",
+          "CHECK"
+        ],
+        "proposed": [
+          "BLOCK_PROGRAM",
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g9-engineering",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Systems thinking",
+          "performanceTask": "map a water-supply system and its failure points"
+        },
+        {
+          "unit": 2,
+          "title": "Sensors and electronics",
+          "performanceTask": "build a moisture sensor circuit for a garden"
+        },
+        {
+          "unit": 3,
+          "title": "Mechanical advantage",
+          "performanceTask": "design a lifting system for a load with measured efficiency"
+        },
+        {
+          "unit": 4,
+          "title": "Water systems",
+          "performanceTask": "design a community water storage plan within constraints"
+        },
+        {
+          "unit": 5,
+          "title": "Energy infrastructure",
+          "performanceTask": "analyse the Mount Coffee hydropower system and propose an improvement"
+        },
+        {
+          "unit": 6,
+          "title": "Capstone design",
+          "performanceTask": "deliver a design, prototype and test report for a school need"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g9-arts-pe",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 2,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g10-english",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 5,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "WASSCE comprehension",
+          "performanceTask": "answer comprehension items with evidence"
+        },
+        {
+          "unit": 2,
+          "title": "Summary writing",
+          "performanceTask": "summarise a passage to a word limit"
+        },
+        {
+          "unit": 3,
+          "title": "Essay writing: argumentative and expository",
+          "performanceTask": "plan and write a timed essay"
+        },
+        {
+          "unit": 4,
+          "title": "Literature in English: prose",
+          "performanceTask": "analyse a set text's characterisation"
+        },
+        {
+          "unit": 5,
+          "title": "Lexis and structure",
+          "performanceTask": "use vocabulary and grammar accurately in context"
+        },
+        {
+          "unit": 6,
+          "title": "Oral English",
+          "performanceTask": "distinguish vowel and consonant sounds and stress"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g10-math",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Quadratic functions",
+          "performanceTask": "maximise the area of a fenced plot with fixed fencing"
+        },
+        {
+          "unit": 2,
+          "title": "Right-triangle trigonometry",
+          "performanceTask": "find the height of a building from an angle of elevation"
+        },
+        {
+          "unit": 3,
+          "title": "Circle geometry",
+          "performanceTask": "prove and apply angle properties of circles"
+        },
+        {
+          "unit": 4,
+          "title": "Sequences and series",
+          "performanceTask": "model savings with arithmetic and geometric series"
+        },
+        {
+          "unit": 5,
+          "title": "Matrices and transformations",
+          "performanceTask": "represent a transformation with a matrix"
+        },
+        {
+          "unit": 6,
+          "title": "Probability",
+          "performanceTask": "compute compound probabilities and check by simulation"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "GRAPH_BUILDER",
+          "PROBABILITY_SIMULATOR"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g10-biology",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "BIOLOGY",
+      "subject": "SCIENCE",
+      "strand": "BIOLOGY",
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Cell biology",
+          "performanceTask": "compare cell structures and relate each to function"
+        },
+        {
+          "unit": 2,
+          "title": "Classification of living things",
+          "performanceTask": "build a dichotomous key for local organisms"
+        },
+        {
+          "unit": 3,
+          "title": "Photosynthesis",
+          "performanceTask": "test the effect of light intensity on oxygen production"
+        },
+        {
+          "unit": 4,
+          "title": "Nutrition in animals and humans",
+          "performanceTask": "test foods for starch, sugar and protein"
+        },
+        {
+          "unit": 5,
+          "title": "Transport in plants and animals",
+          "performanceTask": "model blood flow and measure transpiration"
+        },
+        {
+          "unit": 6,
+          "title": "Ecology of Liberian forests",
+          "performanceTask": "survey a quadrat and calculate species abundance"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "human-heart",
+        "ecosystem-balance"
+      ]
+    },
+    {
+      "courseId": "stem1-g10-chemistry",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "CHEMISTRY",
+      "subject": "SCIENCE",
+      "strand": "CHEMISTRY",
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Particulate nature of matter and separation",
+          "performanceTask": "choose and justify a separation method"
+        },
+        {
+          "unit": 2,
+          "title": "Atomic structure",
+          "performanceTask": "derive electron configuration and explain isotopes"
+        },
+        {
+          "unit": 3,
+          "title": "The periodic table",
+          "performanceTask": "predict properties from group and period trends"
+        },
+        {
+          "unit": 4,
+          "title": "Chemical bonding",
+          "performanceTask": "explain properties of ionic and covalent substances"
+        },
+        {
+          "unit": 5,
+          "title": "Stoichiometry and the mole",
+          "performanceTask": "calculate reacting masses and percentage yield"
+        },
+        {
+          "unit": 6,
+          "title": "Acids, bases and salts",
+          "performanceTask": "prepare a salt and calculate concentration by titration data"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "periodic-table",
+        "molecule-motion"
+      ]
+    },
+    {
+      "courseId": "stem1-g10-physics",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "PHYSICS",
+      "subject": "SCIENCE",
+      "strand": "PHYSICS",
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Measurement, units and uncertainty",
+          "performanceTask": "measure a length several times and report mean and uncertainty"
+        },
+        {
+          "unit": 2,
+          "title": "Motion and kinematics",
+          "performanceTask": "analyse a velocity-time graph to find acceleration and distance"
+        },
+        {
+          "unit": 3,
+          "title": "Forces and Newton's laws",
+          "performanceTask": "predict motion from net force and test with a trolley"
+        },
+        {
+          "unit": 4,
+          "title": "Work, energy and power",
+          "performanceTask": "calculate the power of a learner climbing stairs"
+        },
+        {
+          "unit": 5,
+          "title": "Pressure and fluids",
+          "performanceTask": "explain why a dam wall is thicker at the base"
+        },
+        {
+          "unit": 6,
+          "title": "Heat and temperature",
+          "performanceTask": "measure specific heat capacity of water"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "gravity-explorer"
+      ]
+    },
+    {
+      "courseId": "stem1-g10-computing",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Programming fundamentals",
+          "performanceTask": "write tested programs with clear decomposition"
+        },
+        {
+          "unit": 2,
+          "title": "Object-oriented programming",
+          "performanceTask": "model a library system with classes"
+        },
+        {
+          "unit": 3,
+          "title": "Databases and SQL",
+          "performanceTask": "query a school-records database (synthetic data)"
+        },
+        {
+          "unit": 4,
+          "title": "Computer systems",
+          "performanceTask": "explain the fetch-decode-execute cycle"
+        },
+        {
+          "unit": 5,
+          "title": "Networking",
+          "performanceTask": "explain IP addressing and DNS"
+        },
+        {
+          "unit": 6,
+          "title": "Software project",
+          "performanceTask": "deliver a tested program to a written specification"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL"
+        ],
+        "proposed": [
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g10-engineering",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Engineering drawing",
+          "performanceTask": "produce scaled drawings of a component"
+        },
+        {
+          "unit": 2,
+          "title": "Statics and structures",
+          "performanceTask": "calculate forces in a simple frame"
+        },
+        {
+          "unit": 3,
+          "title": "Circuit analysis",
+          "performanceTask": "design and verify a circuit to a specification"
+        },
+        {
+          "unit": 4,
+          "title": "Engineering materials",
+          "performanceTask": "select materials using property data"
+        },
+        {
+          "unit": 5,
+          "title": "Manufacturing processes",
+          "performanceTask": "plan the manufacture of a simple product"
+        },
+        {
+          "unit": 6,
+          "title": "Design project",
+          "performanceTask": "specify, build and test to requirements"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g10-social-studies",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "History of West Africa",
+          "performanceTask": "analyse colonialism and independence movements"
+        },
+        {
+          "unit": 2,
+          "title": "Physical geography",
+          "performanceTask": "explain landform processes"
+        },
+        {
+          "unit": 3,
+          "title": "Human geography",
+          "performanceTask": "analyse urbanisation in Monrovia"
+        },
+        {
+          "unit": 4,
+          "title": "Economic history of Liberia",
+          "performanceTask": "analyse the role of rubber and iron ore"
+        },
+        {
+          "unit": 5,
+          "title": "Map and data skills",
+          "performanceTask": "interpret topographic maps"
+        },
+        {
+          "unit": 6,
+          "title": "Historical argument",
+          "performanceTask": "write a source-based historical argument"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g10-civics",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 1,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "CIVICS"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Government and the Constitution",
+          "performanceTask": "analyse separation of powers"
+        },
+        {
+          "unit": 2,
+          "title": "Rights and responsibilities in law",
+          "performanceTask": "apply legal rights to cases"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g10-arts-pe",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 2,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g11-english",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 5,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Literature in English: drama",
+          "performanceTask": "analyse a play's conflict and staging"
+        },
+        {
+          "unit": 2,
+          "title": "Literature in English: poetry",
+          "performanceTask": "analyse imagery and form"
+        },
+        {
+          "unit": 3,
+          "title": "Advanced essay writing",
+          "performanceTask": "write letters, speeches and articles to purpose"
+        },
+        {
+          "unit": 4,
+          "title": "Research and citation",
+          "performanceTask": "write a referenced report"
+        },
+        {
+          "unit": 5,
+          "title": "Technical and scientific communication",
+          "performanceTask": "present data in writing"
+        },
+        {
+          "unit": 6,
+          "title": "WASSCE comprehension practice",
+          "performanceTask": "timed comprehension with feedback"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g11-math",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Exponential and logarithmic functions",
+          "performanceTask": "model population growth and solve for doubling time"
+        },
+        {
+          "unit": 2,
+          "title": "Trigonometric functions and identities",
+          "performanceTask": "model tide or daylight data with a sine curve"
+        },
+        {
+          "unit": 3,
+          "title": "Vectors",
+          "performanceTask": "resolve forces on a sloped roof"
+        },
+        {
+          "unit": 4,
+          "title": "Coordinate geometry",
+          "performanceTask": "find equations of lines and circles from conditions"
+        },
+        {
+          "unit": 5,
+          "title": "Statistical inference basics",
+          "performanceTask": "estimate a mean with a confidence statement"
+        },
+        {
+          "unit": 6,
+          "title": "Financial mathematics",
+          "performanceTask": "compare loan offers using compound interest"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "GRAPH_BUILDER",
+          "PROBABILITY_SIMULATOR"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g11-biology",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "BIOLOGY",
+      "subject": "SCIENCE",
+      "strand": "BIOLOGY",
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Respiration",
+          "performanceTask": "measure CO2 output from germinating seeds"
+        },
+        {
+          "unit": 2,
+          "title": "Excretion and homeostasis",
+          "performanceTask": "explain how kidneys regulate water"
+        },
+        {
+          "unit": 3,
+          "title": "Coordination and the nervous system",
+          "performanceTask": "measure reaction time and analyse variation"
+        },
+        {
+          "unit": 4,
+          "title": "Reproduction",
+          "performanceTask": "compare sexual and asexual reproduction in plants and animals"
+        },
+        {
+          "unit": 5,
+          "title": "Genetics",
+          "performanceTask": "solve monohybrid crosses and explain sex-linked inheritance"
+        },
+        {
+          "unit": 6,
+          "title": "Evolution and adaptation",
+          "performanceTask": "explain adaptation using natural selection evidence"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "cell-division"
+      ]
+    },
+    {
+      "courseId": "stem1-g11-chemistry",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "CHEMISTRY",
+      "subject": "SCIENCE",
+      "strand": "CHEMISTRY",
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Redox reactions",
+          "performanceTask": "identify oxidation and reduction in rusting iron"
+        },
+        {
+          "unit": 2,
+          "title": "Rates of reaction",
+          "performanceTask": "measure how temperature changes reaction rate"
+        },
+        {
+          "unit": 3,
+          "title": "Chemical equilibrium",
+          "performanceTask": "predict shifts with Le Chatelier's principle"
+        },
+        {
+          "unit": 4,
+          "title": "Energetics",
+          "performanceTask": "calculate enthalpy change from temperature data"
+        },
+        {
+          "unit": 5,
+          "title": "Electrochemistry",
+          "performanceTask": "build a simple cell and explain electron flow"
+        },
+        {
+          "unit": 6,
+          "title": "Introduction to organic chemistry",
+          "performanceTask": "name and draw hydrocarbons and their reactions"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "chemical-reaction"
+      ]
+    },
+    {
+      "courseId": "stem1-g11-physics",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "PHYSICS",
+      "subject": "SCIENCE",
+      "strand": "PHYSICS",
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Waves",
+          "performanceTask": "measure wave speed and relate frequency and wavelength"
+        },
+        {
+          "unit": 2,
+          "title": "Light and optics",
+          "performanceTask": "trace rays through lenses and find focal length"
+        },
+        {
+          "unit": 3,
+          "title": "Sound",
+          "performanceTask": "measure the speed of sound with echoes"
+        },
+        {
+          "unit": 4,
+          "title": "Current electricity",
+          "performanceTask": "test Ohm's law and analyse series and parallel circuits"
+        },
+        {
+          "unit": 5,
+          "title": "Magnetism",
+          "performanceTask": "map magnetic fields and explain the motor effect"
+        },
+        {
+          "unit": 6,
+          "title": "Oscillations and the pendulum",
+          "performanceTask": "test what affects a pendulum's period"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "wave-motion",
+        "electric-circuit",
+        "pendulum-lab"
+      ]
+    },
+    {
+      "courseId": "stem1-g11-computing",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Algorithms and complexity",
+          "performanceTask": "compare algorithm growth rates experimentally"
+        },
+        {
+          "unit": 2,
+          "title": "Data structures",
+          "performanceTask": "implement a stack and a queue and use them"
+        },
+        {
+          "unit": 3,
+          "title": "Web applications",
+          "performanceTask": "build a form that validates and stores data"
+        },
+        {
+          "unit": 4,
+          "title": "Data science and machine learning basics",
+          "performanceTask": "train and evaluate a simple classifier and explain its limits"
+        },
+        {
+          "unit": 5,
+          "title": "Cybersecurity",
+          "performanceTask": "threat-model a mobile-money app"
+        },
+        {
+          "unit": 6,
+          "title": "Team software project",
+          "performanceTask": "plan, build, review and test as a team"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL"
+        ],
+        "proposed": [
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g11-engineering",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Mechanical design",
+          "performanceTask": "design a mechanism to a torque requirement"
+        },
+        {
+          "unit": 2,
+          "title": "Microcontrollers",
+          "performanceTask": "program a microcontroller to read a sensor (or simulator if no hardware)"
+        },
+        {
+          "unit": 3,
+          "title": "Fluids and water engineering",
+          "performanceTask": "size a pipe and pump for a water system"
+        },
+        {
+          "unit": 4,
+          "title": "Energy systems design",
+          "performanceTask": "size a solar system for a rural clinic"
+        },
+        {
+          "unit": 5,
+          "title": "Civil infrastructure",
+          "performanceTask": "design drainage for a road section"
+        },
+        {
+          "unit": 6,
+          "title": "Team engineering project",
+          "performanceTask": "plan, build and test as a team"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g11-social-studies",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "World history",
+          "performanceTask": "analyse causes and effects of the world wars on Africa"
+        },
+        {
+          "unit": 2,
+          "title": "Geography of resources",
+          "performanceTask": "evaluate resource management with data"
+        },
+        {
+          "unit": 3,
+          "title": "Development and inequality",
+          "performanceTask": "compare development pathways"
+        },
+        {
+          "unit": 4,
+          "title": "Liberia since 2003",
+          "performanceTask": "analyse post-conflict reconstruction"
+        },
+        {
+          "unit": 5,
+          "title": "Fieldwork skills",
+          "performanceTask": "plan and carry out a local geography survey"
+        },
+        {
+          "unit": 6,
+          "title": "Historical argument",
+          "performanceTask": "compare historians' interpretations"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g11-civics",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 1,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "CIVICS"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Public policy and governance",
+          "performanceTask": "evaluate a national policy"
+        },
+        {
+          "unit": 2,
+          "title": "Elections and representation",
+          "performanceTask": "compare electoral systems"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g11-arts-pe",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 2,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g12-english",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "strand": null,
+      "pillar": "LANGUAGE",
+      "platformDelivered": true,
+      "weeklyPeriods": 5,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGLISH",
+        "LITERACY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "WASSCE essay mastery",
+          "performanceTask": "write timed essays across genres"
+        },
+        {
+          "unit": 2,
+          "title": "WASSCE comprehension and summary",
+          "performanceTask": "timed mixed practice with worked feedback"
+        },
+        {
+          "unit": 3,
+          "title": "Literature review",
+          "performanceTask": "compare set texts across genres"
+        },
+        {
+          "unit": 4,
+          "title": "Lexis and structure review",
+          "performanceTask": "diagnose and repair grammar errors"
+        },
+        {
+          "unit": 5,
+          "title": "Oral English review",
+          "performanceTask": "practise WASSCE oral items"
+        },
+        {
+          "unit": 6,
+          "title": "Professional communication",
+          "performanceTask": "write a CV and application letter"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g12-math",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "MATH",
+      "subject": "MATH",
+      "strand": null,
+      "pillar": "M",
+      "platformDelivered": true,
+      "weeklyPeriods": 6,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "MATH"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Differentiation",
+          "performanceTask": "find the rate of change of a quantity and an optimum"
+        },
+        {
+          "unit": 2,
+          "title": "Introduction to integration",
+          "performanceTask": "find area under a velocity-time graph as distance"
+        },
+        {
+          "unit": 3,
+          "title": "Probability distributions",
+          "performanceTask": "use the binomial distribution for a quality-control problem"
+        },
+        {
+          "unit": 4,
+          "title": "Mathematical modelling project",
+          "performanceTask": "model a Liberian water, energy or transport problem end to end"
+        },
+        {
+          "unit": 5,
+          "title": "WASSCE review: number and algebra",
+          "performanceTask": "diagnose and repair errors on past-style items"
+        },
+        {
+          "unit": 6,
+          "title": "WASSCE review: geometry, trigonometry and statistics",
+          "performanceTask": "timed mixed practice with worked feedback"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "GRAPH_BUILDER",
+          "PROBABILITY_SIMULATOR"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g12-biology",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "BIOLOGY",
+      "subject": "SCIENCE",
+      "strand": "BIOLOGY",
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Ecology and conservation",
+          "performanceTask": "propose a conservation plan for a threatened Liberian species"
+        },
+        {
+          "unit": 2,
+          "title": "Biotechnology and disease",
+          "performanceTask": "explain how vaccines work and evaluate public-health data"
+        },
+        {
+          "unit": 3,
+          "title": "Microorganisms and public health",
+          "performanceTask": "explain water-borne disease spread and control"
+        },
+        {
+          "unit": 4,
+          "title": "WASSCE biology practical skills",
+          "performanceTask": "plan, record and analyse a practical"
+        },
+        {
+          "unit": 5,
+          "title": "Data analysis in biology",
+          "performanceTask": "interpret graphs and calculate rates from experimental data"
+        },
+        {
+          "unit": 6,
+          "title": "Integrated WASSCE review",
+          "performanceTask": "diagnose and repair misconceptions across topics"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g12-chemistry",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "CHEMISTRY",
+      "subject": "SCIENCE",
+      "strand": "CHEMISTRY",
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Organic functional groups",
+          "performanceTask": "identify alcohols, acids and esters by tests"
+        },
+        {
+          "unit": 2,
+          "title": "Industrial chemistry in Liberia",
+          "performanceTask": "explain the chemistry of iron-ore and rubber processing"
+        },
+        {
+          "unit": 3,
+          "title": "Environmental chemistry and water purification",
+          "performanceTask": "design and evaluate a water-treatment sequence"
+        },
+        {
+          "unit": 4,
+          "title": "Quantitative analysis",
+          "performanceTask": "carry out titration calculations with uncertainty"
+        },
+        {
+          "unit": 5,
+          "title": "WASSCE chemistry practical skills",
+          "performanceTask": "plan, record and analyse a practical"
+        },
+        {
+          "unit": 6,
+          "title": "Integrated WASSCE review",
+          "performanceTask": "diagnose and repair errors across topics"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g12-physics",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "PHYSICS",
+      "subject": "SCIENCE",
+      "strand": "PHYSICS",
+      "pillar": "S",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Electromagnetic induction and generators",
+          "performanceTask": "explain how Mount Coffee generates electricity"
+        },
+        {
+          "unit": 2,
+          "title": "Electronics",
+          "performanceTask": "build and analyse a diode and transistor circuit"
+        },
+        {
+          "unit": 3,
+          "title": "Atomic and nuclear physics",
+          "performanceTask": "explain radioactive decay with half-life data"
+        },
+        {
+          "unit": 4,
+          "title": "Energy systems",
+          "performanceTask": "compare solar and grid electricity for a rural clinic"
+        },
+        {
+          "unit": 5,
+          "title": "WASSCE physics practical skills",
+          "performanceTask": "plan, record and analyse a practical"
+        },
+        {
+          "unit": 6,
+          "title": "Integrated WASSCE review",
+          "performanceTask": "diagnose and repair errors across topics"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g12-computing",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "strand": null,
+      "pillar": "T",
+      "platformDelivered": true,
+      "weeklyPeriods": 3,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "COMPUTER_SCIENCE"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Software engineering practice",
+          "performanceTask": "write requirements, tests and a design document"
+        },
+        {
+          "unit": 2,
+          "title": "AI and society",
+          "performanceTask": "analyse benefits and risks of AI in Liberian services"
+        },
+        {
+          "unit": 3,
+          "title": "Advanced algorithms",
+          "performanceTask": "apply recursion and graph search to a routing problem"
+        },
+        {
+          "unit": 4,
+          "title": "Systems design",
+          "performanceTask": "design a system for offline-first data collection"
+        },
+        {
+          "unit": 5,
+          "title": "Capstone",
+          "performanceTask": "deliver, test and present a complete software product"
+        },
+        {
+          "unit": 6,
+          "title": "WASSCE ICT review",
+          "performanceTask": "diagnose and repair errors across topics"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL"
+        ],
+        "proposed": [
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g12-engineering",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "strand": null,
+      "pillar": "E",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "ENGINEERING_FOUNDATIONS",
+        "ENGINEERING"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Engineering capstone",
+          "performanceTask": "deliver a full design-build-test project for a community problem"
+        },
+        {
+          "unit": 2,
+          "title": "Project management",
+          "performanceTask": "plan a project schedule and budget"
+        },
+        {
+          "unit": 3,
+          "title": "Ethics and safety",
+          "performanceTask": "analyse an engineering failure case"
+        },
+        {
+          "unit": 4,
+          "title": "Sustainable design",
+          "performanceTask": "evaluate a design's life-cycle impact"
+        },
+        {
+          "unit": 5,
+          "title": "Prototype and test",
+          "performanceTask": "run a structured test plan and report"
+        },
+        {
+          "unit": 6,
+          "title": "Portfolio",
+          "performanceTask": "assemble evidence of design competence"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g12-social-studies",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 2,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "SOCIAL_STUDIES",
+        "HISTORY"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "WASSCE history review",
+          "performanceTask": "timed source-based questions with feedback"
+        },
+        {
+          "unit": 2,
+          "title": "WASSCE geography review",
+          "performanceTask": "map and data questions with feedback"
+        },
+        {
+          "unit": 3,
+          "title": "Contemporary Africa",
+          "performanceTask": "analyse a current regional issue with sources"
+        },
+        {
+          "unit": 4,
+          "title": "Liberia's future",
+          "performanceTask": "evaluate a national development plan"
+        },
+        {
+          "unit": 5,
+          "title": "Research project",
+          "performanceTask": "complete a source-based investigation"
+        },
+        {
+          "unit": 6,
+          "title": "Integrated review",
+          "performanceTask": "diagnose and repair misconceptions"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g12-civics",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "strand": null,
+      "pillar": "HUMANITIES",
+      "platformDelivered": true,
+      "weeklyPeriods": 1,
+      "authority": "LIBERIALEARN_PROPOSED_MOE_MAPPING_REQUIRED",
+      "inventorySubjects": [
+        "CIVICS"
+      ],
+      "units": [
+        {
+          "unit": 1,
+          "title": "Citizenship and nation-building",
+          "performanceTask": "present a civic proposal with evidence"
+        },
+        {
+          "unit": 2,
+          "title": "WASSCE civic education review",
+          "performanceTask": "timed mixed practice with feedback"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": []
+    },
+    {
+      "courseId": "stem1-g12-arts-pe",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "ARTS_PE",
+      "subject": null,
+      "strand": null,
+      "pillar": "WELLBEING",
+      "platformDelivered": false,
+      "weeklyPeriods": 2,
+      "authority": "TEACHER_LED_NOT_PLATFORM_CONTENT",
+      "inventorySubjects": [],
+      "units": [],
+      "blocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": []
+    }
+  ]
+}

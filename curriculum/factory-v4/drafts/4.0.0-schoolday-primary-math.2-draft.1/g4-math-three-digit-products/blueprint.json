@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g4-math-three-digit-products-v4",
+  "version": "4.0.0",
+  "contentHash": "7f5009ed2e2cb05df870b6d5fa353699e76df846f33e4f7008764e3fe9f0689c",
+  "grade": 4,
+  "subject": "MATH",
+  "unitId": "g4-math-three-digit-products",
+  "title": "g4-math-three-digit-products",
+  "repositoryCommit": "efb419f47c456d5b9ef9a757a1ee3a0822e05378",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "39e41fc4561620ffaafd95c4b8c99903477b809b9a7669a2845f9a0519b6283e",
+      "sourceRef": "curriculum/factory-v4/primary-math.2-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "g4-math-three-digit-products-o1",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Multiply a three-digit whole number by one digit using a partitioned area model and a written calculation.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-math-three-digit-products-o1",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-math-three-digit-products-o2",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Explain regrouping as preserving place value, including a zero digit in a product or factor.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-math-three-digit-products-o2",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g4-math-three-digit-products-outcome",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g4-math-three-digit-products-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g4-math-three-digit-products-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g4-math-three-digit-products-practice",
+      "resourceId": "g4-math-three-digit-products-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "g4-math-three-digit-products-o1",
+        "g4-math-three-digit-products-o2"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "39e41fc4561620ffaafd95c4b8c99903477b809b9a7669a2845f9a0519b6283e",
+      "sourceRef": "curriculum/factory-v4/primary-math.2-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0"
+}

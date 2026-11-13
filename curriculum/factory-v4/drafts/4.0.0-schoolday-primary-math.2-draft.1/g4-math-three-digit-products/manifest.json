@@ -1,0 +1,147 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-schoolday-primary-math.2-draft.1",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g4-math-three-digit-products",
+  "lessonId": "schoolday:g4-math-three-digit-products",
+  "grade": 4,
+  "subject": "MATH",
+  "title": "Multiply hundreds, tens and ones",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-primary-math-author/2.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "ORIGINAL_FACTORY_DRAFT",
+    "authoringPlan": "lib/content-factory/v4/primaryMath2/lessonAuthor.ts",
+    "legacyRecordsReplaced": false
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "programOrderId": "GO-G04-P1-MATH-U1",
+  "courseId": "stem1-g4-math",
+  "unit": 1,
+  "orderKind": "LESSON",
+  "inputPins": {
+    "manifestSha256": "39e41fc4561620ffaafd95c4b8c99903477b809b9a7669a2845f9a0519b6283e",
+    "frontendCommit": "efb419f47c456d5b9ef9a757a1ee3a0822e05378"
+  },
+  "candidateSha256": "4fe423deb164b80ee63f4144d15cd34fcf206b879c244f4631b2d136616fb2dc",
+  "blueprintHash": "7f5009ed2e2cb05df870b6d5fa353699e76df846f33e4f7008764e3fe9f0689c",
+  "learnerProjectionSha256": "c1e65daeeea5c44db60ce7ab8a6ab1929bdabe1f3fcf3002cd747a8372e9d713",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "MATHEMATICS",
+    "balance": {
+      "explanationSeconds": 274,
+      "activitySeconds": 930,
+      "activityShare": 0.772
+    },
+    "practice": {
+      "g4-math-three-digit-products-o1": {
+        "visuals": 1,
+        "workedExamples": 2,
+        "guided": 4,
+        "independent": 3,
+        "mistakes": 1,
+        "transfer": 2
+      },
+      "g4-math-three-digit-products-o2": {
+        "visuals": 1,
+        "workedExamples": 2,
+        "guided": 4,
+        "independent": 3,
+        "mistakes": 1,
+        "transfer": 2
+      }
+    },
+    "totals": {
+      "visuals": 2,
+      "workedExamples": 4,
+      "guided": 8,
+      "independent": 6,
+      "mistakes": 2,
+      "transfer": 4,
+      "problems": 10
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "77% activity (target 65–75%); do not pad with repetitive questions to reach it."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 7,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-math-three-digit-products-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-math-three-digit-products-o2",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING",
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ],
+  "files": {
+    "candidate.json": "c0d4fa46329c0bc6b86147708125934d00e49a1877186e70c886144c2920dddc",
+    "visual-teaching.json": "c46eec39d2ba069a97b8033a6d1b0aaac250040f191a680db4950af560aaf3af",
+    "blueprint.json": "bc811e388bb380c3b338ce87851bcd70bc793c3f1014c6d1ce3570366fac97b2",
+    "factory-artifact.json": "d2a6f8555266f803ab687cefc896414239d9ff161dbf7e9fd7cb786f20edb932",
+    "learner-projection.json": "11a6394c1f58ebd58e6ebe1205173ce812398d87f3586099b706fa9e6d223046",
+    "factory-receipt.json": "44c04f4dd1e36b8920394b8d82738c11e46d52a80cda534ea1c9f29b7ca985cc",
+    "paper-alternative.txt": "5761a1d5cc1781bd3ccbdf3a02511b56d7a821f8b7478c3507bcf32accae0cae",
+    "academic-review.json": "126e14473591fde4368577a67060782d3cbc535e50e8ab6907eabdd5e3bfb0b3",
+    "teacher-guide.json": "a4f57c07f59e5454e5c973b8e2a08187e25f8cda5f3ad38b3a9845509b4de9ff"
+  },
+  "unicodeNormalization": "NFC",
+  "packageHash": "df24c30a680e745006ef124f671a26cccb1bdf64a8ec9f79b3273e8ba4d98eb2"
+}

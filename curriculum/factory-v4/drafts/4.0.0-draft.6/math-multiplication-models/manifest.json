@@ -1,0 +1,157 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-draft.6",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "math-multiplication-models",
+  "lessonId": "cv4-demo-math-multiplication-models",
+  "grade": 5,
+  "subject": "MATH",
+  "title": "Generated: Split both dimensions",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-lesson-author/1.2.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "SYNTHETIC_DEMONSTRATION",
+    "reason": "No approved source lesson teaches equal groups, arrays and the area model together; the nearest rows are listed for a curriculum owner, not bound.",
+    "relatedRows": [
+      {
+        "contentId": "math-g7-multiplication-and-division-strategies-application",
+        "title": "Multiplication and Division Strategies for Real-Life Problem Solving"
+      },
+      {
+        "contentId": "wk_krs5a_wed_p1",
+        "title": "Understanding Multiplication through Real-Life Applications"
+      }
+    ]
+  },
+  "sourceVerification": "REPOSITORY_PINS_AND_DOCUMENTED_PRIMARY_REFERENCES_CHECKED_NOT_RIGHTS_OR_ACADEMIC_APPROVAL",
+  "inputPins": {
+    "manifestSha256": "82408cd4be2afb695cddc95ec54903012e34697aeeeca786613509d219f9077e",
+    "frontendCommit": "e5d89c34f421f028428cf9e4230ab3d40ff45536",
+    "candidate": {
+      "path": "curriculum/v4/candidates/math-multiplication-models.json",
+      "sha256": "a3c629af5a246f6db6c0ac2d7bba901b08ea15326408196227f92378ac12ae17"
+    }
+  },
+  "candidateSha256": "ed0a518f060509276607c67910fdc00513a9793f6cf7dedadcd2dbbe5dadbe9a",
+  "blueprintHash": "16fbf7ea3fae622144ddf5953de0eacc4f1dbf2bebafd432dd2d3f863dfeddab",
+  "learnerProjectionSha256": "f069577bb127fe119c642f7b0e63ca7d3907f7e83abe33dae5cee5eb612ffce0",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "MATHEMATICS",
+    "balance": {
+      "explanationSeconds": 200,
+      "activitySeconds": 815,
+      "activityShare": 0.803
+    },
+    "practice": {
+      "v4-demo-mult-models": {
+        "visuals": 2,
+        "workedExamples": 1,
+        "guided": 7,
+        "independent": 3,
+        "mistakes": 1,
+        "transfer": 2
+      },
+      "v4-demo-mult-area-model": {
+        "visuals": 2,
+        "workedExamples": 1,
+        "guided": 7,
+        "independent": 3,
+        "mistakes": 1,
+        "transfer": 2
+      }
+    },
+    "totals": {
+      "visuals": 4,
+      "workedExamples": 2,
+      "guided": 14,
+      "independent": 6,
+      "mistakes": 2,
+      "transfer": 4,
+      "problems": 13
+    },
+    "advisories": [
+      {
+        "code": "v4_paragraph_long",
+        "severity": "ADVISORY",
+        "detail": "A 68-word paragraph; consider splitting it or showing it.",
+        "sceneId": "generated-1"
+      },
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "80% activity (target 65–75%); do not pad with repetitive questions to reach it."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 12,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "SYNTHETIC_DEMONSTRATION",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:v4-demo-mult-models",
+    "OBJECTIVE_MAPPING_PROPOSED:v4-demo-mult-area-model",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING",
+    "EXACT_DRAFT6_RELEASE_AUTHORIZATION_REQUIRED",
+    "CONTENT_RIGHTS_ACCESS_ACCESSIBILITY_SAFETY_REVIEW_PENDING"
+  ],
+  "files": {
+    "candidate.json": "81be7b1e78a95c4d694af7a82b48a34300d399dcf6892ca6d6a89eb25f704ac4",
+    "visual-teaching.json": "e4d473b04617f8e148c4ad59e37e4cbb4676d9b8015fb70b57c6f0f3a37b995a",
+    "blueprint.json": "d9a1c8f23fbd2ec3ed279cc5fed4a273898f6e6e359bdb2cb592e085a279d601",
+    "factory-artifact.json": "b4b6e6aa653792906f722a0c8c3a25f451b6b437efa5d83b3b068d7c02300663",
+    "learner-projection.json": "2c24f49723539fb78226fd12eb9d794989a99a496d98c7f93d4dce1a0ddd378a",
+    "factory-receipt.json": "5b5028f8d139e5358042c345404058ef6d552e0545eaa740a349b7baec0e498d",
+    "paper-alternative.txt": "b669c7bb8474293f150d8f1676214c62d5824e58c90a7682fe1bce373db826d2",
+    "academic-review.json": "2da0518bead355b6762b71e10c6f55b6f18ee3fc34491fb1de33f63b39ba9a3f"
+  },
+  "packageHash": "7a469baccfb5d7d1e932942baf013e1848579c4efa9077a949dcebb7542d75ce"
+}

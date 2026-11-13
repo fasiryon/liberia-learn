@@ -1,0 +1,47 @@
+generated-1/blocks/0
+7 rows of 4 dots: 7 × 4 = 28. Seven groups of four and seven rows of four count the same 28 items.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-1/blocks/1
+Trace the four partial rectangles and describe their dimensions. Find 24 × 13 by splitting it into parts.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/0
+24 x 13 Step 1: Split both factors. (20 + 4)(10 + 3) Step 2: Calculate every rectangle. 200 + 60 + 40 + 12 = 312 Step 3: Regroup as algorithm rows. 24 × 3 + 24 × 10 = 72 + 240 = 312
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-3/blocks/0
+Which sum represents seven groups of four? Options: 4 + 4 + 4 + 4 + 4 + 4 + 4; 7 + 4.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-3/blocks/1
+Fill all four partial products, then add them. Find 23 × 14 by splitting it into parts.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-3/blocks/2
+Calculate 23 times 14. Explain how every partial rectangle is counted. Total: write your answer.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-3/blocks/3
+Calculate 16 times 12. Explain how every partial rectangle is counted. Total: write your answer.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/0
+Which multiplication and sum represent six rows of five? Options: 6 x 5 = 5 + 5 + 5 + 5 + 5 + 5 = 30; 6 + 5 = 11.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/1
+Calculate 32 times 24. Explain how every partial rectangle is counted. Total: write your answer.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/2
+Calculate 17 times 18. Explain how every partial rectangle is counted. Total: write your answer.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-5/blocks/0
+24 x 13 A learner wrote: 20 x 10 + 4 x 3 = 212 Which diagnosis accounts for the missing area? Options: The 20 x 3 and 4 x 10 rectangles were left out.; The total should be rounded to 300 because both factors have two digits..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-6/blocks/0
+Calculate 18 times 14. Explain how every partial rectangle is counted. Total: write your answer.
+How many audience chairs remain after reserving 12? Explain the order of operations and check with an estimate. Write your response and reasoning on paper. Responses are capture only, never official scores.

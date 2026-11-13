@@ -1,0 +1,128 @@
+{
+  "status": "PASS",
+  "applicationBase": "26026ca699df254aaf120e9ad23adf1d897d7346",
+  "securityPort": "217405a07b8e343721e03ffda9c643fd681bea0b",
+  "reviewedHead": "5daefe7ce484182f10fa412fa50e0e9e474f7f7b",
+  "uncommittedReviewTree": "a27fb79467d74088b699dd394d9503dfd24954ae",
+  "branchUpdated": false,
+  "securityFilesPreserved": 25,
+  "overlap": [],
+  "identityRouteProductionEquivalence": [
+    {
+      "file": "app/api/admin/credentials/send/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/guardian-link/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/import/batches/[id]/credentials/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/import/confirm/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/import/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/interoperability/oneroster/import/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/invites/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/onboarding/import-students/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/onboarding/import-teachers/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/school/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/schools/pending/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/security/mfa/recovery/reset/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/students/[id]/generate-reset-code/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/students/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/admin/teachers/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/auth/forgot-password/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/auth/reset-password/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/auth/reset-with-code/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/enroll/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/guardian/register/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/onboard/accept/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/onboard/invite/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/platform/security/accept/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/platform/security/demote/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/register/guardian/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/register/student/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/rollout/invite/student/bulk/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/rollout/invite/student/route.ts",
+      "unchangedWithoutNoopGuard": true
+    },
+    {
+      "file": "app/api/rollout/invite/teacher/route.ts",
+      "unchangedWithoutNoopGuard": true
+    }
+  ]
+}

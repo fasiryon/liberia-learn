@@ -37,18 +37,14 @@ Stack: Next.js 14 App Router, Prisma, Supabase (Postgres), Vercel (serverless), 
 
 ## Demo Accounts for Testing
 
-```
-student1@cha.edu.lr   / DemoSeed2026!
-teacher1@cha.edu.lr   / DemoSeed2026!
-admin@cha.edu.lr      / DemoSeed2026!
-official1@moe.gov.lr  / MOESeed2026!
-```
+Account passwords are supplied by the authorized operator through the secret manager.
+Never publish passwords, password hashes or reusable login instructions in this brief.
+Use isolated accounts for rehearsal. The browser tests require an explicit target URL
+and role-specific environment secrets; see [rehearsal credentials](../qa/REHEARSAL_CREDENTIALS.md).
 
-**Before handoff to any vendor: re-verify these passwords against the live
-bcrypt hash in production, not this document.** Demo credentials have
-drifted silently from written docs before (see project memory
-`feedback_demo_credential_verification.md`). This brief was not re-verified
-against live state as part of this P1-D update.
+Previously published seeded credentials must be treated as compromised. Production
+rotation or account disablement, session revocation and login review require the
+Production owner's action. Source cleanup does not establish that those actions occurred.
 
 ## Privileged Identity / MFA (added P1-D, 2026-08-05)
 

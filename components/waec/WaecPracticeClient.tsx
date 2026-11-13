@@ -56,8 +56,10 @@ export function WaecPracticeClient({ slug, subjectName }: { slug: string; subjec
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers: session.questions.map((q) => ({ id: q.id, chosen: answers[q.id] ?? null })) }),
       });
-      setResult(await res.json());
-    } catch { setLoadError("Could not submit. Please try again."); }
+      const payload = await res.json();
+      if (!res.ok) throw new Error(typeof payload?.error === "string" ? payload.error : "Could not submit. Reload to start a new attempt.");
+      setResult(payload);
+    } catch (error) { setLoadError(error instanceof Error ? error.message : "Could not submit. Please try again."); }
     finally { setSubmitting(false); }
   }, [session, answers, slug]);
 
