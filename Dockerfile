@@ -8,25 +8,23 @@ RUN npm ci
 FROM node:20-alpine AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG DATABASE_URL
-ARG DIRECT_URL
-ARG NEXTAUTH_SECRET
 ARG NEXTAUTH_URL
-ARG SENTRY_AUTH_TOKEN
 ARG SENTRY_ORG
 ARG SENTRY_PROJECT
 
-ENV DATABASE_URL=$DATABASE_URL
-ENV DIRECT_URL=$DIRECT_URL
-ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
-ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
 ENV SENTRY_ORG=$SENTRY_ORG
 ENV SENTRY_PROJECT=$SENTRY_PROJECT
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npx prisma generate
-RUN npm run build
+# Database/auth credentials belong to the running container, never build args.
+# Source-map upload is optional and receives its token only for this instruction.
+RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
+    if [ -f /run/secrets/SENTRY_AUTH_TOKEN ]; then \
+      export SENTRY_AUTH_TOKEN="$(cat /run/secrets/SENTRY_AUTH_TOKEN)"; \
+    fi; \
+    npm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
