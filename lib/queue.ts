@@ -99,3 +99,21 @@ export async function enqueueJob(jobType: JobType, payload: unknown, options: En
     return false;
   }
 }
+
+/**
+ * Thrown when work must not be acknowledged because the queue did not accept it
+ * (queue unconfigured, or the send was rejected). handleApiError maps it to 503.
+ */
+export class QueueUnavailableError extends Error {
+  readonly status = 503;
+  readonly code = "QUEUE_UNAVAILABLE";
+  constructor(readonly jobType: JobType) {
+    super("Background processing is unavailable; the job was not queued");
+    this.name = "QueueUnavailableError";
+  }
+}
+
+/** Enqueue, or throw QueueUnavailableError so callers cannot report unaccepted work as queued. */
+export async function enqueueJobOrThrow(jobType: JobType, payload: unknown, options: EnqueueJobOptions = {}): Promise<void> {
+  if (!(await enqueueJob(jobType, payload, options))) throw new QueueUnavailableError(jobType);
+}

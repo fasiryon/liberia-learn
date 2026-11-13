@@ -18,6 +18,7 @@ vi.mock("@/lib/db", () => ({
 vi.mock("@/lib/queue", () => ({
   JobType: { GENERATE_CERTIFICATION_ASSETS: "GENERATE_CERTIFICATION_ASSETS" },
   enqueueJob: mockEnqueueJob,
+  QueueUnavailableError: class extends Error { status = 503; },
 }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/serverFlags", () => ({ isCertificationAssetGenerationEnabled: () => true }));
@@ -28,7 +29,7 @@ describe("certification asset generation route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUpdate.mockResolvedValue({});
-    mockEnqueueJob.mockResolvedValue(undefined);
+    mockEnqueueJob.mockResolvedValue(true); // enqueueJob returns true when SQS accepts the send
     mockLogAudit.mockResolvedValue(undefined);
   });
 

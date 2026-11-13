@@ -39,6 +39,7 @@ vi.mock("@/lib/queue", () => ({
   },
   enqueueJob: mockEnqueueJob,
   isQueueConfigured: mockIsQueueConfigured,
+  QueueUnavailableError: class extends Error { status = 503; },
 }));
 
 vi.mock("@/lib/db", () => ({
@@ -102,7 +103,7 @@ beforeEach(() => {
     id: "sched-1",
   });
   mockEmbedLesson.mockResolvedValue(undefined);
-  mockEnqueueJob.mockResolvedValue(undefined);
+  mockEnqueueJob.mockResolvedValue(true); // enqueueJob returns true when SQS accepts the send
   mockIsQueueConfigured.mockReturnValue(false);
   mockLogAudit.mockResolvedValue(undefined);
 });

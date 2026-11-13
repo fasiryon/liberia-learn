@@ -81,11 +81,12 @@ export async function POST(req: NextRequest) {
     });
 
     if (isSchoolOnboardingKitFlagEnabled()) {
-      await enqueueJob(JobType.GENERATE_SCHOOL_ONBOARDING_KIT, {
+      const kitAccepted = await enqueueJob(JobType.GENERATE_SCHOOL_ONBOARDING_KIT, {
         schoolId: school.id,
         actorUserId: actor.id,
       });
-      await logAudit({
+      // School creation stands on its own; an unqueued optional kit is never audited as enqueued.
+      if (kitAccepted) await logAudit({
         userId: actor.id,
         schoolId: school.id,
         action: "school.onboarding_kit.enqueued",
