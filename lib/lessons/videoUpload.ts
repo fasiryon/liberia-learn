@@ -16,7 +16,7 @@ export function validateLessonVideoFile(input: {
   durationSeconds: number;
 }) {
   const extension = input.fileName.split(".").pop()?.toLowerCase() ?? "";
-  if (!ACCEPTED_VIDEO_TYPES.has(input.contentType) && !ACCEPTED_EXTENSIONS.has(extension)) {
+  if (!ACCEPTED_VIDEO_TYPES.has(input.contentType) || !ACCEPTED_EXTENSIONS.has(extension)) {
     throw Object.assign(new Error("Only MP4 or WebM videos are supported."), { status: 400 });
   }
   if (input.size > MAX_LESSON_VIDEO_BYTES) {
