@@ -43,8 +43,9 @@ describe("AWS unavailable: rejected enqueue must not be acknowledged", () => {
   });
   afterAll(() => vi.unstubAllGlobals());
 
-  it("audio queue creation exposes unavailable dispatch instead of resolving as queued", async () => {
-    await expect(queueLessonAudioGeneration({ lessonId: "synthetic-lesson", contentVersion: "v1", text: "Synthetic text" })).rejects.toMatchObject({ status: 503 });
+  it("audio control: retains a durable pending row, not a generated asset, after failed dispatch", async () => {
+    await expect(queueLessonAudioGeneration({ lessonId: "synthetic-lesson", contentVersion: "v1", text: "Synthetic text" })).resolves.toMatchObject({ status: "PENDING" });
+    expect(h.audioUpsert).toHaveBeenCalledOnce(); expect(h.enqueue).toHaveBeenCalledOnce();
   });
 
   it("thumbnail generation refuses instead of recording an enqueued audit", async () => {
