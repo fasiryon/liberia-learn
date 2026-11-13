@@ -271,10 +271,12 @@ export async function POST(req: Request) {
     if (record.status === "published") {
       if (isQueueConfigured()) {
         try {
-          await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
+          const accepted = await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
             lessonId: record.id,
             contentId: record.contentId,
           });
+          // A rejected or unconfigured send takes the same inline fallback as a thrown send.
+          if (!accepted) throw new Error("Queue did not accept the embedding job");
         } catch (error) {
           logger.warn("[QUEUE] Falling back to inline embedding generation", { error });
           try {
