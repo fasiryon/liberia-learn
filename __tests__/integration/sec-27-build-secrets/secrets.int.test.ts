@@ -24,7 +24,7 @@ describe.skipIf(!admitted)("SEC-27 native build secret and runtime database cont
     if (probe) return probe;
     const command = buildRun();
     if (!command?.includes("--mount=type=secret,id=SENTRY_AUTH_TOKEN")) throw Error("Build step lacks the transient Sentry secret contract");
-    if (run(["buildx", "inspect", "default", "--format", "{{.Driver}}"]) !== "docker") throw Error("Only the local Docker builder is admitted");
+    if (!/^Driver:\s+docker\s*$/m.test(run(["buildx", "inspect", "default"]))) throw Error("Only the local Docker builder is admitted");
     // Verify the approved cached base exists; never pull an image or use Build Cloud.
     run(["image", "inspect", "pgvector/pgvector:0.8.0-pg17", "--format", "{{.Id}}"]);
     const root = "C:/liberia-learn/artifacts/v4-coordination";
