@@ -49,4 +49,16 @@ describe("fixed notice bands (#199)", () => {
     act(() => { window.dispatchEvent(new Event("offline")); });
     expect(document.querySelector('[data-pwa-status="offline"]')).not.toBeNull();
   });
+
+  it("a band that takes no space reserves none: a zero-height (hidden) notice never pads the page with its gap", () => {
+    // PR #202 lab gate: a mounted but zero-height PWA notice set --ll-status-notice to 0 + 16 px, so globals.css padded
+    // <body> by 16 px in one capture run only.
+    const rect = vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({ height: 0, width: 0, top: 0, left: 0, right: 0, bottom: 0, x: 0, y: 0, toJSON: () => ({}) } as DOMRect);
+    try {
+      mount(<PwaLifecycleStatus />);
+      act(() => { window.dispatchEvent(new CustomEvent("liberialearn-pwa-update-available", { detail: {} })); });
+      expect(document.querySelector("[data-pwa-status]")).not.toBeNull();
+      expect(css("--ll-status-notice")).toBe("");
+    } finally { rect.mockRestore(); }
+  });
 });
