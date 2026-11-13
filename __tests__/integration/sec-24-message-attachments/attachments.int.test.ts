@@ -44,6 +44,9 @@ describe.skipIf(!admitted)("SEC-24 native message attachment contract", () => {
     ["non-string URL", { attachmentUrl: 42 }], ["empty name", { attachmentName: "" }], ["control character name", { attachmentName: "bad\u0000name.png" }],
     ["oversized name", { attachmentName: "x".repeat(256) }], ["incomplete metadata", { attachmentType: null }],
   ] as Array<[string, Record<string, unknown>]>) it(`rejects ${label} before message or audit writes`, async () => { await unchanged(payload(overrides)); });
+  it.each([...Array.from({ length: 32 }, (_, code) => code), 127])("rejects raw URL-path control code %i before any write", async code => {
+    await unchanged(payload({ attachmentUrl: `https://attachments.example.invalid/a${String.fromCharCode(code)}.png` }));
+  });
   it.each(["image/jpeg", "image/png", "image/gif", "application/pdf"])("retains the upload producer's %s contract and durable actor/school audit", async attachmentType => {
     const res = await send(request(payload({ attachmentType }))); expect(res.status).toBe(201); const { messageId } = await res.json();
     expect(await db.message.findUnique({ where: { id: messageId } })).toMatchObject({ fromUserId: "student-user", toUserId: "teacher-A", classId: "class-A", attachmentType });
