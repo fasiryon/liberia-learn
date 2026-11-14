@@ -9,7 +9,9 @@ vi.mock("@/lib/db", () => ({ prisma: {
     findMany: vi.fn(async ({ where }: { where: { status: string } }) => h.run.status === where.status && h.run.nextRetryAt !== null ? [{ ...h.run }] : []),
     update: vi.fn(async ({ data }: { data: Record<string, unknown> }) => {
       if (typeof data.status === "string") h.run.status = data.status;
-      if (data.nextRetryAt === null || data.nextRetryAt instanceof Date) h.run.nextRetryAt = data.nextRetryAt;
+      const nextRetryAt = data.nextRetryAt;
+      if (nextRetryAt === null) h.run.nextRetryAt = null;
+      else if (nextRetryAt instanceof Date) h.run.nextRetryAt = nextRetryAt;
       return { ...h.run };
     }),
   },
