@@ -59,6 +59,8 @@ vi.mock("@/lib/auth", () => ({
   requireUser: mockRequireUser,
 }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit, logAuditRequired: mockLogAudit }));
+vi.mock("@/lib/ai/rag/embeddingDeferral", () => ({ deferLessonEmbedding: vi.fn(async () => undefined) })); // embedding DEFER is covered by embedding-deferral/defer-unconfigured tests
+
 
 vi.mock("@/lib/serverFlags", async () => {
   const actual = await vi.importActual<any>("@/lib/serverFlags");

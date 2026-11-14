@@ -19,8 +19,6 @@ import {
   generateRubric,
   generateMasteryChecks,
 } from "@/lib/curriculum-helpers";
-import { embedLesson } from "@/lib/ai/rag/embeddingService";
-import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import {
   checkRateLimit,
@@ -290,16 +288,16 @@ export async function POST(req: Request) {
           });
         }
       } else {
-        try {
-          await syncCurriculumContentRagChunks(record.id);
-        } catch (syncError) {
-          logger.warn("[RAG] Best-effort full-pack chunk sync failed", { error: syncError });
-        }
-        try {
-          await embedLesson(record.id);
-        } catch (embeddingError) {
-          logger.warn("[RAG] Best-effort full-pack embedding failed", { error: embeddingError });
-        }
+        // Founder DEFER 2026-11-13 / Atlas R3 P2-1: no queue configured is not a licence for inline paid embedding.
+        await deferLessonEmbedding({
+          lessonId: record.id,
+          contentId: record.contentId,
+          actorUserId: user.id,
+          schoolId: user.schoolId ?? null,
+          source: "admin.curriculum.generate-full-pack",
+          reason: "QUEUE_NOT_CONFIGURED",
+          removeStaleChunks: true,
+        });
       }
     }
 

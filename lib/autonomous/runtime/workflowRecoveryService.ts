@@ -151,6 +151,7 @@ export async function requeueRetryableWorkflows(input: {
       partitionKey: true,
       idempotencyKey: true,
       traceId: true,
+      nextRetryAt: true,
     },
   });
 
@@ -174,8 +175,17 @@ export async function requeueRetryableWorkflows(input: {
         attempt: run.attempt,
       });
       requeued++;
-    } catch {
+    } catch (error) {
       skipped++;
+      // AWS-R3-01 / Atlas R3 P2-3: a refused dispatch must not strand the run as pending with no retry time
+      // (neither recovery query would select it again). Restore the failed, retry-due state it was selected in.
+      await transitionWorkflowStatus({
+        workflowRunId: run.id,
+        status: "failed",
+        nextRetryAt: run.nextRetryAt ?? now,
+        errorCode: "QUEUE_UNAVAILABLE",
+        error,
+      });
     }
   }
 

@@ -1,11 +1,10 @@
+// route-policy: auth=session; scope=tenant; authority=teacher-class; rationale=requires teacher role and canonical class ownership before saving a lesson or deferring its embeddings
 import { deferLessonEmbedding } from "@/lib/ai/rag/embeddingDeferral";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import {
   deleteCurriculumContentRagChunks,
-  syncCurriculumContentRagChunks,
 } from "@/lib/ai/rag/ragIngestionService";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
@@ -102,24 +101,25 @@ async function runBestEffortAiWork(
         actorUserId: actor.userId,
         schoolId: actor.schoolId ?? null,
         source: "teacher.lessons",
+        removeStaleChunks: true,
       });
     }
   } else {
-    try {
-      await embedLesson(recordId);
-    } catch (embeddingError) {
-      logger.warn("[RAG] Best-effort teacher lesson embedding failed", { error: embeddingError });
-    }
+    // Founder DEFER 2026-11-13 / Atlas R3 P2-1: no queue configured is not a licence for inline paid embedding.
+    await deferLessonEmbedding({
+      lessonId: recordId,
+      contentId: contentId,
+      actorUserId: actor.userId,
+      schoolId: actor.schoolId ?? null,
+      source: "teacher.lessons",
+      reason: "QUEUE_NOT_CONFIGURED",
+      removeStaleChunks: true,
+    });
   }
 
   if (status === "published") {
-    if (!queueConfigured) {
-      try {
-        await syncCurriculumContentRagChunks(recordId);
-      } catch (syncError) {
-        logger.warn("[RAG] Best-effort teacher lesson sync failed", { error: syncError });
-      }
-    }
+    // Chunk sync embeds chunks (paid provider). Under DEFER it never runs inline; the deferral above already
+    // removed stale chunks, and a later authorized recovery rebuilds them.
     return;
   }
 

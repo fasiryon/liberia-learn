@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({ auditRequired: vi.fn(), deleteChunks: vi.fn(), routedEmbedding: vi.fn(), enqueue: vi.fn() }));
 vi.mock("@/lib/audit", () => ({ logAuditRequired: h.auditRequired }));
-vi.mock("@/lib/ai/rag/ragIngestionService", () => ({ deleteCurriculumContentRagChunks: h.deleteChunks }));
+vi.mock("@/lib/ai/rag/ragIngestionService", () => ({ deleteCurriculumContentRagChunksStrict: h.deleteChunks }));
 vi.mock("@/lib/ai/routedCompletion", () => ({ routedEmbedding: h.routedEmbedding }));
 vi.mock("@/lib/queue", () => ({ enqueueJob: h.enqueue, JobType: { GENERATE_EMBEDDINGS: "GENERATE_EMBEDDINGS" } }));
 

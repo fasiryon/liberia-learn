@@ -12,6 +12,8 @@ const mockEmbedLesson = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockEnqueueJob = vi.hoisted(() => vi.fn());
 const mockIsQueueConfigured = vi.hoisted(() => vi.fn());
+const mockDeferLessonEmbedding = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/ai/rag/embeddingDeferral", () => ({ deferLessonEmbedding: mockDeferLessonEmbedding }));
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
@@ -105,6 +107,7 @@ beforeEach(() => {
   mockEmbedLesson.mockResolvedValue(undefined);
   mockEnqueueJob.mockResolvedValue(true); // enqueueJob returns true when SQS accepts the send
   mockIsQueueConfigured.mockReturnValue(false);
+  mockDeferLessonEmbedding.mockResolvedValue(undefined);
   mockLogAudit.mockResolvedValue(undefined);
 });
 
@@ -144,5 +147,18 @@ describe("POST /api/teacher/lessons", () => {
       expect.objectContaining({ lessonId: "content-1" })
     );
     expect(mockEmbedLesson).not.toHaveBeenCalled();
+    expect(mockDeferLessonEmbedding).not.toHaveBeenCalled();
+  });
+
+  it("defers the embedding (no inline embedding) when no queue is configured — founder DEFER", async () => {
+    mockIsQueueConfigured.mockReturnValue(false);
+
+    const res = await POST(makeReq(validBody));
+
+    expect(res.status).toBe(200);
+    expect(mockEmbedLesson).not.toHaveBeenCalled();
+    expect(mockDeferLessonEmbedding).toHaveBeenCalledWith(
+      expect.objectContaining({ lessonId: "content-1", reason: "QUEUE_NOT_CONFIGURED", removeStaleChunks: true })
+    );
   });
 });

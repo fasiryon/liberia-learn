@@ -279,6 +279,25 @@ export async function deleteCurriculumContentRagChunks(
   }
 }
 
+/**
+ * Strict variant for paths that REQUIRE stale chunks to be gone (embedding DEFER, Atlas R3 P2-2).
+ * A failed or impossible deletion throws; a legitimate zero-row deletion returns 0.
+ * The best-effort deleteCurriculumContentRagChunks above is unchanged for its existing callers.
+ */
+export async function deleteCurriculumContentRagChunksStrict(curriculumContentId: string): Promise<number> {
+  const ragChunkModel = (prisma as any)?.ragChunk;
+  if (typeof ragChunkModel?.deleteMany !== "function") {
+    throw new Error("RAG chunk deletion is unavailable; stale chunks cannot be removed");
+  }
+  const result = await ragChunkModel.deleteMany({
+    where: { sourceType: "curriculum_content", sourceId: curriculumContentId },
+  });
+  if (typeof result?.count !== "number") {
+    throw new Error("RAG chunk deletion returned no count; removal is unconfirmed");
+  }
+  return result.count;
+}
+
 export async function getCurriculumEmbeddingSource(curriculumContentId: string): Promise<string> {
   return getLessonEmbeddingSource(curriculumContentId);
 }
