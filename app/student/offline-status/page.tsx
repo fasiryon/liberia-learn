@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 
 import { getQueue } from "@/lib/offline-queue";
-import { studentConflictMessage } from "@/lib/offline/conflictCopy";
+import { learnerItemLabel, studentConflictMessage } from "@/lib/offline/conflictCopy";
 
 type Item = { id: string; type?: string; entity?: string; status: string; conflict?: { resolutionHint?: string } | null };
-const itemName = (item: Item) => (item.entity ?? item.type ?? "offline-item").replace(/-/g, " ");
 
 export default function StudentOfflineStatusPage() {
   const [online, setOnline] = useState(true);
@@ -46,7 +45,7 @@ export default function StudentOfflineStatusPage() {
             <ul className="mt-4 space-y-2 text-sm text-[var(--ll-text)]">
               {conflicts.map((item) => (
                 <li key={item.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3" data-conflict-hint={item.conflict?.resolutionHint}>
-                  <span className="font-semibold">{itemName(item)}</span>: {studentConflictMessage(item.conflict?.resolutionHint)}
+                  <span className="font-semibold">{learnerItemLabel(item)}</span>: {studentConflictMessage(item.conflict?.resolutionHint)}
                 </li>
               ))}
             </ul>
@@ -59,7 +58,7 @@ export default function StudentOfflineStatusPage() {
             <ul className="mt-4 space-y-2 text-sm text-[var(--ll-text)]">
               {waiting.map((item) => (
                 <li key={item.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3">
-                  {itemName(item)} - {item.status}
+                  {learnerItemLabel(item)} - {item.status}
                 </li>
               ))}
             </ul>
