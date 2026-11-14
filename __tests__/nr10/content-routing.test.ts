@@ -265,6 +265,7 @@ describe("POST /api/admin/curriculum/approve — cache invalidation", () => {
       Redis: { fromEnv: () => redisMock },
     }));
     vi.doMock("@/lib/auth", () => makeAuthMock("ADMIN"));
+    vi.doMock("@/lib/ai/rag/embeddingDeferral", () => ({ deferLessonEmbedding: vi.fn(async () => undefined) })); // DEFER covered elsewhere
     const prismaMock = makePrismaMock();
     (prismaMock as any).curriculumContent = {
       findUnique: vi.fn(async () => ({

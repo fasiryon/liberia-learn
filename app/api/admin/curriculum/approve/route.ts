@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=curriculum-approve; rationale=requires curriculum approval permission before governed publication and embedding deferral
 import { deferLessonEmbedding } from "@/lib/ai/rag/embeddingDeferral";
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
@@ -5,8 +6,6 @@ import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
 import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
-import { embedLesson } from "@/lib/ai/rag/embeddingService";
-import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import { logger } from "@/lib/logger";
 import { Redis } from "@upstash/redis";
@@ -113,17 +112,16 @@ export async function POST(req: Request) {
         });
       }
     } else {
-      try {
-        await syncCurriculumContentRagChunks(record.id);
-      } catch (syncError) {
-        logger.warn("[RAG] Best-effort approval chunk sync failed", { error: syncError });
-      }
-
-      try {
-        await embedLesson(record.id);
-      } catch (embeddingError) {
-        logger.warn("[RAG] Best-effort approval embedding failed", { error: embeddingError });
-      }
+      // Founder DEFER 2026-11-13 / Atlas R3 P2-1: no queue configured is not a licence for inline paid embedding.
+      await deferLessonEmbedding({
+        lessonId: record.id,
+        contentId: record.contentId,
+        actorUserId: user.id,
+        schoolId: user.schoolId ?? null,
+        source: "admin.curriculum.approve",
+        reason: "QUEUE_NOT_CONFIGURED",
+        removeStaleChunks: true,
+      });
     }
 
     if (isCurriculumFeedbackEnabled()) {

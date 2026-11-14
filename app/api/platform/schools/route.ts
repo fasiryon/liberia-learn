@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=platform; authority=moe-platform-admin; rationale=requires the canonical MOE platform administrator guard before school reads or mutations
 import { NextRequest, NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";

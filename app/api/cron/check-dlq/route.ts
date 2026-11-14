@@ -1,3 +1,4 @@
+// route-policy: auth=cron; scope=none; authority=required-bearer-secret; rationale=requires a configured matching cron secret before queue observation or operations alerts
 import { NextResponse } from "next/server";
 import { getQueueDepths } from "@/lib/ops/queueDepths";
 import { sendOpsAlert } from "@/lib/ops/alerts";

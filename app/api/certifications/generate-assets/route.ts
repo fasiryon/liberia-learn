@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=national; authority=elevated; rationale=requires national MOE authority before requesting assets for a persisted certification
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
