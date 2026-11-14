@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=platform; authority=school-create-permission; rationale=requires the school creation permission before creating a school or requesting an optional kit
 // app/api/admin/schools/route.ts
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
