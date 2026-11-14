@@ -1,7 +1,9 @@
+// route-policy: auth=session; scope=tenant; authority=curriculum-approve; rationale=admin curriculum operations require approval permission before parsing or effects
 import { NextResponse } from "next/server";
 
 import { logAudit } from "@/lib/audit";
 import { requireRole } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import {
   extractCurriculumImportText,
   normalizeImportedCurriculum,
@@ -13,6 +15,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   try {
     const user = await requireRole("ADMIN", "TEACHER");
+    assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE);
     const formData = await req.formData();
     const file = formData.get("file");
     if (!(file instanceof File)) {

@@ -43,18 +43,20 @@ async function main() {
     orderBy: [{ gradeLevel: "asc" }, { subject: "asc" }],
   });
 
+  let groupsEnqueued = 0;
   for (const checkpoint of checkpoints) {
-    await enqueueJob(JobType.CURRICULUM_REGENERATE_RESUME, {
+    if (await enqueueJob(JobType.CURRICULUM_REGENERATE_RESUME, {
       runId,
       gradeLevel: checkpoint.gradeLevel,
       subject: checkpoint.subject,
-    });
+    })) groupsEnqueued++;
   }
 
   console.log(JSON.stringify({
     action: "curriculum_regeneration_resume",
     runId,
-    groupsEnqueued: checkpoints.length,
+    groupsEnqueued,
+    groupsNotEnqueued: checkpoints.length - groupsEnqueued,
   }, null, 2));
 }
 

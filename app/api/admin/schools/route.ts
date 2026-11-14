@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=platform; authority=school-create-permission; rationale=requires the school creation permission before creating a school or requesting an optional kit
 // app/api/admin/schools/route.ts
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
@@ -59,11 +60,15 @@ export async function POST(request: Request) {
         where: { id },
         data: { onboardingKitStatus: "pending" },
       });
-      await enqueueJob(JobType.GENERATE_SCHOOL_ONBOARDING_KIT, {
+      const kitAccepted = await enqueueJob(JobType.GENERATE_SCHOOL_ONBOARDING_KIT, {
         schoolId: id,
         actorUserId: user.id,
       });
-      await logAudit({
+      // School creation stands on its own; an unqueued optional kit is recorded as failed, never as enqueued.
+      if (!kitAccepted) {
+        await prisma.school.update({ where: { id }, data: { onboardingKitStatus: "failed" } });
+      }
+      if (kitAccepted) await logAudit({
         userId: user.id,
         action: "school.onboarding_kit.enqueued",
         resourceType: "school",

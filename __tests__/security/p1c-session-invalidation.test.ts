@@ -111,6 +111,10 @@ describe("P1-C privileged session invalidation", () => {
 
   it("fails closed when privileged assurance state cannot be read", async () => {
     mocks.userFindUnique.mockRejectedValue(new Error("database unavailable"));
-    await expect(requireUser()).rejects.toThrow("database unavailable");
+    await expect(requireUser()).rejects.toMatchObject({
+      status: 503,
+      code: "AUTH_VERIFICATION_UNAVAILABLE",
+      message: "Authentication verification unavailable",
+    });
   });
 });

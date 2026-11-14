@@ -1,6 +1,9 @@
+// route-policy: auth=session; scope=tenant; authority=curriculum-approve; rationale=admin curriculum operations require approval permission before parsing or effects
+import { deferLessonEmbedding } from "@/lib/ai/rag/embeddingDeferral";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { liberianize } from "@/lib/localization/liberia-context";
@@ -16,8 +19,6 @@ import {
   generateRubric,
   generateMasteryChecks,
 } from "@/lib/curriculum-helpers";
-import { embedLesson } from "@/lib/ai/rag/embeddingService";
-import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import {
   checkRateLimit,
@@ -41,6 +42,7 @@ const RequestSchema = z.object({
 export async function POST(req: Request) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
+    assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE);
     const rateLimit = await checkRateLimit(user.id, {
       windowMs: RATE_LIMIT_POLICIES.ADMIN.windowMs,
       limit: RATE_LIMIT_POLICIES.ADMIN.limit,
@@ -268,34 +270,34 @@ export async function POST(req: Request) {
     if (record.status === "published") {
       if (isQueueConfigured()) {
         try {
-          await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
+          const accepted = await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
             lessonId: record.id,
             contentId: record.contentId,
           });
-        } catch (error) {
-          logger.warn("[QUEUE] Falling back to inline embedding generation", { error });
-          try {
-            await syncCurriculumContentRagChunks(record.id);
-          } catch (syncError) {
-            logger.warn("[RAG] Best-effort full-pack chunk sync failed", { error: syncError });
-          }
-          try {
-            await embedLesson(record.id);
-          } catch (embeddingError) {
-            logger.warn("[RAG] Best-effort full-pack embedding failed", { error: embeddingError });
-          }
+          // A rejected send is deferred (no inline paid embedding).
+          if (!accepted) throw new Error("Queue did not accept the embedding job");
+        } catch {
+          // Founder DEFER 2026-11-13: no paid inline embedding while the queue is unavailable.
+          await deferLessonEmbedding({
+            lessonId: record.id,
+            contentId: record.contentId,
+            actorUserId: user.id,
+            schoolId: user.schoolId ?? null,
+            source: "admin.curriculum.generate-full-pack",
+            removeStaleChunks: true,
+          });
         }
       } else {
-        try {
-          await syncCurriculumContentRagChunks(record.id);
-        } catch (syncError) {
-          logger.warn("[RAG] Best-effort full-pack chunk sync failed", { error: syncError });
-        }
-        try {
-          await embedLesson(record.id);
-        } catch (embeddingError) {
-          logger.warn("[RAG] Best-effort full-pack embedding failed", { error: embeddingError });
-        }
+        // Founder DEFER 2026-11-13 / Atlas R3 P2-1: no queue configured is not a licence for inline paid embedding.
+        await deferLessonEmbedding({
+          lessonId: record.id,
+          contentId: record.contentId,
+          actorUserId: user.id,
+          schoolId: user.schoolId ?? null,
+          source: "admin.curriculum.generate-full-pack",
+          reason: "QUEUE_NOT_CONFIGURED",
+          removeStaleChunks: true,
+        });
       }
     }
 

@@ -4,6 +4,12 @@ node_modules
 **/.next
 .git
 .env*
+**/.env*
+.aws
+.agents
+.codex
+.codex-auto-resume
+.task-worktrees
 coverage
 __tests__
 *.test.*
@@ -11,6 +17,7 @@ __tests__
 .worktrees
 load-tests
 docs
+!docs/architecture/content-factory/evidence/first-three-v021-reconciliation.json
 archive
 FactoryArtifacts
 os-vault

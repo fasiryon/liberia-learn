@@ -1,4 +1,4 @@
-// app/api/student/[id]/route.ts
+// route-policy: auth=session; scope=record; authority=teacher-class-or-school-admin; rationale=student and returned grade/enrollment rows require own-school administrator or assigned-class teacher authority
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
@@ -16,12 +16,17 @@ export async function GET(
       return NextResponse.json({ error: "School context required" }, { status: 400 });
     }
 
+    const classScope = { schoolId: user.schoolId, ...(user.role === "TEACHER" ? { teacherId: user.id } : {}) };
     const student = await prisma.student.findFirst({
-      where: { id: params.id, user: { schoolId: user.schoolId } },
+      where: {
+        id: params.id,
+        user: { schoolId: user.schoolId },
+        ...(user.role === "TEACHER" ? { enrollments: { some: { Class: classScope } } } : {}),
+      },
       include: {
         user: { select: { id: true, email: true, name: true, role: true } },
-        enrollments: { include: { Class: { include: { School: true } } } },
-        grades: { include: { Class: true }, orderBy: { computedAt: "desc" }, take: 20 },
+        enrollments: { where: { Class: classScope }, include: { Class: { include: { School: true } } } },
+        grades: { where: { Class: classScope }, include: { Class: true }, orderBy: { computedAt: "desc" }, take: 20 },
       },
     });
 

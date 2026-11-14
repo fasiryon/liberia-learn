@@ -1,3 +1,4 @@
+// route-policy: auth=cron; scope=none; authority=required-bearer-secret; rationale=requires a configured matching cron secret before queue observation or operations alerts
 import { NextResponse } from "next/server";
 import { getQueueDepths } from "@/lib/ops/queueDepths";
 import { sendOpsAlert } from "@/lib/ops/alerts";
@@ -19,7 +20,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ checked: true, dlqConfigured: false, dlqDepth: null });
   }
 
-  const dlqDepth = queues.dlq.depth ?? 0;
+  // An unreadable DLQ (e.g. AWS unavailable) is unknown, never an empty queue: no success, no heartbeat.
+  if (queues.dlq.depth === null || queues.dlq.depth === undefined) {
+    return NextResponse.json(
+      { checked: false, dlqConfigured: true, dlqDepth: null, error: "DLQ_DEPTH_UNAVAILABLE" },
+      { status: 503 },
+    );
+  }
+  const dlqDepth = queues.dlq.depth;
 
   if (dlqDepth > 0) {
     await sendOpsAlert({

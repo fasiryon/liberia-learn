@@ -1,6 +1,8 @@
+// route-policy: auth=session; scope=tenant; authority=curriculum-approve; rationale=admin curriculum operations require approval permission before parsing or effects
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { createEliteUpgradeDraft } from "@/lib/curriculum/eliteUpgrade";
 import { logger } from "@/lib/logger";
@@ -12,6 +14,7 @@ const RequestSchema = z.object({
 export async function POST(req: Request) {
   try {
     const user = await requireRole("ADMIN", "TEACHER");
+    assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE);
     const parsed = RequestSchema.safeParse(await req.json());
     if (!parsed.success) {
       return NextResponse.json(
