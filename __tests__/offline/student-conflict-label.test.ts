@@ -14,3 +14,21 @@ describe("offline status: a kept conflict is named in learner words", () => {
     expect(page, "item.entity must not be rendered as the learner-visible label").not.toMatch(/item\.entity\s*\?\?/);
   });
 });
+
+describe("learnerItemLabel: learner words for an offline item (#29)", () => {
+  it("maps each queued work type to learner words, with 'Lesson work' as the neutral fallback", async () => {
+    const { learnerItemLabel } = await import("@/lib/offline/conflictCopy");
+    expect(learnerItemLabel({ type: "lesson-complete", entity: "studentProgress" })).toBe("Lesson work");
+    expect(learnerItemLabel({ type: "assignment-submission", entity: "assignmentSubmission" })).toBe("Assignment");
+    expect(learnerItemLabel({ type: "homework" })).toBe("Homework");
+    expect(learnerItemLabel({ type: "lab-submission", entity: "labSession" })).toBe("Lab work");
+    for (const item of [{}, { entity: "studentProgress" }, { type: "something-new", entity: "attendanceRecord" }, { type: "" }]) {
+      expect(learnerItemLabel(item)).toBe("Lesson work");
+    }
+  });
+  it("the page labels both lists through learnerItemLabel", () => {
+    const page = fs.readFileSync(PAGE, "utf8");
+    expect(page).toContain("learnerItemLabel(item)");
+    expect(page).not.toMatch(/itemName\(/);
+  });
+});
