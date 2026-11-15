@@ -58,7 +58,7 @@ it.each(["a".repeat(40), "b".repeat(16), "synthetic-legacy-hash"])("renders visi
     await until(() => /Everything has been sent/.test(host.textContent ?? ""));
     return;
   }
-  await until(() => /Try again/.test(host.textContent ?? ""));
+  await until(() => /Still not sent\. Your work is safe on this device/.test(host.textContent ?? ""));
   expect((await getQueue(partition))[0].status).toBe("failed");
   expect(fetchMock).not.toHaveBeenCalled();
   await act(async () => { root.render(<OfflineStatus />); });
@@ -68,7 +68,7 @@ it.each(["a".repeat(40), "b".repeat(16), "synthetic-legacy-hash"])("renders visi
   expect(host.querySelector('[role="alert"]')).toBeNull();
   expect(host.querySelector('[role="status"][aria-live="polite"]')).not.toBeNull();
   await act(async () => { host.querySelector("button")?.click(); });
-  await until(() => /Still not sent\. Your work is safe on this device\. If this keeps happening, tell your teacher\./.test(host.textContent ?? ""))
+  await until(() => /Still not sent\. Your work is safe on this device\. If this keeps happening, tell your teacher\./.test(host.textContent ?? ""));
   expect((await getQueue(partition))[0].operationId).toBe(queued.operationId);
   expect(fetchMock).not.toHaveBeenCalled();
 });
