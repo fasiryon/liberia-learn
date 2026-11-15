@@ -207,6 +207,19 @@ export async function pollOnce() {
       break;
     }
 
+    // Execution budget: a message already past MAX_RETRIES receives is never run again here, whether or not an
+    // SQS redrive policy exists. It goes to the DLQ when one is configured; otherwise it is left undeleted
+    // (not lost) for operator action.
+    if (getReceiveCount(message) > MAX_RETRIES) {
+      const movedToDlq = await moveToDlq(message, "retry budget exhausted").catch(() => false);
+      logger.error("[WORKER] message over retry budget; not executed", {
+        receiveCount: getReceiveCount(message),
+        maxRetries: MAX_RETRIES,
+        movedToDlq,
+      });
+      continue;
+    }
+
     inFlightMessage = processMessage(message);
     await inFlightMessage;
     inFlightMessage = null;

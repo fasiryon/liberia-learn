@@ -1,10 +1,10 @@
+// route-policy: auth=session; scope=tenant; authority=teacher-class; rationale=requires teacher role and canonical class ownership before saving a lesson or deferring its embeddings
+import { deferLessonEmbedding } from "@/lib/ai/rag/embeddingDeferral";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import {
   deleteCurriculumContentRagChunks,
-  syncCurriculumContentRagChunks,
 } from "@/lib/ai/rag/ragIngestionService";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
@@ -80,40 +80,46 @@ function isTeacherGenerationDisabled() {
 async function runBestEffortAiWork(
   recordId: string,
   contentId: string,
-  status: string
+  status: string,
+  actor: { userId: string; schoolId: string | null }
 ) {
   const queueConfigured = isQueueConfigured();
 
   if (queueConfigured) {
     try {
-      await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
+      const accepted = await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
         lessonId: recordId,
         contentId,
       });
-    } catch (queueError) {
-      logger.warn("[QUEUE] Falling back to inline embedding generation", { error: queueError });
-      try {
-        await embedLesson(recordId);
-      } catch (embeddingError) {
-        logger.warn("[RAG] Best-effort teacher lesson embedding failed", { error: embeddingError });
-      }
+      // A rejected send is deferred (no inline paid embedding).
+      if (!accepted) throw new Error("Queue did not accept the embedding job");
+    } catch {
+      // Founder DEFER 2026-11-13: no paid inline embedding while the queue is unavailable.
+      await deferLessonEmbedding({
+        lessonId: recordId,
+        contentId: contentId,
+        actorUserId: actor.userId,
+        schoolId: actor.schoolId ?? null,
+        source: "teacher.lessons",
+        removeStaleChunks: true,
+      });
     }
   } else {
-    try {
-      await embedLesson(recordId);
-    } catch (embeddingError) {
-      logger.warn("[RAG] Best-effort teacher lesson embedding failed", { error: embeddingError });
-    }
+    // Founder DEFER 2026-11-13 / Atlas R3 P2-1: no queue configured is not a licence for inline paid embedding.
+    await deferLessonEmbedding({
+      lessonId: recordId,
+      contentId: contentId,
+      actorUserId: actor.userId,
+      schoolId: actor.schoolId ?? null,
+      source: "teacher.lessons",
+      reason: "QUEUE_NOT_CONFIGURED",
+      removeStaleChunks: true,
+    });
   }
 
   if (status === "published") {
-    if (!queueConfigured) {
-      try {
-        await syncCurriculumContentRagChunks(recordId);
-      } catch (syncError) {
-        logger.warn("[RAG] Best-effort teacher lesson sync failed", { error: syncError });
-      }
-    }
+    // Chunk sync embeds chunks (paid provider). Under DEFER it never runs inline; the deferral above already
+    // removed stale chunks, and a later authorized recovery rebuilds them.
     return;
   }
 
@@ -286,7 +292,7 @@ export async function POST(req: NextRequest) {
       }).catch((error) => logger.warn("[CANVA] course thumbnail enqueue failed", { error }));
     }
 
-    await runBestEffortAiWork(record.id, record.contentId, record.status);
+    await runBestEffortAiWork(record.id, record.contentId, record.status, { userId: user.id, schoolId: user.schoolId ?? null });
 
     let scheduledWorkId: string | null = null;
     if (record.status === "published") {

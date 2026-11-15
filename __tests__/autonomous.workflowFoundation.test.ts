@@ -26,7 +26,7 @@ const mockExecutionTrace = {
 };
 const mockLogLearningEvent = vi.fn();
 const mockLogAudit = vi.fn();
-const mockEnqueueJob = vi.fn();
+const mockEnqueueJob = vi.fn(async () => true); // SQS accepted the send
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -55,6 +55,9 @@ vi.mock("@/lib/db/writeThrottle", () => ({
 vi.mock("@/lib/queue", () => ({
   JobType: { AUTONOMOUS_WORKFLOW_RUN: "autonomous.workflow.run" },
   enqueueJob: mockEnqueueJob,
+  enqueueJobOrThrow: async (...args: unknown[]) => {
+    if (!(await (mockEnqueueJob as (...a: unknown[]) => Promise<boolean>)(...args))) throw Object.assign(new Error("QUEUE_UNAVAILABLE"), { status: 503 });
+  },
 }));
 
 beforeEach(() => {

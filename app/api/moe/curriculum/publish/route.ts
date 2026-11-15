@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=national; authority=elevated; rationale=MOE portal flag and existing canonical role or permission scope gate all domain work
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
@@ -10,9 +11,11 @@ import { updateCurriculumReleaseProjectionMany } from "@/lib/curriculum/mutation
 import { isP2bReviewOperationsEnabled } from "@/lib/serverFlags";
 import { assertMoeReleaseReady } from "@/lib/curriculum/review/legacyAdapter";
 
+import { isMoePortalEnabled } from "@/lib/serverFlags";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  if (!isMoePortalEnabled()) return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
   try {
     const { user } = await requireMoeActor();
     assertPermission(user, PERMISSIONS.CURRICULUM_OVERRIDE);

@@ -669,6 +669,7 @@ export async function enqueuePendingCurriculumRegenerationJobs(input: Curriculum
     orderBy: { createdAt: "asc" },
     take: getSubjectConcurrencyProfile(input.subject).batchSize,
   });
+  let accepted = 0;
   for (const job of jobs) {
     const payload = {
       runId: job.runId,
@@ -683,17 +684,18 @@ export async function enqueuePendingCurriculumRegenerationJobs(input: Curriculum
       tenantId: job.tenantId,
       idempotencyKey: job.idempotencyKey,
     };
-    await enqueueJob(JobType.CURRICULUM_REGENERATE_LESSON, payload, {
+    if (await enqueueJob(JobType.CURRICULUM_REGENERATE_LESSON, payload, {
       messageGroupId: job.runId,
       messageDeduplicationId: buildRetryDeduplicationId(job.idempotencyKey, job.attempt),
-    });
+    })) accepted++;
   }
 
   if (jobs.length === 0) {
     await finalizeCurriculumRegenerationRun(input.runId);
   }
 
-  return { enqueued: jobs.length };
+  // Count only sends the queue accepted; unaccepted jobs stay durably pending.
+  return { enqueued: accepted, notEnqueued: jobs.length - accepted };
 }
 
 export async function stopCurriculumRegenerationRun(runId: string, reason: string) {

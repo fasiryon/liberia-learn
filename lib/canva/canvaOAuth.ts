@@ -146,7 +146,7 @@ export async function consumeCanvaOAuthState(input: { state: string; now?: Date 
 }
 
 function getCanvaTokenEncryptionKey(): Buffer {
-  const secret = process.env.NEXTAUTH_SECRET?.trim() || process.env.JWT_SECRET?.trim();
+  const secret = process.env.NEXTAUTH_SECRET?.trim();
   if (!secret) {
     throw Object.assign(new Error("Canva token encryption secret is missing"), {
       status: 503,

@@ -13,6 +13,7 @@ const mockFindUnique = vi.hoisted(() => vi.fn());
 const mockUpdate = vi.hoisted(() => vi.fn());
 const mockFeedbackCreate = vi.hoisted(() => vi.fn());
 
+vi.mock("@/lib/ai/rag/embeddingDeferral", () => ({ deferLessonEmbedding: vi.fn(async () => undefined) })); // embedding DEFER is covered by embedding-deferral/defer-unconfigured tests
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
   requireUser: mockRequireRole,

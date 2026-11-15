@@ -3,6 +3,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 // ── Token utility tests ──────────────────────────────────────────────────────
 
 vi.mock("@/lib/db", () => ({ prisma: {} }));
+vi.mock("@/lib/serverFlags", () => ({ isMoePortalEnabled: () => true }));
+
+function canonicalAuthMock() {
+  return { authOptions: {}, requireUser: async () => {
+    const { getServerSession } = await import("next-auth");
+    const session = await getServerSession();
+    if (!session?.user) throw Object.assign(new Error("Unauthorized"), { status: 401 });
+    return session.user;
+  } };
+}
 
 describe("liveToken", () => {
   beforeEach(() => {
@@ -93,7 +103,7 @@ describe("GET /api/moe/live", () => {
     vi.doMock("next-auth", () => ({
       getServerSession: vi.fn(async () => null),
     }));
-    vi.doMock("@/lib/auth", () => ({ authOptions: {} }));
+    vi.doMock("@/lib/auth", canonicalAuthMock);
 
     const { GET } = await import("@/app/api/moe/live/route");
     const req = new Request("http://localhost/api/moe/live");
@@ -107,7 +117,7 @@ describe("GET /api/moe/live", () => {
         user: { role: "MOE_OFFICIAL", isPlatformAdmin: false },
       })),
     }));
-    vi.doMock("@/lib/auth", () => ({ authOptions: {} }));
+    vi.doMock("@/lib/auth", canonicalAuthMock);
 
     const { GET } = await import("@/app/api/moe/live/route");
     const req = new Request("http://localhost/api/moe/live");
@@ -123,7 +133,7 @@ describe("GET /api/moe/live", () => {
     vi.doMock("next-auth", () => ({
       getServerSession: vi.fn(async () => null),
     }));
-    vi.doMock("@/lib/auth", () => ({ authOptions: {} }));
+    vi.doMock("@/lib/auth", canonicalAuthMock);
 
     const { GET } = await import("@/app/api/moe/live/route");
     const req = new Request("http://localhost/api/moe/live?token=valid-token");
@@ -135,7 +145,7 @@ describe("GET /api/moe/live", () => {
     vi.doMock("next-auth", () => ({
       getServerSession: vi.fn(async () => null),
     }));
-    vi.doMock("@/lib/auth", () => ({ authOptions: {} }));
+    vi.doMock("@/lib/auth", canonicalAuthMock);
 
     const { GET } = await import("@/app/api/moe/live/route");
     const req = new Request("http://localhost/api/moe/live?token=bad-token");
@@ -149,7 +159,7 @@ describe("GET /api/moe/live", () => {
         user: { role: "ADMIN", isPlatformAdmin: true },
       })),
     }));
-    vi.doMock("@/lib/auth", () => ({ authOptions: {} }));
+    vi.doMock("@/lib/auth", canonicalAuthMock);
 
     const { GET } = await import("@/app/api/moe/live/route");
     const req = new Request("http://localhost/api/moe/live");
@@ -163,7 +173,7 @@ describe("GET /api/moe/live", () => {
         user: { role: "MOE_OFFICIAL", isPlatformAdmin: false },
       })),
     }));
-    vi.doMock("@/lib/auth", () => ({ authOptions: {} }));
+    vi.doMock("@/lib/auth", canonicalAuthMock);
 
     const { GET } = await import("@/app/api/moe/live/route");
     const req = new Request("http://localhost/api/moe/live");

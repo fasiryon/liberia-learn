@@ -28,6 +28,7 @@ const mockCountRiskFlaggedAwaitingReview = vi.hoisted(() => vi.fn(async () => 0)
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit, logAuditRequired: mockLogAudit }));
 vi.mock("@/lib/serverFlags", () => ({ isCurriculumFeedbackEnabled: () => false }));
+vi.mock("@/lib/ai/rag/embeddingDeferral", () => ({ deferLessonEmbedding: vi.fn(async () => undefined) })); // embedding DEFER is covered by embedding-deferral/defer-unconfigured tests
 vi.mock("@/lib/ai/rag/embeddingService", () => ({ embedLesson: vi.fn(async () => {}) }));
 vi.mock("@/lib/ai/rag/ragIngestionService", () => ({
   syncCurriculumContentRagChunks: vi.fn(async () => {}),

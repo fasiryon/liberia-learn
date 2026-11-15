@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=national; authority=elevated; rationale=requires national MOE authority before requesting assets for a persisted certification
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -5,7 +6,7 @@ import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { requireMoeActor } from "@/lib/moe/authority";
-import { enqueueJob, JobType } from "@/lib/queue";
+import { enqueueJob, JobType, QueueUnavailableError } from "@/lib/queue";
 import { isCertificationAssetGenerationEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
@@ -37,10 +38,18 @@ export async function POST(req: Request) {
       where: { id: certification.id },
       data: { assetGenerationStatus: "pending" },
     });
-    await enqueueJob(JobType.GENERATE_CERTIFICATION_ASSETS, {
+    const accepted = await enqueueJob(JobType.GENERATE_CERTIFICATION_ASSETS, {
       certificationId: certification.id,
       actorUserId: user.id,
     });
+    if (!accepted) {
+      // Nothing will process a "pending" asset; record the failure and refuse instead of acknowledging.
+      await prisma.examCertification.update({
+        where: { id: certification.id },
+        data: { assetGenerationStatus: "failed" },
+      });
+      throw new QueueUnavailableError(JobType.GENERATE_CERTIFICATION_ASSETS);
+    }
     await logAudit({
       userId: user.id,
       schoolId: certification.exam.schoolId,

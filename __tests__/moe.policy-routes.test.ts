@@ -16,6 +16,7 @@ vi.mock("@/lib/moe/policyGovernance", () => ({
   transitionMoeDirective: mockTransitionMoeDirective,
 }));
 vi.mock("@/lib/serverFlags", () => ({
+  isMoePortalEnabled: () => true,
   isMoeGovernanceWorkflowEnabled: () => true,
   isMoePolicyPushEnabled: () => true,
 }));

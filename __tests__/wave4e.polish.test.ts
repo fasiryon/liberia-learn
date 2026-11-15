@@ -95,7 +95,8 @@ describe("POST /api/student/flag-content", () => {
 // ── GET /api/moe/teacher-lessons ─────────────────────────────────────────────
 
 describe("GET /api/moe/teacher-lessons", () => {
-  beforeEach(() => { vi.resetModules(); });
+  beforeEach(() => { vi.resetModules();
+    vi.doMock("@/lib/serverFlags", () => ({ isMoePortalEnabled: () => true })); });
   afterEach(() => { vi.resetAllMocks(); });
 
   it("returns totalPublished count and bySchool breakdown", async () => {

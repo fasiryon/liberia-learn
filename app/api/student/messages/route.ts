@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=student-own-thread-and-school-teacher; rationale=students read their own threads and send only to a canonical same-school class teacher with validated attachment metadata
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireUser } from "@/lib/auth";
@@ -19,6 +20,25 @@ function sanitizeBody(raw: string): string {
 
 function buildThreadKey(a: string, b: string): string {
   return [a, b].sort().join(":");
+}
+
+function readAttachment(input: Record<string, unknown>) {
+  const { attachmentUrl, attachmentName, attachmentType } = input;
+  if ([attachmentUrl, attachmentName, attachmentType].every(value => value == null)) {
+    return { attachmentUrl: null, attachmentName: null, attachmentType: null };
+  }
+  const invalid = () => Object.assign(new Error("Invalid attachment metadata"), { status: 400 });
+  if (typeof attachmentUrl !== "string" || typeof attachmentName !== "string" || typeof attachmentType !== "string" ||
+      attachmentUrl.length > 2048 || !/^https:\/\//i.test(attachmentUrl) || /[\s\\]/.test(attachmentUrl) ||
+      /[\x00-\x1f\x7f]/.test(attachmentUrl) ||
+      !attachmentName.trim() || attachmentName.length > 255 || /[\x00-\x1f\x7f]/.test(attachmentName) ||
+      !["image/jpeg", "image/png", "image/gif", "application/pdf"].includes(attachmentType)) {
+    throw invalid();
+  }
+  let parsed: URL;
+  try { parsed = new URL(attachmentUrl); } catch { throw invalid(); }
+  if (parsed.protocol !== "https:" || parsed.username || parsed.password) throw invalid();
+  return { attachmentUrl, attachmentName: attachmentName.trim(), attachmentType };
 }
 
 export async function GET(req: NextRequest) {
@@ -168,6 +188,7 @@ export async function POST(req: NextRequest) {
     if (user.role !== "STUDENT") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
+    if (!user.schoolId) return NextResponse.json({ error: "School context required" }, { status: 403 });
 
     let body: unknown;
     try {
@@ -176,7 +197,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
     }
 
-    const { teacherId, body: rawBody, attachmentUrl, attachmentName, attachmentType } = body as Record<string, unknown>;
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json({ error: "Invalid message body" }, { status: 400 });
+    }
+    const input = body as Record<string, unknown>;
+    const { teacherId, body: rawBody } = input;
 
     if (!teacherId || typeof teacherId !== "string") {
       return NextResponse.json({ error: "teacherId is required" }, { status: 400 });
@@ -192,9 +217,10 @@ export async function POST(req: NextRequest) {
     if (sanitized.length > MAX_BODY_LENGTH) {
       return NextResponse.json({ error: `Body must be ${MAX_BODY_LENGTH} chars or fewer` }, { status: 400 });
     }
+    const attachment = readAttachment(input);
 
     const studentRecord = await prisma.student.findFirst({
-      where: { userId: user.id },
+      where: { userId: user.id, user: { schoolId: user.schoolId } },
       select: { id: true },
     });
     if (!studentRecord) {
@@ -202,7 +228,7 @@ export async function POST(req: NextRequest) {
     }
 
     const enrollment = await prisma.enrollment.findFirst({
-      where: { studentId: studentRecord.id, Class: { teacherId } },
+      where: { studentId: studentRecord.id, Class: { teacherId, schoolId: user.schoolId, Teacher: { schoolId: user.schoolId } } },
       include: { Class: { select: { schoolId: true } } },
     });
     if (!enrollment) {
@@ -235,9 +261,7 @@ export async function POST(req: NextRequest) {
         flagged,
         flaggedAt: flagged ? new Date() : null,
         flagReason: flagged ? "keyword_match" : null,
-        attachmentUrl: typeof attachmentUrl === "string" ? attachmentUrl : null,
-        attachmentName: typeof attachmentName === "string" ? attachmentName : null,
-        attachmentType: typeof attachmentType === "string" ? attachmentType : null,
+        ...attachment,
       },
     });
 

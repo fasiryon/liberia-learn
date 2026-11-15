@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=national; authority=elevated; rationale=MOE portal flag and existing canonical role or permission scope gate all domain work
 // app/api/moe/align/route.ts
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
@@ -9,9 +10,11 @@ import { prisma } from "@/lib/db";
 import { hasGenuineMoeAlignment } from "@/lib/moe/alignmentReader";
 import { isMoeSuperRole } from "@/lib/moe/rbac";
 
+import { isMoePortalEnabled } from "@/lib/serverFlags";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  if (!isMoePortalEnabled()) return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
   try {
     const actor = await requireUser();
     if (!actor.isPlatformAdmin && !isMoeSuperRole(actor.role)) {
@@ -51,6 +54,7 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
+  if (!isMoePortalEnabled()) return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
   try {
     const actor = await requireUser();
     if (!actor.isPlatformAdmin && !isMoeSuperRole(actor.role)) {
