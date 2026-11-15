@@ -26,7 +26,7 @@ tests
 e2e
 test-results
 playwright-report
-coverage
+/coverage
 *.log
 docs/audits
 docs/security
