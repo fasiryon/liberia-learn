@@ -45,6 +45,10 @@ jobs:
       - name: Enforce explicit API route auth and scope policy
         run: npm run audit:api-routes
       - run: npx tsc --noEmit
+        env:
+          # Whole-repo type check exceeded the default V8 heap (exit 134). Heap only;
+          # same tsconfig, same files, same strictness. ubuntu-24.04 runner has ~16 GB.
+          NODE_OPTIONS: --max-old-space-size=8192
       - run: npx vitest run --reporter=dot
       - name: Run OS vault context security tests
         run: npm --prefix os-vault/daemon test
