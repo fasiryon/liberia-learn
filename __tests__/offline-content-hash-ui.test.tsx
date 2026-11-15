@@ -4,7 +4,7 @@ import React, { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { clear } from "idb-keyval";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { enqueueOfflineOperation, getQueue } from "@/lib/offline-queue";
+import { enqueueOfflineOperation, getQueue, markSyncTerminalFailure } from "@/lib/offline-queue";
 import { resolveSessionPartition, setActiveSessionPartition } from "@/lib/offline-session";
 import SyncManager from "@/app/student/SyncManager";
 import OfflineStatus from "@/app/student/offline-status/page";
@@ -42,18 +42,28 @@ it.each(["a".repeat(40), "b".repeat(16), "synthetic-legacy-hash"])("renders visi
     contentId: "hash-ui-content", contentVersion: "1", contentHash,
     payload: { scheduledWorkId: "hash-ui-work" }, clientCreatedAt: "2026-11-14T15:00:00.000Z",
   }, resolveSessionPartition());
-  const fetchMock = vi.fn();
+  if (contentHash.length === 40) await markSyncTerminalFailure([queued.id], "invalid_offline_operation", partition);
+  const fetchMock = vi.fn(async () => ({ ok: true, status: 200, redirected: false, json: async () => ({ results: [{ status: "synced" }] }) }));
   vi.stubGlobal("fetch", fetchMock);
   await act(async () => { root.render(<SyncManager isPlatformAdmin={false} />); });
   await until(() => /could not sync\. It is still saved on this device/.test(host.textContent ?? ""));
   expect(fetchMock).not.toHaveBeenCalled();
   expect((await getQueue(partition))[0]).toMatchObject({ operationId: queued.operationId, status: "failed", lastError: "invalid_offline_operation" });
   await act(async () => { host.querySelector("button")?.click(); });
+  if (contentHash.length === 40) {
+    await until(() => /1 item synced/.test(host.textContent ?? ""));
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(await getQueue(partition)).toHaveLength(0);
+    await act(async () => { root.render(<OfflineStatus />); });
+    await until(() => /All activity synced/.test(host.textContent ?? ""));
+    return;
+  }
   await until(() => /Try again/.test(host.textContent ?? ""));
   expect((await getQueue(partition))[0].status).toBe("failed");
   expect(fetchMock).not.toHaveBeenCalled();
   await act(async () => { root.render(<OfflineStatus />); });
-  await until(() => /(?:studentProgress|lesson complete) - failed/.test(host.textContent ?? ""));
-  expect(host.textContent).toMatch(/1 items waiting to sync/);
+  await until(() => /Not synced/.test(host.textContent ?? ""));
+  expect(host.textContent).toContain("Failed to sync. Saved on this device.");
+  expect(host.textContent).not.toContain("Waiting to sync");
   expect(host.textContent).not.toContain("All activity synced");
 });

@@ -3,7 +3,7 @@ import { clear } from "idb-keyval";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildNr12GenerationPlan } from "@/lib/curriculum/nr12GradeDeserts";
 import { buildNr13GenerationPlan } from "@/lib/curriculum/nr13Grades58";
-import { clearQueue, enqueueOfflineOperation, getQueue, getReadyQueue, retryFailedOperations, toSyncOperation } from "@/lib/offline-queue";
+import { clearQueue, enqueueOfflineOperation, getQueue, getReadyQueue, markSyncTerminalFailure, retryFailedOperations, toSyncOperation } from "@/lib/offline-queue";
 import { safeLogout } from "@/lib/safe-logout";
 import { flushSubmissionQueue } from "@/lib/offline/flushQueue";
 import { validateOfflineOperation } from "@/lib/offline/syncProtocol";
@@ -53,7 +53,7 @@ describe("offline completion content hash compatibility", () => {
     expect(await getQueue(partition)).toHaveLength(0);
   });
 
-  it.each(["b".repeat(40), "c".repeat(16), "synthetic-legacy-hash"])("RED: dispatches a stored legacy hash %s for exact server comparison", async hash => {
+  it.each(["b".repeat(40), "a".repeat(64)])("dispatches an approved digest %s for exact server comparison", async hash => {
     await enqueueHash(hash);
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ results: [{ status: "synced" }] })));
     vi.stubGlobal("fetch", fetchMock);
@@ -62,7 +62,15 @@ describe("offline completion content hash compatibility", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it.each(["b".repeat(40), "c".repeat(16), "synthetic-legacy-hash"])("observes retained failure, explicit retry, logout and deletion for %s", async hash => {
+  it.each(["c".repeat(16), "synthetic-legacy-hash"])("keeps unapproved legacy hash %s refused before dispatch", async hash => {
+    await enqueueHash(hash);
+    const fetchMock = vi.fn(); vi.stubGlobal("fetch", fetchMock);
+    expect((await flushSubmissionQueue(partition)).failed).toBe(1);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect((await getQueue(partition))[0]).toMatchObject({ contentHash: hash, status: "failed" });
+  });
+
+  it.each(["c".repeat(16), "synthetic-legacy-hash"])("observes retained failure, explicit retry, logout and deletion for %s", async hash => {
     const original = await enqueueHash(hash);
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
@@ -80,6 +88,26 @@ describe("offline completion content hash compatibility", () => {
     expect(fetchMock).not.toHaveBeenCalled();
     await clearQueue(partition);
     expect(await getQueue(partition)).toHaveLength(0);
+  });
+
+  it("recovers an original failed 40-hex op only after explicit retry", async () => {
+    const original = await enqueueHash("a".repeat(40));
+    await markSyncTerminalFailure([original.id], "invalid_offline_operation", partition);
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ results: [{ status: "synced" }] })));
+    vi.stubGlobal("fetch", fetchMock);
+    expect((await flushSubmissionQueue(partition)).flushed).toBe(0);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(await safeLogout({ partition, keepPendingWork: true })).toMatchObject({ preservedCount: 1 });
+    expect(await retryFailedOperations([original.id], partition)).toBe(1);
+    expect((await flushSubmissionQueue(partition)).flushed).toBe(1);
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).items[0]).toMatchObject({ operationId: original.operationId, contentHash: original.contentHash, payload: original.payload });
+    expect(await getQueue(partition)).toHaveLength(0);
+  });
+
+  it("does not widen non-lesson digests or accept a trailing newline", async () => {
+    const op = toSyncOperation(await enqueueHash("a".repeat(40)));
+    expect(validateOfflineOperation({ ...op, resourceType: "assessment_attempt", operationType: "assessment_attempt.append" })).toBe(false);
+    expect(validateOfflineOperation({ ...op, contentHash: `${"a".repeat(64)}\n` })).toBe(false);
   });
 
   it.each([null, "a".repeat(64)])("preserves existing accepted hash %s", async hash => {

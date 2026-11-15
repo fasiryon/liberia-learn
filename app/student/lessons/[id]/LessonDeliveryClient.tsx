@@ -965,7 +965,7 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
           contentHash: lesson.contentHash ?? null,
           dedupeKey: `lesson-complete:${lesson.id}`,
         });
-        setSubmitMessage("Saved offline. Will sync when you reconnect.");
+        setSubmitMessage("Saved on this device. Check Offline Status for sync progress or retry.");
         return;
       }
       const response = await fetch(`/api/student/lessons/${lesson.id}/complete`, {

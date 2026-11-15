@@ -98,6 +98,7 @@ const OPERATION_TYPES_BY_RESOURCE: Record<OfflineResourceType, OfflineOperationT
 
 const ISO_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const HASH_PATTERN = /^[0-9a-f]{64}$/;
+const LEGACY_LESSON_HASH_PATTERN = /^[0-9a-f]{40}$/;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -147,7 +148,15 @@ export function validateOfflineOperation(value: unknown): value is OfflineOperat
   for (const key of ["contentId", "contentVersion", "contentHash", "baseServerVersion"]) {
     if (value[key] !== null && typeof value[key] !== "string") return false;
   }
-  if (value.contentHash !== null && (typeof value.contentHash !== "string" || !HASH_PATTERN.test(value.contentHash))) return false;
+  if (value.contentHash !== null) {
+    const hash = value.contentHash;
+    if (typeof hash !== "string") return false;
+    // A legacy lesson digest is an opaque stored identity, not a release seal.
+    // Syntax only admits it to the server's exact content/version comparison.
+    const fullDigest = hash.length === 64 && HASH_PATTERN.test(hash);
+    const legacyLessonDigest = value.resourceType === "lesson_progress" && hash.length === 40 && LEGACY_LESSON_HASH_PATTERN.test(hash);
+    if (!fullDigest && !legacyLessonDigest) return false;
+  }
   if (!ISO_PATTERN.test(String(value.clientCreatedAt)) || !Number.isFinite(Date.parse(String(value.clientCreatedAt)))) return false;
   if (typeof value.idempotencyKey !== "string" || value.idempotencyKey !== value.operationId) return false;
   if (!isRecord(value.payload)) return false;
