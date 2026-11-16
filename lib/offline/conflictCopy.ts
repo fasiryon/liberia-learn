@@ -14,3 +14,18 @@ const GENERAL = "Your teacher or school needs to check this. It is saved on this
 export function studentConflictMessage(resolutionHint: string | null | undefined): string {
   return (resolutionHint && COPY[resolutionHint]) || GENERAL;
 }
+
+/**
+ * #29 (R4 P2-1): the learner-facing name of an offline item. Built from the queued work type only: never the server's
+ * entity/model name (e.g. "studentProgress"). The device has no lesson title offline, so unknown or missing types get
+ * the neutral "Lesson work".
+ */
+const ITEM_LABELS: Record<string, string> = {
+  "lesson-complete": "Lesson work",
+  "assignment-submission": "Assignment",
+  homework: "Homework",
+  "lab-submission": "Lab work",
+};
+export function learnerItemLabel(item: Readonly<{ type?: string | null; entity?: string | null }>): string {
+  return (item.type && ITEM_LABELS[item.type]) || "Lesson work";
+}

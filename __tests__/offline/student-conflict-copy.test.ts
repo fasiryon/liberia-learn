@@ -20,6 +20,6 @@ describe("student wording for kept conflicts", () => {
   it("the offline status page lists conflicts apart from waiting items, with this wording", () => {
     const page = fs.readFileSync("app/student/offline-status/page.tsx", "utf8");
     expect(page).toContain("studentConflictMessage(item.conflict?.resolutionHint)");
-    expect(page).toMatch(/waiting = items\.filter\(\(item\) => item\.status !== "conflict"\)/);
+    expect(page).toMatch(/waiting = items\.filter\(\(item\) => item\.status !== "conflict" && item\.status !== "failed"\)/);
   });
 });
