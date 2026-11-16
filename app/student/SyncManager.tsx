@@ -146,7 +146,7 @@ export default function SyncManager({
   const idle = !syncing && !syncResult;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2" aria-live="polite">
+    <div className="fixed right-4 z-50 flex max-w-[calc(100vw-2rem)] flex-col items-end gap-2 bottom-[calc(9.5rem+env(safe-area-inset-bottom,0px))] md:bottom-4" aria-live="polite">
       {idle && authRequired > 0 && (
         <div className="rounded-lg bg-amber-100 border border-amber-300 px-4 py-2 text-sm text-amber-900 shadow">
           {authRequired} item{authRequired > 1 ? "s" : ""}. {RECOVERY_COPY.savedOnDevice}{" "}
