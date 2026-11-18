@@ -1,5 +1,6 @@
 "use client";
 
+import { loginErrorMessage } from "@/lib/loginErrorCopy";
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
@@ -223,7 +224,7 @@ export default function LoginClient({
 
     if (res?.error) {
       setLoading(false);
-      setError(res.error);
+      setError(loginErrorMessage(res.error));
       return;
     }
 

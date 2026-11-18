@@ -206,7 +206,8 @@ async function assessContentTrust(operation: OfflineOperation | null) {
   if (operation.contentVersion && row.version !== operation.contentVersion) {
     return { action: "conflict" as const, status: "content_version_changed", serverState: { version: row.version } };
   }
-  if (operation.contentHash && row.hash && row.hash !== operation.contentHash) {
+  if ((releaseBound && operation.contentHash !== null && operation.contentHash !== (row.hash ?? null)) ||
+      (!releaseBound && operation.contentHash && row.hash && row.hash !== operation.contentHash)) {
     return { action: "conflict" as const, status: "content_hash_mismatch", serverState: { hash: row.hash } };
   }
   if (releaseBound && row.hash && !operation.contentHash) {

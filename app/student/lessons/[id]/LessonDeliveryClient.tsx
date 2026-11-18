@@ -19,6 +19,7 @@ import { exitLessonFullscreen } from "@/lib/lesson/fullscreen";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
+import { RECOVERY_COPY } from "@/lib/offline/recoveryCopy";
 import { loadLessonProgress, removeLessonProgress, saveLessonProgress } from "@/lib/offline/lessonProgress";
 import { cacheLessonSession, loadCachedLessonSession } from "@/lib/offline/lessonSession";
 import { loadCachedLesson, removeCachedLesson } from "@/lib/lesson-offline-cache";
@@ -965,7 +966,7 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
           contentHash: lesson.contentHash ?? null,
           dedupeKey: `lesson-complete:${lesson.id}`,
         });
-        setSubmitMessage("Saved offline. Will sync when you reconnect.");
+        setSubmitMessage(RECOVERY_COPY.saved);
         return;
       }
       const response = await fetch(`/api/student/lessons/${lesson.id}/complete`, {

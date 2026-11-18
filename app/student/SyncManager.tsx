@@ -9,6 +9,7 @@ import {
   subscribeToQueueChanges,
 } from "@/lib/offline-queue";
 import { flushSubmissionQueue } from "@/lib/offline/flushQueue";
+import { RECOVERY_COPY } from "@/lib/offline/recoveryCopy";
 import { reportSyncDiagnostics, scheduleSyncDiagnosticsReport } from "@/lib/offline/syncDiagnosticsReporter";
 import { getCacheStats, purgeExpiredPacks, purgePartitionPacks } from "@/lib/offline-cache";
 import { detectAndSetActiveSessionPartition, type SessionPartition } from "@/lib/offline-session";
@@ -24,7 +25,6 @@ export default function SyncManager({
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
   const [partition, setPartition] = useState<SessionPartition | null>(null);
-  const [online, setOnline] = useState(true);
   const [stats, setStats] = useState({
     queuePending: 0,
     queueConflicts: 0,
@@ -58,7 +58,7 @@ export default function SyncManager({
     setTimeout(() => setSyncResult(null), 5000);
   }
 
-  const doSync = useCallback(async () => {
+  const doSync = useCallback(async (explicitRetry = false) => {
     if (!partitionRef.current || (typeof navigator !== "undefined" && !navigator.onLine)) return;
     setSyncing(true);
     setSyncResult(null);
@@ -67,12 +67,14 @@ export default function SyncManager({
       if (result.conflicts > 0) {
         flash(`${result.conflicts} item${result.conflicts > 1 ? "s" : ""} need${result.conflicts === 1 ? "s" : ""} review`);
       } else if (result.blocked > 0) {
-        flash("Sign in again to sync saved offline work");
+        flash(RECOVERY_COPY.signIn);
       } else if (result.flushed > 0) {
-        flash(`${result.flushed} item${result.flushed > 1 ? "s" : ""} synced`);
+        flash(RECOVERY_COPY.sentCount(result.flushed));
+      } else if (result.failed > 0 && explicitRetry) {
+        flash(RECOVERY_COPY.stillNotSent);
       }
     } catch {
-      flash("Offline work could not sync yet. It remains saved on this device.");
+      flash(RECOVERY_COPY.couldNotSend);
     } finally {
       setSyncing(false);
       await refreshStats();
@@ -93,17 +95,14 @@ export default function SyncManager({
 
   useEffect(() => {
     if (!partition) return;
-    setOnline(navigator.onLine);
     if (navigator.onLine) void doSync();
 
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     const onOnline = () => {
-      setOnline(true);
       if (reconnectTimer) clearTimeout(reconnectTimer);
       reconnectTimer = setTimeout(() => { void doSync(); }, RECONNECT_DEBOUNCE_MS);
     };
     const onOffline = () => {
-      setOnline(false);
       if (reconnectTimer) clearTimeout(reconnectTimer);
     };
     // Resume after the OS froze or killed the background tab (low-RAM phones).
@@ -118,7 +117,7 @@ export default function SyncManager({
       if (e.data?.type === "offline-sync-complete") {
         void refreshStats();
         if (e.data?.syncedCount > 0) {
-          flash(`${e.data.syncedCount} item${e.data.syncedCount > 1 ? "s" : ""} synced`);
+          flash(RECOVERY_COPY.sentCount(e.data.syncedCount));
         }
       }
     };
@@ -147,32 +146,30 @@ export default function SyncManager({
   const idle = !syncing && !syncResult;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2" aria-live="polite">
+    <div className="fixed right-4 z-50 flex max-w-[calc(100vw-2rem)] flex-col items-end gap-2 bottom-[calc(9.5rem+env(safe-area-inset-bottom,0px))] md:bottom-4" aria-live="polite">
       {idle && authRequired > 0 && (
         <div className="rounded-lg bg-amber-100 border border-amber-300 px-4 py-2 text-sm text-amber-900 shadow">
-          Your sign-in expired. {authRequired} saved item{authRequired > 1 ? "s" : ""} will sync after you{" "}
+          {authRequired} item{authRequired > 1 ? "s" : ""}. {RECOVERY_COPY.savedOnDevice}{" "}
           <Link href="/login" className="underline font-semibold">sign in again</Link>.
         </div>
       )}
       {idle && pending - authRequired > 0 && (
         <div className="rounded-lg bg-amber-100 border border-amber-300 px-4 py-2 text-sm text-amber-900 shadow">
-          {online
-            ? `${pending - authRequired} item${pending - authRequired > 1 ? "s" : ""} waiting to sync`
-            : `You are offline. ${pending - authRequired} item${pending - authRequired > 1 ? "s are" : " is"} saved on this device and will sync when you reconnect.`}
+          {RECOVERY_COPY.waiting}. {pending - authRequired} item{pending - authRequired > 1 ? "s" : ""}. {RECOVERY_COPY.savedOnDevice}
         </div>
       )}
       {idle && failed > 0 && (
         <div className="rounded-lg bg-red-50 border border-red-300 px-4 py-2 text-sm text-red-900 shadow">
-          {failed} item{failed > 1 ? "s" : ""} could not sync. It is still saved on this device.{" "}
+          {RECOVERY_COPY.couldNotSend}{" "}
           <button
             type="button"
             className="underline font-semibold"
             onClick={async () => {
               await retryFailedOperations(undefined, partitionRef.current ?? undefined);
-              await doSync();
+              await doSync(true);
             }}
           >
-            Try again
+            {RECOVERY_COPY.retry}
           </button>
         </div>
       )}
@@ -185,7 +182,7 @@ export default function SyncManager({
 
       {syncing && (
         <div className="rounded-xl bg-[var(--ll-yellow-soft)] border border-amber-500/30 px-4 py-2 text-sm text-[var(--ll-yellow)]">
-          Syncing offline work…
+          {RECOVERY_COPY.sending}
         </div>
       )}
       {syncResult && (
