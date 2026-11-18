@@ -6,7 +6,7 @@
     "content:scheduledwork:analyze": "tsx scripts/analyze-scheduledwork-content.ts",
     "postinstall": "node scripts/patch-vitest-offline-wildcard.mjs",
     "dev": "next dev",
-    "build": "prisma generate && cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" next build",
+    "build": "prisma generate && cross-env NODE_OPTIONS=\"--max-old-space-size=6144\" next build",
     "start": "next start",
     "lint": "next lint",
     "generate-icons": "node scripts/generate-icons.mjs",
